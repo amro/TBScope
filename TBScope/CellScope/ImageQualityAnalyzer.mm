@@ -15,6 +15,9 @@
 
 @implementation ImageQualityAnalyzer
 
+static int const kMinBoundaryThreshold = 70.0;  // The minimum boundaryScore at which we consider an image to be a boundary
+static int const kMinContentThreshold = 1.80;   // The minimum contentScore at which we consider an image to have content
+
 using namespace cv;
 
 +(IplImage *)createIplImageFromSampleBuffer:(CMSampleBufferRef)sampleBuffer {
@@ -446,6 +449,8 @@ double _stdev(std::vector<int> v) {
     }
     iq.boundaryScore = boundaryScore(green);
     iq.contentScore = iq.greenContrast;  // contentScore(green);  (no sense in calculating it twice)
+    iq.isBoundary = (iq.boundaryScore >= kMinBoundaryThreshold);
+    iq.isEmpty = (iq.contentScore < kMinContentThreshold);
 
     src.release();
     green.release();
