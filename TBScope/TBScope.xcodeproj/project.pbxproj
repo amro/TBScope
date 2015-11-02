@@ -11,13 +11,15 @@
 		84072C4B196BB3EA004F8826 /* ImageQualityAnalyzer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84072C4A196BB3EA004F8826 /* ImageQualityAnalyzer.mm */; };
 		84072C4E196BB403004F8826 /* CoreDataJSONHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 84072C4D196BB403004F8826 /* CoreDataJSONHelper.m */; };
 		84072C51196BB410004F8826 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84072C50196BB410004F8826 /* Reachability.m */; };
-		8A08D7891C05592E009E4AAC /* TBScopeHardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A08D7841C05592E009E4AAC /* TBScopeHardware.m */; };
-		8A08D78A1C05592E009E4AAC /* TBScopeHardwareMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A08D7861C05592E009E4AAC /* TBScopeHardwareMock.m */; };
-		8A08D78B1C05592E009E4AAC /* TBScopeHardwareReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A08D7881C05592E009E4AAC /* TBScopeHardwareReal.m */; };
-		8A2FF9761BC1E20700B99E63 /* TBScopeFocusManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A2FF9751BC1E20700B99E63 /* TBScopeFocusManager.m */; };
-		8A5253FA1BBC7B75009B29BF /* TBScopeCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5253F71BBC7B75009B29BF /* TBScopeCamera.m */; };
-		8A5253FB1BBC7B75009B29BF /* TBScopeCameraReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5253F91BBC7B75009B29BF /* TBScopeCameraReal.m */; };
-		8A5253FE1BBC7CA6009B29BF /* TBScopeCameraMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5253FD1BBC7CA6009B29BF /* TBScopeCameraMock.m */; };
+		8A4F3D581C05E337000EA005 /* TBScopeCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D4D1C05E337000EA005 /* TBScopeCamera.m */; };
+		8A4F3D591C05E337000EA005 /* TBScopeCameraMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D4F1C05E337000EA005 /* TBScopeCameraMock.m */; };
+		8A4F3D5A1C05E337000EA005 /* TBScopeCameraReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D511C05E337000EA005 /* TBScopeCameraReal.m */; };
+		8A4F3D5B1C05E337000EA005 /* TBScopeFocusManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D531C05E337000EA005 /* TBScopeFocusManager.m */; };
+		8A4F3D5C1C05E337000EA005 /* TBScopeImageAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D551C05E337000EA005 /* TBScopeImageAsset.m */; };
+		8A4F3D5D1C05E337000EA005 /* UIImage+Crop.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D571C05E337000EA005 /* UIImage+Crop.m */; };
+		8A4F3D641C05E3FC000EA005 /* TBScopeHardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D5F1C05E3FC000EA005 /* TBScopeHardware.m */; };
+		8A4F3D651C05E3FC000EA005 /* TBScopeHardwareMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D611C05E3FC000EA005 /* TBScopeHardwareMock.m */; };
+		8A4F3D661C05E3FC000EA005 /* TBScopeHardwareReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D631C05E3FC000EA005 /* TBScopeHardwareReal.m */; };
 		8A5254051BBD6666009B29BF /* bf_mock.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A5254041BBD6666009B29BF /* bf_mock.jpg */; };
 		8A5254071BBD666E009B29BF /* fl_mock.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A5254061BBD666E009B29BF /* fl_mock.jpg */; };
 		8A52546A1BBEBEA6009B29BF /* bf_blurry.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A5254661BBEBEA6009B29BF /* bf_blurry.jpg */; };
@@ -367,20 +369,24 @@
 		84072C4F196BB410004F8826 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = CellScope/Reachability.h; sourceTree = "<group>"; };
 		84072C50196BB410004F8826 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = CellScope/Reachability.m; sourceTree = "<group>"; };
 		843EF682977FA22DC2DE0F04 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		8A08D7831C05592E009E4AAC /* TBScopeHardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardware.h; path = Services/TBScopeHardware.h; sourceTree = "<group>"; };
-		8A08D7841C05592E009E4AAC /* TBScopeHardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeHardware.m; path = Services/TBScopeHardware.m; sourceTree = "<group>"; };
-		8A08D7851C05592E009E4AAC /* TBScopeHardwareMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardwareMock.h; path = Services/TBScopeHardwareMock.h; sourceTree = "<group>"; };
-		8A08D7861C05592E009E4AAC /* TBScopeHardwareMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeHardwareMock.m; path = Services/TBScopeHardwareMock.m; sourceTree = "<group>"; };
-		8A08D7871C05592E009E4AAC /* TBScopeHardwareReal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardwareReal.h; path = Services/TBScopeHardwareReal.h; sourceTree = "<group>"; };
-		8A08D7881C05592E009E4AAC /* TBScopeHardwareReal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeHardwareReal.m; path = Services/TBScopeHardwareReal.m; sourceTree = "<group>"; };
-		8A2FF9741BC1E20700B99E63 /* TBScopeFocusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeFocusManager.h; path = Services/TBScopeFocusManager.h; sourceTree = "<group>"; };
-		8A2FF9751BC1E20700B99E63 /* TBScopeFocusManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeFocusManager.m; path = Services/TBScopeFocusManager.m; sourceTree = "<group>"; };
-		8A5253F61BBC7B75009B29BF /* TBScopeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeCamera.h; path = Services/TBScopeCamera.h; sourceTree = "<group>"; };
-		8A5253F71BBC7B75009B29BF /* TBScopeCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeCamera.m; path = Services/TBScopeCamera.m; sourceTree = "<group>"; };
-		8A5253F81BBC7B75009B29BF /* TBScopeCameraReal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeCameraReal.h; path = Services/TBScopeCameraReal.h; sourceTree = "<group>"; };
-		8A5253F91BBC7B75009B29BF /* TBScopeCameraReal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeCameraReal.m; path = Services/TBScopeCameraReal.m; sourceTree = "<group>"; };
-		8A5253FC1BBC7CA6009B29BF /* TBScopeCameraMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeCameraMock.h; path = Services/TBScopeCameraMock.h; sourceTree = "<group>"; };
-		8A5253FD1BBC7CA6009B29BF /* TBScopeCameraMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeCameraMock.m; path = Services/TBScopeCameraMock.m; sourceTree = "<group>"; };
+		8A4F3D4C1C05E337000EA005 /* TBScopeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeCamera.h; path = Services/TBScopeCamera.h; sourceTree = "<group>"; };
+		8A4F3D4D1C05E337000EA005 /* TBScopeCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeCamera.m; path = Services/TBScopeCamera.m; sourceTree = "<group>"; };
+		8A4F3D4E1C05E337000EA005 /* TBScopeCameraMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeCameraMock.h; path = Services/TBScopeCameraMock.h; sourceTree = "<group>"; };
+		8A4F3D4F1C05E337000EA005 /* TBScopeCameraMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeCameraMock.m; path = Services/TBScopeCameraMock.m; sourceTree = "<group>"; };
+		8A4F3D501C05E337000EA005 /* TBScopeCameraReal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeCameraReal.h; path = Services/TBScopeCameraReal.h; sourceTree = "<group>"; };
+		8A4F3D511C05E337000EA005 /* TBScopeCameraReal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeCameraReal.m; path = Services/TBScopeCameraReal.m; sourceTree = "<group>"; };
+		8A4F3D521C05E337000EA005 /* TBScopeFocusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeFocusManager.h; path = Services/TBScopeFocusManager.h; sourceTree = "<group>"; };
+		8A4F3D531C05E337000EA005 /* TBScopeFocusManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeFocusManager.m; path = Services/TBScopeFocusManager.m; sourceTree = "<group>"; };
+		8A4F3D541C05E337000EA005 /* TBScopeImageAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeImageAsset.h; path = Services/TBScopeImageAsset.h; sourceTree = "<group>"; };
+		8A4F3D551C05E337000EA005 /* TBScopeImageAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeImageAsset.m; path = Services/TBScopeImageAsset.m; sourceTree = "<group>"; };
+		8A4F3D561C05E337000EA005 /* UIImage+Crop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Crop.h"; path = "Services/UIImage+Crop.h"; sourceTree = "<group>"; };
+		8A4F3D571C05E337000EA005 /* UIImage+Crop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Crop.m"; path = "Services/UIImage+Crop.m"; sourceTree = "<group>"; };
+		8A4F3D5E1C05E3FC000EA005 /* TBScopeHardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardware.h; path = Services/TBScopeHardware.h; sourceTree = "<group>"; };
+		8A4F3D5F1C05E3FC000EA005 /* TBScopeHardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeHardware.m; path = Services/TBScopeHardware.m; sourceTree = "<group>"; };
+		8A4F3D601C05E3FC000EA005 /* TBScopeHardwareMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardwareMock.h; path = Services/TBScopeHardwareMock.h; sourceTree = "<group>"; };
+		8A4F3D611C05E3FC000EA005 /* TBScopeHardwareMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeHardwareMock.m; path = Services/TBScopeHardwareMock.m; sourceTree = "<group>"; };
+		8A4F3D621C05E3FC000EA005 /* TBScopeHardwareReal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardwareReal.h; path = Services/TBScopeHardwareReal.h; sourceTree = "<group>"; };
+		8A4F3D631C05E3FC000EA005 /* TBScopeHardwareReal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeHardwareReal.m; path = Services/TBScopeHardwareReal.m; sourceTree = "<group>"; };
 		8A5254041BBD6666009B29BF /* bf_mock.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bf_mock.jpg; path = CellScope/bf_mock.jpg; sourceTree = "<group>"; };
 		8A5254061BBD666E009B29BF /* fl_mock.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = fl_mock.jpg; path = CellScope/fl_mock.jpg; sourceTree = "<group>"; };
 		8A52542B1BBDA1C0009B29BF /* TBScopeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TBScopeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -729,20 +735,24 @@
 		8A5CDE3A1BB421F3004E30A3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				8A5253F61BBC7B75009B29BF /* TBScopeCamera.h */,
-				8A5253F71BBC7B75009B29BF /* TBScopeCamera.m */,
-				8A5253F81BBC7B75009B29BF /* TBScopeCameraReal.h */,
-				8A5253F91BBC7B75009B29BF /* TBScopeCameraReal.m */,
-				8A5253FC1BBC7CA6009B29BF /* TBScopeCameraMock.h */,
-				8A5253FD1BBC7CA6009B29BF /* TBScopeCameraMock.m */,
-				8A2FF9741BC1E20700B99E63 /* TBScopeFocusManager.h */,
-				8A2FF9751BC1E20700B99E63 /* TBScopeFocusManager.m */,
-				8A08D7831C05592E009E4AAC /* TBScopeHardware.h */,
-				8A08D7841C05592E009E4AAC /* TBScopeHardware.m */,
-				8A08D7851C05592E009E4AAC /* TBScopeHardwareMock.h */,
-				8A08D7861C05592E009E4AAC /* TBScopeHardwareMock.m */,
-				8A08D7871C05592E009E4AAC /* TBScopeHardwareReal.h */,
-				8A08D7881C05592E009E4AAC /* TBScopeHardwareReal.m */,
+				8A4F3D5E1C05E3FC000EA005 /* TBScopeHardware.h */,
+				8A4F3D5F1C05E3FC000EA005 /* TBScopeHardware.m */,
+				8A4F3D601C05E3FC000EA005 /* TBScopeHardwareMock.h */,
+				8A4F3D611C05E3FC000EA005 /* TBScopeHardwareMock.m */,
+				8A4F3D621C05E3FC000EA005 /* TBScopeHardwareReal.h */,
+				8A4F3D631C05E3FC000EA005 /* TBScopeHardwareReal.m */,
+				8A4F3D4C1C05E337000EA005 /* TBScopeCamera.h */,
+				8A4F3D4D1C05E337000EA005 /* TBScopeCamera.m */,
+				8A4F3D4E1C05E337000EA005 /* TBScopeCameraMock.h */,
+				8A4F3D4F1C05E337000EA005 /* TBScopeCameraMock.m */,
+				8A4F3D501C05E337000EA005 /* TBScopeCameraReal.h */,
+				8A4F3D511C05E337000EA005 /* TBScopeCameraReal.m */,
+				8A4F3D521C05E337000EA005 /* TBScopeFocusManager.h */,
+				8A4F3D531C05E337000EA005 /* TBScopeFocusManager.m */,
+				8A4F3D541C05E337000EA005 /* TBScopeImageAsset.h */,
+				8A4F3D551C05E337000EA005 /* TBScopeImageAsset.m */,
+				8A4F3D561C05E337000EA005 /* UIImage+Crop.h */,
+				8A4F3D571C05E337000EA005 /* UIImage+Crop.m */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -1563,30 +1573,30 @@
 				9BD352B215FAABE800E331E9 /* CoreDataHelper.m in Sources */,
 				ACFC05AF1698D13500411641 /* TBDiagnoser.mm in Sources */,
 				84072C51196BB410004F8826 /* Reachability.m in Sources */,
-				8A2FF9761BC1E20700B99E63 /* TBScopeFocusManager.m in Sources */,
 				AC024C5717013AAC0071DD14 /* DataInteractor.mm in Sources */,
+				8A4F3D641C05E3FC000EA005 /* TBScopeHardware.m in Sources */,
 				A513226619E7857D00B11AEE /* FollowUpData.m in Sources */,
 				A513226219E5FDF900B11AEE /* FollowUpViewController.m in Sources */,
 				AC1CF6A6179E52DB007FA438 /* BlobClass.cpp in Sources */,
-				8A08D78B1C05592E009E4AAC /* TBScopeHardwareReal.m in Sources */,
 				AC1CF6AA179E52DB007FA438 /* Features.cpp in Sources */,
-				8A5253FE1BBC7CA6009B29BF /* TBScopeCameraMock.m in Sources */,
 				A500C0B818AC0E4100D8C569 /* CJSONSerializer.m in Sources */,
 				A500C0B718AC0E4100D8C569 /* CJSONDeserializer.m in Sources */,
 				AC1CF6AC179E52DB007FA438 /* ImageTools.cpp in Sources */,
 				A5B45F95183039BE002F4D30 /* LoadSampleViewController.m in Sources */,
 				A50B06551835697700880350 /* ImageResultViewController.m in Sources */,
 				A500C0BD18AC0E8F00D8C569 /* BLE.m in Sources */,
-				8A08D78A1C05592E009E4AAC /* TBScopeHardwareMock.m in Sources */,
 				AC1CF6AE179E52DB007FA438 /* MatrixOperations.cpp in Sources */,
 				AC1CF6B0179E52DB007FA438 /* Region.cpp in Sources */,
 				A5CF1A38187F3EDC00C2C2E1 /* ExamListTableViewCell.m in Sources */,
+				8A4F3D5D1C05E337000EA005 /* UIImage+Crop.m in Sources */,
 				A5FD379D183DCF4700C67D85 /* UsersViewController.m in Sources */,
 				A5CF19FA187A39DF00C2C2E1 /* CameraScrollView.m in Sources */,
 				AC5E748D179F3DA700BDC4EB /* Debug.cpp in Sources */,
 				AC5E749F179F3F3200BDC4EB /* Classifier.cpp in Sources */,
+				8A4F3D651C05E3FC000EA005 /* TBScopeHardwareMock.m in Sources */,
 				A5FD379A183DBE6400C67D85 /* SettingsViewController.m in Sources */,
 				A599E1111824413300B52EF2 /* ResultsTabBarController.m in Sources */,
+				8A4F3D591C05E337000EA005 /* TBScopeCameraMock.m in Sources */,
 				AC5E74AB179F421900BDC4EB /* svm-scale.c in Sources */,
 				A5FCCD3018B6F0730004B2F5 /* Images.m in Sources */,
 				A5C0156D18F8C9B7004BC143 /* PrintViewController.m in Sources */,
@@ -1594,8 +1604,10 @@
 				A50B06521835695100880350 /* SlideDiagnosisViewController.m in Sources */,
 				A5C27AB0182EFAF400A8CB1D /* TBSlideViewerSubview.m in Sources */,
 				AC5E74AF179F421900BDC4EB /* svm.cpp in Sources */,
-				8A5253FB1BBC7B75009B29BF /* TBScopeCameraReal.m in Sources */,
+				8A4F3D661C05E3FC000EA005 /* TBScopeHardwareReal.m in Sources */,
+				8A4F3D5A1C05E337000EA005 /* TBScopeCameraReal.m in Sources */,
 				A5A2189A1AF6CCE4005334FB /* ConfigurationViewController.m in Sources */,
+				8A4F3D581C05E337000EA005 /* TBScopeCamera.m in Sources */,
 				A5FCCD3818B6F0DD0004B2F5 /* TBScopeData.m in Sources */,
 				A599E11418247BEF00B52EF2 /* AnalysisViewController.m in Sources */,
 				A5C27AA1182C3AB900A8CB1D /* MainMenuViewController.m in Sources */,
@@ -1604,11 +1616,11 @@
 				A5FD37A0183DDEB400C67D85 /* GoogleDriveViewController.m in Sources */,
 				A5C8E177196DFF8C0072D99C /* NSData+HexData.m in Sources */,
 				A52BDEB71859236F00B4ECB2 /* TBScope.xcdatamodeld in Sources */,
+				8A4F3D5B1C05E337000EA005 /* TBScopeFocusManager.m in Sources */,
 				84072C4E196BB403004F8826 /* CoreDataJSONHelper.m in Sources */,
-				8A5253FA1BBC7B75009B29BF /* TBScopeCamera.m in Sources */,
 				A5A0F3E118F70E4900909615 /* ImageROIResultCell.m in Sources */,
 				A513226919E7866100B11AEE /* Exams.m in Sources */,
-				8A08D7891C05592E009E4AAC /* TBScopeHardware.m in Sources */,
+				8A4F3D5C1C05E337000EA005 /* TBScopeImageAsset.m in Sources */,
 				A513228519E9F32A00B11AEE /* LogEntryCell.m in Sources */,
 				A513226C19E8AD4E00B11AEE /* LogViewController.m in Sources */,
 				A5B72A7318988FB90013DA9F /* GoogleDriveSync.m in Sources */,
