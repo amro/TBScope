@@ -11,6 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <PromiseKit/PromiseKit.h>
 #import "CoreDataHelper.h" //TODO: still needed?
 #import "Exams.h"
 #import "Slides.h"
@@ -55,6 +56,7 @@
 
 + (void)touchExam:(Exams*)exam;
 
++ (PMKPromise *)getImage:(Images*)currentImage;
 + (void)getImage:(Images*)currentImage resultBlock:(void (^)(UIImage* image, NSError* err))resultBlock;
 
 
