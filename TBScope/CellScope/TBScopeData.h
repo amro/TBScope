@@ -43,7 +43,7 @@
 //TODO: make these class methods
 - (void) startGPS;
 
-- (void) saveCoreData;
+- (PMKPromise *) saveCoreData;
 
 - (void) resetCoreData;
 

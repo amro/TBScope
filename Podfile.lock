@@ -13,13 +13,22 @@ PODS:
   - OCMock (3.2)
   - PromiseKit/Hang (1.6.0):
     - PromiseKit/Promise
+  - PromiseKit/Join (1.6.0):
+    - PromiseKit/Promise
+    - PromiseKit/Until
   - PromiseKit/Promise (1.6.0)
+  - PromiseKit/Until (1.6.0):
+    - PromiseKit/Promise
+    - PromiseKit/When
+  - PromiseKit/When (1.6.0):
+    - PromiseKit/Promise
 
 DEPENDENCIES:
   - DynamicSpriteSheet (from `https://github.com/ardell/DynamicSpriteSheet.git`)
   - Google-API-Client/Drive (~> 1.0)
   - OCMock
   - PromiseKit/Hang (~> 1.6)
+  - PromiseKit/Join (~> 1.6)
   - PromiseKit/Promise (~> 1.6)
 
 EXTERNAL SOURCES:
@@ -28,11 +37,11 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   DynamicSpriteSheet:
-    :commit: 88bf0f138c02d862de1ef19a5523bfb948a7d648
+    :commit: 6f90fa503dcf8bbb422383fd43da0e2b9dc44c5f
     :git: https://github.com/ardell/DynamicSpriteSheet.git
 
 SPEC CHECKSUMS:
-  DynamicSpriteSheet: 248cf456d19339c8cdb6bd4e1c34c71d4079f458
+  DynamicSpriteSheet: 6252c47752b0e42312f50e38472e1df17e10da64
   Google-API-Client: cb712cf122f1d7fda966de4c2bc551324573366c
   gtm-http-fetcher: 6d4617e7d343b6e4c082b777541c334eb6f5d81e
   gtm-oauth2: 2a18b824e4f8a02df6cfe987beb59ae9d9697f9d

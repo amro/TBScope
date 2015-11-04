@@ -15,7 +15,8 @@
             delegate,
             xPosition,
             yPosition,
-            zPosition;
+            zPosition,
+            firmwareVersion;
 
 - (instancetype)init
 {

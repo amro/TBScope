@@ -7,6 +7,7 @@
 //
 
 #import "GoogleDriveViewController.h"
+#import "GoogleDriveService.h"
 
 //#import "ViewController.h"
 
@@ -29,8 +30,9 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
 {
     
     //if logged in, display current username and the logout button, else, load the login screen
-    if ([[GoogleDriveSync sharedGDS] isLoggedIn]) {
-        self.usernameLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Logged in as: %@", nil),[[GoogleDriveSync sharedGDS] userEmail]];
+    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
+    if ([gds isLoggedIn]) {
+        self.usernameLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Logged in as: %@", nil), [gds userEmail]];
         [self.loginButton setTitle:NSLocalizedString(@"Log Out",nil) forState:UIControlStateNormal];
     }
     else
@@ -42,11 +44,11 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
 
 - (IBAction)logInOut:(id)sender
 {
-    
-    if ([[GoogleDriveSync sharedGDS] isLoggedIn]) {
+    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
+    if ([[[GoogleDriveService alloc] init] isLoggedIn]) {
         [GTMOAuth2ViewControllerTouch removeAuthFromKeychainForName:@"CellScope"];
-        [GTMOAuth2ViewControllerTouch revokeTokenForGoogleAuthentication:[[[GoogleDriveSync sharedGDS] driveService] authorizer]];
-        [[[GoogleDriveSync sharedGDS] driveService] setAuthorizer:nil];
+        [GTMOAuth2ViewControllerTouch revokeTokenForGoogleAuthentication:[[gds driveService] authorizer]];
+        [[gds driveService] setAuthorizer:nil];
         [self viewDidAppear:NO];
     }
     else
@@ -78,6 +80,7 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
       finishedWithAuth:(GTMOAuth2Authentication *)authResult
                  error:(NSError *)error
 {
+    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
     if (error != nil)
     {
         
@@ -89,13 +92,13 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
                                  otherButtonTitles: nil];
         [alert show];
         
-        [[[GoogleDriveSync sharedGDS] driveService] setAuthorizer:nil];
+        [[gds driveService] setAuthorizer:nil];
         
     }
     else
     {
         
-        [[[GoogleDriveSync sharedGDS] driveService] setAuthorizer:authResult];
+        [[gds driveService] setAuthorizer:authResult];
         [self viewDidAppear:NO];
     }
 }
