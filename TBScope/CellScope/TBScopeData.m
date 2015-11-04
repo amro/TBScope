@@ -376,7 +376,8 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
 
 + (UIImage*)getPatchFromImage:(UIImage*)image X:(float)x Y:(float)y
 {
-    CGRect roiRect = CGRectMake(x - PATCHSZ/2, y - PATCHSZ/2, PATCHSZ, PATCHSZ);
+    //TODO: utility method, where are 24s stored?
+    CGRect roiRect = CGRectMake(x - PATCH_WIDTH/2, y - PATCH_HEIGHT/2, PATCH_WIDTH, PATCH_HEIGHT);
     CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], roiRect);
     UIImage* retImg = [UIImage imageWithCGImage:imageRef];
     CGImageRelease(imageRef);
