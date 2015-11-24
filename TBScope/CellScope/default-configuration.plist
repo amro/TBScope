@@ -9,7 +9,7 @@
 	<key>BatteryWarningVoltage</key>
 	<real>7.2</real>
 	<key>DefaultFocusZ</key>
-	<integer>0</integer>
+	<integer>10000</integer>
 	<key>SlideCenterY</key>
 	<integer>800</integer>
 	<key>SlideCenterX</key>
