@@ -40,6 +40,9 @@
         [videoView addSubview:moviePlayer.view];
         
         [moviePlayer play];
+
+        //home z
+        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
         
         //extend the tray
         [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionLoading];
@@ -47,8 +50,7 @@
         //draw tray in
         [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionHome];
 
-        //home z
-        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
+
     }
     else
         [self performSegueWithIdentifier:@"ScanSlideSegue" sender:self];

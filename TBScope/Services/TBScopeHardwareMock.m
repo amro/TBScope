@@ -37,15 +37,12 @@
             self.yPosition = 0;
             break;
         case CSStagePositionZHome:
+            self.zPosition = -1;
+            break;
+        case CSStagePositionZDown:
             self.zPosition = 0;
             break;
         case CSStagePositionLoading:
-            // What to do here?
-            break;
-        case CSStagePositionSlideCenter:
-            // What to do here?
-            break;
-        case CSStagePositionTestTarget:
             // What to do here?
             break;
     }

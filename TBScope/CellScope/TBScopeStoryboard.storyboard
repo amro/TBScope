@@ -125,7 +125,7 @@
                             <tableViewSection id="PyW-we-yFe">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="305" id="VO2-tY-zbe">
-                                        <rect key="frame" x="0.0" y="64" width="1024" height="305"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="305"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="VO2-tY-zbe" id="GNW-1P-3eR">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="305"/>
@@ -676,7 +676,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="C5q-H7-o6I">
-                                <rect key="frame" x="0.0" y="86" width="1024" height="44"/>
+                                <rect key="frame" x="0.0" y="22" width="1024" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="C5q-H7-o6I" id="VgB-qq-SgM">
                                     <rect key="frame" x="0.0" y="0.0" width="1024" height="43.5"/>
@@ -1035,7 +1035,7 @@
                             <tableViewSection headerTitle="Assay Settings" id="2gI-L3-KWq">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="139" id="VjD-vC-puG">
-                                        <rect key="frame" x="0.0" y="86" width="1024" height="139"/>
+                                        <rect key="frame" x="0.0" y="22" width="1024" height="139"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VjD-vC-puG" id="nYd-Ur-oFf">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="138.5"/>
@@ -1137,7 +1137,7 @@
                             <tableViewSection headerTitle="Visualization Settings" id="2Hu-x8-InV">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="71" id="oYw-Ij-6UB">
-                                        <rect key="frame" x="0.0" y="247" width="1024" height="71"/>
+                                        <rect key="frame" x="0.0" y="183" width="1024" height="71"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oYw-Ij-6UB" id="1Zo-Fs-C1l">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="70.5"/>
@@ -1183,7 +1183,7 @@
                             <tableViewSection headerTitle="Auto Scan Settings" id="ZUp-qV-Ngu">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="231" id="kgB-m8-6Gh">
-                                        <rect key="frame" x="0.0" y="340" width="1024" height="231"/>
+                                        <rect key="frame" x="0.0" y="276" width="1024" height="231"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kgB-m8-6Gh" id="xlr-yb-05L">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="230.5"/>
@@ -1360,7 +1360,7 @@
                             <tableViewSection headerTitle="Focus Options" id="CAO-S9-4uL" userLabel="Focus Options">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="295" id="mna-yX-mFp">
-                                        <rect key="frame" x="0.0" y="593" width="1024" height="295"/>
+                                        <rect key="frame" x="0.0" y="529" width="1024" height="295"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mna-yX-mFp" id="Ddb-hI-bFE">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="294.5"/>
@@ -1666,7 +1666,7 @@
                             <tableViewSection headerTitle="Camera Settings" id="isD-xm-dSD">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="183" id="Qbm-Du-QeP">
-                                        <rect key="frame" x="0.0" y="910" width="1024" height="183"/>
+                                        <rect key="frame" x="0.0" y="846" width="1024" height="183"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qbm-Du-QeP" id="rJ2-Zb-wWH">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="182.5"/>
@@ -1777,7 +1777,7 @@
                             <tableViewSection headerTitle="Algorithm Settings" id="hbo-VN-Ujq">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="56" id="Sea-o3-tBs">
-                                        <rect key="frame" x="0.0" y="1115" width="1024" height="56"/>
+                                        <rect key="frame" x="0.0" y="1051" width="1024" height="56"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Sea-o3-tBs" id="BWc-8K-dWF">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="55.5"/>
@@ -1823,7 +1823,7 @@
                             <tableViewSection headerTitle="Google Drive Sync" id="cqF-HU-BLd">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="101" id="a6T-2O-r4x">
-                                        <rect key="frame" x="0.0" y="1193" width="1024" height="101"/>
+                                        <rect key="frame" x="0.0" y="1129" width="1024" height="101"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="a6T-2O-r4x" id="UkQ-c8-nma">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="100.5"/>
@@ -1867,7 +1867,7 @@
                             <tableViewSection headerTitle="Debug Settings" id="0li-4f-v4v">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="78" id="alh-R3-Sbq">
-                                        <rect key="frame" x="0.0" y="1316" width="1024" height="78"/>
+                                        <rect key="frame" x="0.0" y="1252" width="1024" height="78"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="alh-R3-Sbq" id="qYE-HU-mt9">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="77.5"/>
@@ -1909,7 +1909,7 @@
                             <tableViewSection headerTitle="Reset Options" id="zwD-ka-Y17">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="253" id="YDw-WK-HoZ">
-                                        <rect key="frame" x="0.0" y="1416" width="1024" height="253"/>
+                                        <rect key="frame" x="0.0" y="1352" width="1024" height="253"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="YDw-WK-HoZ" id="ena-Cd-eb5">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="252.5"/>
@@ -3933,6 +3933,50 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="gVE-up-0yp">
+                                <rect key="frame" x="900" y="140" width="100" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.84697438110000001" green="0.169844778" blue="0.16197826670000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Move Home">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="didPressMoveHome:" destination="102-pc-xxo" eventType="touchUpInside" id="mx7-Vr-5G4"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aYv-Kz-xHJ">
+                                <rect key="frame" x="900" y="190" width="100" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.84697438110000001" green="0.169844778" blue="0.16197826670000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Move Center">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="didPressMoveCenter:" destination="102-pc-xxo" eventType="touchUpInside" id="90f-2F-drW"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="a0k-yJ-2VK">
+                                <rect key="frame" x="900" y="240" width="100" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Set Center">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="didPressSetCenter:" destination="102-pc-xxo" eventType="touchUpInside" id="Tet-tK-8mt"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(11111, 22222, 333)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0SN-4n-6Nj">
+                                <rect key="frame" x="850" y="100" width="150" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" alpha="0.69999999999999996" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="jzR-5T-Qiq">
                                 <rect key="frame" x="450" y="80" width="124" height="80"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -4063,6 +4107,7 @@
                         <outlet property="autoScanProgressBar" destination="LUv-tr-Zd4" id="51L-ga-1VV"/>
                         <outlet property="bfButton" destination="07F-TT-pWV" id="JfL-bu-9Zm"/>
                         <outlet property="controlPanelView" destination="LmM-RG-80R" id="mb4-0P-CxY"/>
+                        <outlet property="coordinateLabel" destination="0SN-4n-6Nj" id="WFt-oH-yaI"/>
                         <outlet property="downButton" destination="ZFT-CF-FFD" id="ROF-JG-olD"/>
                         <outlet property="fastSlowButton" destination="W2L-va-E6w" id="ncP-BP-XFS"/>
                         <outlet property="flButton" destination="s2l-zF-M9a" id="A0z-YO-Akw"/>
@@ -4072,11 +4117,14 @@
                         <outlet property="manualScanFocusDown" destination="k7A-Bs-CeR" id="BiX-4r-tbZ"/>
                         <outlet property="manualScanFocusOk" destination="I05-Lh-RGK" id="xOw-ld-hwG"/>
                         <outlet property="manualScanFocusUp" destination="dB0-Zl-r6Z" id="EgA-Tk-1QN"/>
+                        <outlet property="moveCenterButton" destination="aYv-Kz-xHJ" id="CCU-1M-4Jb"/>
+                        <outlet property="moveHomeButton" destination="gVE-up-0yp" id="Kg2-w3-EQQ"/>
                         <outlet property="navItem" destination="5Sn-Z7-Cz3" id="CfH-MR-qsJ"/>
                         <outlet property="previewView" destination="OHk-kc-fKL" id="h7s-5i-ToD"/>
                         <outlet property="refocusButton" destination="PLW-gS-nU1" id="nhA-Tk-dHW"/>
                         <outlet property="rightButton" destination="QFg-eT-hl2" id="BME-Hs-oys"/>
                         <outlet property="scanStatusLabel" destination="RDB-A0-cdK" id="oKK-up-6WK"/>
+                        <outlet property="setCenterButton" destination="a0k-yJ-2VK" id="4EU-NY-2Ss"/>
                         <outlet property="snapButton" destination="cS0-5r-1nN" id="nfr-lP-VKw"/>
                         <outlet property="upButton" destination="jzR-5T-Qiq" id="LEi-Ch-h4H"/>
                     </connections>

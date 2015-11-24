@@ -34,6 +34,7 @@ void onUncaughtException(NSException* exception)
     
     //start bluetooth connection
     [[TBScopeHardware sharedHardware] setupBLEConnection];
+    [[TBScopeHardware sharedHardware] setupEnvironmentalLogging];
     
     //setup location services
     //set up location manager for geotagging photos

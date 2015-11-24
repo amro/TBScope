@@ -191,4 +191,10 @@
 "No" = "Không";
 "Yes" = "Có";
 
+//System Status
+"Battery Warning" = "pin Cảnh báo";
+"CellScope's battery is low and it will shut off soon. Please plug it in." = "Pin CellScope là thấp và nó sẽ tắt ngay. Hãy sạc pin cho nó.";
+
+
+
 

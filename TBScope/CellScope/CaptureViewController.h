@@ -58,7 +58,11 @@
 @property (weak, nonatomic) IBOutlet UIButton *manualScanFocusUp;
 @property (weak, nonatomic) IBOutlet UIButton *manualScanFocusOk;
 @property (weak, nonatomic) IBOutlet UIButton *manualScanFocusDown;
+@property (weak, nonatomic) IBOutlet UIButton *moveHomeButton;
+@property (weak, nonatomic) IBOutlet UIButton *moveCenterButton;
+@property (weak, nonatomic) IBOutlet UIButton *setCenterButton;
 
+@property (weak, nonatomic) IBOutlet UILabel *coordinateLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *fastSlowButton;
 
@@ -81,15 +85,17 @@
 - (IBAction)didPressAutoScan:(id)sender;
 - (IBAction)didPressStressTest:(id)sender;
 
-- (IBAction)didPressSlideCenter:(id)sender;
 - (IBAction)didPressAbort:(id)sender;
 - (IBAction)didPressManualFocus:(id)sender;
 - (IBAction)didPressFastSlow:(id)sender;
 
-- (IBAction)didPressManualFocusUp:(id)sender;
-- (IBAction)didPressManualFocusDown:(id)sender;
 - (IBAction)didPressManualFocusOk:(id)sender;
 
+- (IBAction)didPressMoveHome:(id)sender;
+- (IBAction)didPressMoveCenter:(id)sender;
+- (IBAction)didPressSetCenter:(id)sender;
+
+- (void) updateCoordinateLabel;
 
 - (void) autoscanWithCols:(int)numCols
                      Rows:(int)numRows

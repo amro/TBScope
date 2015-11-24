@@ -69,10 +69,26 @@ MKCoordinateRegion lastRegion;
     recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapBehind:)];
     [recognizer setNumberOfTapsRequired:1];
     recognizer.cancelsTouchesInView = NO; //So the user can still interact with controls in the modal view
+    recognizer.enabled = YES;
+    [recognizer setDelegate:self];
     [self.view.window addGestureRecognizer:recognizer];
     
     
     [TBScopeData CSLog:@"Map screen presented" inCategory:@"USER"];
+}
+
+#pragma mark - UIGestureRecognizer Delegate
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    return YES;
 }
 
 - (void)handleTapBehind:(UITapGestureRecognizer *)sender
@@ -140,7 +156,8 @@ MKCoordinateRegion lastRegion;
 {
     for (UITapGestureRecognizer* recognizer in self.view.window.gestureRecognizers)
         [self.view.window removeGestureRecognizer:recognizer];
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
     lastRegion = self.mapView.region;
 }
 /*

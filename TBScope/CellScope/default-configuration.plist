@@ -2,6 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FocusBroadSweepRange</key>
+	<integer>13000</integer>
+	<key>FocusBroadSweepStepSize</key>
+	<integer>500</integer>
+	<key>BatteryWarningVoltage</key>
+	<real>7.2</real>
+	<key>DefaultFocusZ</key>
+	<integer>0</integer>
+	<key>SlideCenterY</key>
+	<integer>800</integer>
+	<key>SlideCenterX</key>
+	<integer>3600</integer>
 	<key>StageSettlingTime</key>
 	<real>0.1</real>
 	<key>FocusSettlingTime</key>
@@ -119,10 +131,10 @@
 	<key>CameraISOSpeedFL</key>
 	<integer>300</integer>
 	<key>CameraWhiteBalanceBlueGain</key>
-	<integer>2</integer>
+	<integer>1</integer>
 	<key>CameraWhiteBalanceGreenGain</key>
 	<integer>1</integer>
 	<key>CameraWhiteBalanceRedGain</key>
-	<integer>2</integer>
+	<integer>1</integer>
 </dict>
 </plist>

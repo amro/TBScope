@@ -46,17 +46,20 @@
 
 - (int)zPositionBroadSweepStepsPerSlice
 {
-    return 500;  // steps
+    return (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepStepSize"];  // steps
 }
 
 - (int)zPositionBroadSweepMax
 {
-    return 23000;  // steps
+    return (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"] +
+            ((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2) ;
+    
 }
 
 - (int)zPositionBroadSweepMin
 {
-    return 13000;  // steps
+    return (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"] -
+    ((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2) ;
 }
 
 - (float)currentImageQualityMetric
@@ -113,6 +116,10 @@
     [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:[self zPositionBroadSweepMin]];
     [[TBScopeHardware sharedHardware] waitForStage];
 
+    NSLog(@"min %d",[self zPositionBroadSweepMin]);
+    NSLog(@"max %d",[self zPositionBroadSweepMax]);
+    NSLog(@"step %d",[self zPositionBroadSweepStepsPerSlice]);
+    
     // For each slice to zPositionBroadSweepMax...
     int stepsPerSlice = [self zPositionBroadSweepStepsPerSlice];
     NSMutableArray *samples = [[NSMutableArray alloc] init];

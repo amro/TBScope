@@ -19,7 +19,7 @@
 - (void)mapView:(MapViewController*)sender didSelectExam:(Exams *)exam;
 @end
 
-@interface MapViewController : UIViewController <MKMapViewDelegate>
+@interface MapViewController : UIViewController <MKMapViewDelegate, UIGestureRecognizerDelegate>
 
 @property (weak,nonatomic) IBOutlet MKMapView* mapView;
 

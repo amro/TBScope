@@ -94,23 +94,18 @@ AVAudioPlayer* _avPlayer;
     self.scanStatusLabel.hidden = YES;
     self.abortButton.hidden = YES;
     
+    [NSTimer scheduledTimerWithTimeInterval:(float)0.5 target:self selector:@selector(updateCoordinateLabel) userInfo:nil repeats:YES];
+    
     [TBScopeData CSLog:@"Capture screen presented" inCategory:@"USER"];
 
+    [NSThread sleepForTimeInterval:1];
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DoAutoScan"]) {
-        [NSThread sleepForTimeInterval:1];
         [self didPressAutoScan:nil];
     }
     else
     {
-        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionSlideCenter];
-
-        // Move to a reasonable start position; 18500 seems to be a reasonable default
-        // based on a few sample bead slides and TB smears.
-        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
-        [[TBScopeHardware sharedHardware] moveStageWithDirection:CSStageDirectionFocusDown
-                                                           Steps:18500
-                                                     StopOnLimit:YES
-                                                    DisableAfter:YES];
+        [self toggleBF:YES];
+        [self didPressMoveCenter:nil];
     }
 }
 
@@ -135,6 +130,13 @@ AVAudioPlayer* _avPlayer;
     
 }
 
+- (void)updateCoordinateLabel
+{
+    int x = [[TBScopeHardware sharedHardware] xPosition];
+    int y = [[TBScopeHardware sharedHardware] yPosition];
+    int z = [[TBScopeHardware sharedHardware] zPosition];
+    [self.coordinateLabel setText:[NSString stringWithFormat:@"(%d, %d, %d)",x,y,z]];
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -142,6 +144,9 @@ AVAudioPlayer* _avPlayer;
         AnalysisViewController *avc = (AnalysisViewController*)[segue destinationViewController];
         avc.currentSlide = self.currentSlide;
         avc.showResultsAfterAnalysis = YES;
+        
+        //raise objective
+        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
         
         //eject slide
         [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionLoading];
@@ -160,12 +165,11 @@ AVAudioPlayer* _avPlayer;
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
     [[TBScopeHardware sharedHardware] disableMotors];
     
-    //[self.previewView stopPreview];
-    
     [self.previewView takeDownCamera];
     
-    //[self.previewView.session stopRunning];
-
+    if ([self isMovingFromParentViewController])
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    
     [super viewWillDisappear:animated];
 }
 
@@ -267,10 +271,6 @@ AVAudioPlayer* _avPlayer;
     [library writeImageToSavedPhotosAlbum:image.CGImage orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:block];
 }
 
-- (IBAction)didPressSlideCenter:(id)sender
-{
-    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionSlideCenter];
-}
 
 - (IBAction)didTouchDownStageButton:(id)sender
 {
@@ -297,27 +297,8 @@ AVAudioPlayer* _avPlayer;
         self.currentDirection = CSStageDirectionFocusDown;
     
     
-    holdTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(moveStage:) userInfo:nil repeats:YES];
+    holdTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(moveStage:) userInfo:nil repeats:YES];
     
-}
-
-- (IBAction)didPressManualFocusDown:(id)sender
-{
-    _manualRefocusStepCounter = _manualRefocusStepCounter - 20;
-    
-    [[TBScopeHardware sharedHardware] moveStageWithDirection:CSStageDirectionFocusDown
-                                                Steps:20
-                                                 StopOnLimit:YES
-                                                DisableAfter:NO];
-}
-
-- (IBAction)didPressManualFocusUp:(id)sender
-{
-    
-    [[TBScopeHardware sharedHardware] moveStageWithDirection:CSStageDirectionFocusUp
-                                                Steps:20
-                                                 StopOnLimit:YES
-                                                DisableAfter:NO];
 }
 
 - (IBAction)didPressManualFocusOk:(id)sender
@@ -518,6 +499,52 @@ AVAudioPlayer* _avPlayer;
     }
 }
 
+-(IBAction)didPressMoveHome:(id)sender
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        [[TBScopeHardware sharedHardware] waitForStage];
+        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
+        [[TBScopeHardware sharedHardware] waitForStage];
+        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionHome];
+        [[TBScopeHardware sharedHardware] waitForStage];
+    });
+}
+
+-(IBAction)didPressMoveCenter:(id)sender
+{
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        [[TBScopeHardware sharedHardware] waitForStage];
+        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
+        [[TBScopeHardware sharedHardware] waitForStage];
+        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionHome];
+        [[TBScopeHardware sharedHardware] waitForStage];
+        [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZDown];
+        [[TBScopeHardware sharedHardware] waitForStage];
+        
+        int centerX = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterX"];
+        int centerY = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterY"];
+        int focusZ = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"];
+        
+        [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:focusZ];
+        [[TBScopeHardware sharedHardware] waitForStage];
+    });
+}
+
+-(IBAction)didPressSetCenter:(id)sender
+{
+    
+    int centerX = (int)[[TBScopeHardware sharedHardware] xPosition];
+    int centerY = (int)[[TBScopeHardware sharedHardware] yPosition];
+    int focusZ = (int)[[TBScopeHardware sharedHardware] zPosition];
+    
+    [[NSUserDefaults standardUserDefaults] setInteger:centerX forKey:@"SlideCenterX"];
+    [[NSUserDefaults standardUserDefaults] setInteger:centerY forKey:@"SlideCenterY"];
+    [[NSUserDefaults standardUserDefaults] setInteger:focusZ forKey:@"DefaultFocusZ"];
+    
+    [TBScopeData CSLog:[NSString stringWithFormat:@"Set new slide center position to (%d, %d, %d)",centerX,centerY,focusZ] inCategory:@"CALIBRATION"];
+}
+
 
 - (IBAction)didTouchUpStageButton:(id)sender
 {
@@ -595,18 +622,18 @@ AVAudioPlayer* _avPlayer;
 //timer function
 -(void) moveStage:(NSTimer *)timer
 {
-    //this is a hack, want to keep track of how far user moves focus in manual mode for debug purposes.
-    if (_isWaitingForFocusConfirmation) {
-        if (self.currentDirection == CSStageDirectionFocusDown)
-            _manualRefocusStepCounter = _manualRefocusStepCounter - 20;
-        else if (self.currentDirection == CSStageDirectionFocusUp)
-            _manualRefocusStepCounter = _manualRefocusStepCounter + 20;
-    }
-    
-    if (self.currentSpeed==CSStageSpeedSlow)
-        [[TBScopeHardware sharedHardware] moveStageWithDirection:self.currentDirection Steps:20 StopOnLimit:YES DisableAfter:NO];
-    else if (self.currentSpeed==CSStageSpeedFast)
-        [[TBScopeHardware sharedHardware] moveStageWithDirection:self.currentDirection Steps:100 StopOnLimit:YES DisableAfter:NO];
+        //this is a hack, want to keep track of how far user moves focus in manual mode for debug purposes.
+        if (_isWaitingForFocusConfirmation) {
+            if (self.currentDirection == CSStageDirectionFocusDown)
+                _manualRefocusStepCounter = _manualRefocusStepCounter - 20;
+            else if (self.currentDirection == CSStageDirectionFocusUp)
+                _manualRefocusStepCounter = _manualRefocusStepCounter + 20;
+        }
+        
+        if (self.currentSpeed==CSStageSpeedSlow)
+            [[TBScopeHardware sharedHardware] moveStageWithDirection:self.currentDirection Steps:20 StopOnLimit:YES DisableAfter:YES];
+        else if (self.currentSpeed==CSStageSpeedFast)
+            [[TBScopeHardware sharedHardware] moveStageWithDirection:self.currentDirection Steps:100 StopOnLimit:YES DisableAfter:YES];
     
 }
 
@@ -737,6 +764,9 @@ AVAudioPlayer* _avPlayer;
         self.scanStatusLabel.hidden = NO;
         self.abortButton.hidden = NO;
         self.refocusButton.hidden = NO;
+        self.moveCenterButton.hidden = YES;
+        self.moveHomeButton.hidden = YES;
+        self.setCenterButton.hidden = YES;
         
         self.autoScanProgressBar.hidden = NO;
         self.autoScanProgressBar.progress = 0;
@@ -754,12 +784,17 @@ AVAudioPlayer* _avPlayer;
     
     [self playSound:@"scanning_started"];
     
-    //TODO: take picture of test target
-    
-    
-    //move to slide center
-    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionSlideCenter];
     [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionHome];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZDown];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    
+    int centerX = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterX"];
+    int centerY = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterY"];
+    int focusZ = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"];
     
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
@@ -767,6 +802,13 @@ AVAudioPlayer* _avPlayer;
     //set stage speed
     [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
     [NSThread sleepForTimeInterval:0.1];
+    
+    //move to center
+    [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:focusZ];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    
+    //check if abort button pressed
+    if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
     //move to first position in grid
     //backup in both X and Y by half the row/col distance
@@ -839,20 +881,21 @@ AVAudioPlayer* _avPlayer;
             {
                 if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DoAutoFocus"])
                 {
-                NSLog(@"auto focus");
-                dispatch_async(dispatch_get_main_queue(), ^(void){
-                    self.scanStatusLabel.text = NSLocalizedString(@"Focusing...", nil);});
-                
-                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
-                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
-                
-                [NSThread sleepForTimeInterval:0.1];
-                
-                TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
+                    NSLog(@"auto focus");
+                    dispatch_async(dispatch_get_main_queue(), ^(void){
+                        self.scanStatusLabel.text = NSLocalizedString(@"Focusing...", nil);});
+                    
+                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+                    
+                    [NSThread sleepForTimeInterval:0.1];
+                    
+                    TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
 
-                if (focusResult == TBScopeFocusManagerResultFailure)
-                    [self manualFocusWithFL:flIntensity BF:1];
-                } else {
+                    if (focusResult == TBScopeFocusManagerResultFailure)
+                        [self manualFocusWithFL:flIntensity BF:1];
+                }
+                else {
                     [self manualFocusWithFL:flIntensity BF:1];
                 }
                 autoFocusFailCount = 0;
@@ -988,7 +1031,9 @@ AVAudioPlayer* _avPlayer;
         self.abortButton.hidden = YES;
         self.refocusButton.hidden = YES;
         self.autoScanProgressBar.hidden = YES;
-        
+        self.moveCenterButton.hidden = NO;
+        self.moveHomeButton.hidden = NO;
+        self.setCenterButton.hidden = NO;
 
     });
     

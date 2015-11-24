@@ -37,7 +37,8 @@ typedef NS_ENUM(int, CSStagePosition)
     CSStagePositionHome,
     CSStagePositionTestTarget,
     CSStagePositionSlideCenter,
-    CSStagePositionZHome
+    CSStagePositionZHome,
+    CSStagePositionZDown
 };
 
 @protocol TBScopeHardwareDelegate
@@ -60,12 +61,13 @@ typedef NS_ENUM(int, CSStagePosition)
 -(void)moveToPosition:(CSStagePosition)position;
 -(void)moveToX:(int)x Y:(int)y Z:(int)z;
 -(void)setupBLEConnection;
+-(void)setupEnvironmentalLogging;
 -(void)requestStatusUpdate;
 -(BOOL)isConnected;
 -(void)setMicroscopeLED:(CSLED)led Level:(Byte)level;
 -(void)disableMotors;
 -(void)moveStageWithDirection:(CSStageDirection)dir
-                        Steps:(UInt16)steps
+                        Steps:(long)steps
                   StopOnLimit:(BOOL)stopOnLimit
                  DisableAfter:(BOOL)disableAfter;
 -(void)waitForStage;

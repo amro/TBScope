@@ -13,10 +13,15 @@ CBPeripheral* _tbScopePeripheral;
 
 @implementation TBScopeHardwareReal
 
+const int MIN_X_POSITION = 0; // limit switch
+const int MAX_X_POSITION = 6300; //just before it ejects (x axis is the axis that extents out of the scope)
+const int MIN_Y_POSITION = 0; //limit switch
+const int MAX_Y_POSITION = 2000; //just before it hits stage on the right side
 const int MIN_Z_POSITION = 0;
 const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
                                    // 107,500 is starting to make weird noises against the base
                                    // 109,200 is absolute bottom
+
 
 @synthesize batteryVoltage,
             temperature,
@@ -64,6 +69,11 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
     [NSTimer scheduledTimerWithTimeInterval:(float)1.0 target:self selector:@selector(connectionTimer:) userInfo:nil repeats:NO];
 }
 
+- (void) setupEnvironmentalLogging
+{
+    [NSTimer scheduledTimerWithTimeInterval:(float)60.0 target:self selector:@selector(environmentalLoggingTimer:) userInfo:nil repeats:YES];
+}
+
 - (BOOL)isConnected
 {
     return [self.ble isConnected];
@@ -103,13 +113,15 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
 // When data is comming, this will be called
 -(void) bleDidReceiveData:(unsigned char *)data length:(int)length
 {
+   
     // parse data, all commands are in 3-byte chunks
     for (int i = 0; i < length; i+=3)
     {
+        //NSLog(@"%x %x %x",data[i],data[i+1],data[i+2]);
         
         if (data[i] == 0xFF) //all "move completed" messages should start with FF
         {
-            BOOL xLimit = ((data[i+1] & 0b00000100)!=0);
+            BOOL xLimit = ((data[i+1] & 0b00000100)!=0); //not using the limit switch values anymore
             BOOL yLimit = ((data[i+1] & 0b00000010)!=0);
             BOOL zLimit = ((data[i+1] & 0b00000001)!=0);
             
@@ -143,6 +155,23 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
         {
             NSLog(@"unrecognized response from scope");
         }
+    }
+}
+
+-(void) environmentalLoggingTimer:(NSTimer *)timer
+{
+    [TBScopeData CSLog:[NSString stringWithFormat:@"Battery: %3.2fV, Temperature: %3.1fC, Humidity: %3.1f%%",self.batteryVoltage,self.temperature,self.humidity] inCategory:@"SYSTEM"];
+    
+    if (self.batteryVoltage<[[NSUserDefaults standardUserDefaults] floatForKey:@"BatteryWarningVoltage"] && self.batteryVoltage>0) {
+        [TBScopeData CSLog:@"Low Battery Warning" inCategory:@"SYSTEM"];
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Battery Warning", nil)
+                                                         message:NSLocalizedString(@"CellScope's battery is low and it will shut off soon. Please plug it in.",nil)
+                                                        delegate:self
+                                               cancelButtonTitle:NSLocalizedString(@"OK",nil)
+                                               otherButtonTitles:nil];
+        alert.alertViewStyle = UIAlertViewStyleDefault;
+        alert.tag = 1;
+        [alert show];
     }
 }
 
@@ -282,7 +311,8 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
 // Move stage in maxStepsPerRound increments since moving in larger
 // increments makes a lot of noise and causes the microscope to
 // vibrate
-- (void)moveStageWithDirection:(CSStageDirection)dir
+// i'm not sure that's necessary. it seems like starting/stopping smaller increments would add vibration?
+/*- (void)moveStageWithDirection:(CSStageDirection)dir
                          Steps:(UInt16)steps
                    StopOnLimit:(BOOL)stopOnLimit
                   DisableAfter:(BOOL)disableAfter
@@ -296,12 +326,14 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
                                 Steps:stepsThisRound
                           StopOnLimit:stopOnLimit
                          DisableAfter:disableAfter];
-        [self waitForStage];
+        //[self waitForStage];
         stepsSoFar += stepsThisRound;
     }
 }
+*/
 
-- (void) _moveStageWithDirection:(CSStageDirection)dir
+//this is a non-blocking function
+- (void) moveStageWithDirection:(CSStageDirection)dir
                            Steps:(UInt16)steps
                      StopOnLimit:(BOOL)stopOnLimit
                     DisableAfter:(BOOL)disableAfter
@@ -316,50 +348,61 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
     buf[0] |= 0b00100000; //move command
     
     switch (dir) {
-        case CSStageDirectionUp:
-            self.yPosition += steps;
-            buf[0] |= 0b00001100;
-            break;
         case CSStageDirectionDown:
-            self.yPosition -= steps;
+            if (self.yPosition+steps > MAX_Y_POSITION)
+                steps = MAX_Y_POSITION - self.yPosition;
+            self.yPosition += steps;
             buf[0] |= 0b00001000;
             break;
+        case CSStageDirectionUp:
+            if (self.yPosition-steps < MIN_Y_POSITION)
+                steps = self.yPosition - MIN_Y_POSITION;
+            self.yPosition -= steps;
+
+            buf[0] |= 0b00001100;
+            break;
         case CSStageDirectionLeft:
+            if (self.xPosition-steps < MIN_X_POSITION)
+                steps = self.xPosition - MIN_X_POSITION;
             self.xPosition -= steps;
             buf[0] |= 0b00010000;
             break;
         case CSStageDirectionRight:
+            if (self.xPosition+steps > MAX_X_POSITION)
+                steps = MAX_X_POSITION - self.xPosition;
             self.xPosition += steps;
             buf[0] |= 0b00010100;
             break;
         case CSStageDirectionFocusUp:
-            if (self.zPosition-steps < MIN_Z_POSITION) { // Don't move past limit
+            if (self.zPosition-steps < MIN_Z_POSITION) // Don't move past limit
                 steps = self.zPosition - MIN_Z_POSITION;
-            }
             self.zPosition -= steps;  // zPosition is distance from origin which is (counter-intuitively) at the top
             buf[0] |= 0b00011000;
             break;
         case CSStageDirectionFocusDown:
-            if (self.zPosition+steps > MAX_Z_POSITION) { // Don't move past limit
+            if (self.zPosition+steps > MAX_Z_POSITION) // Don't move past limit
                 steps = MAX_Z_POSITION - self.zPosition;
-            }
             self.zPosition += steps;  // zPosition is distance from origin which is (counter-intuitively) at the top
             buf[0] |= 0b00011100;
             break;
     }
-    if (stopOnLimit)
-        buf[0] |= 0b00000010;
-    if (disableAfter)
-        buf[0] |= 0b00000001;
     
-    //last 2 bytes = # steps
-    buf[1] = (UInt8)((steps & 0xFF00) >> 8);
-    buf[2] = (UInt8)(steps & 0x00FF);
-    
-    //send move command
-    _isMoving = YES;
-    [ble write:[NSData dataWithBytes:buf length:3]];
-    NSLog(@"moved to (%d, %d, %d)", self.xPosition, self.yPosition, self.zPosition);
+    if (steps>0) //if there's no movement (b/c at a limit), don't send a command
+    {
+        if (stopOnLimit)
+            buf[0] |= 0b00000010;
+        if (disableAfter)
+            buf[0] |= 0b00000001;
+
+        //last 2 bytes = # steps
+        buf[1] = (UInt8)((steps & 0xFF00) >> 8);
+        buf[2] = (UInt8)(steps & 0x00FF);
+
+        //send move command
+        _isMoving = YES;
+        [ble write:[NSData dataWithBytes:buf length:3]];
+
+    }
 }
 
 - (void) moveToPosition:(CSStagePosition) position
@@ -373,21 +416,18 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
             self.yPosition = 0;
             buf[1] = 0x00;
             break;
-        case CSStagePositionTestTarget:
-            // What to do here?
-            buf[1] = 0x01;
-            break;
-        case CSStagePositionSlideCenter:
-            // What to do here?
-            buf[1] = 0x02;
-            break;
         case CSStagePositionLoading:
-            // What to do here?
+            self.xPosition = 0; //have to assume tray was inserted back in and scope re-homed
+            self.yPosition = 0;
             buf[1] = 0x03;
             break;
         case CSStagePositionZHome:
-            self.zPosition = 0;
+            self.zPosition = -1; //just a non-zero value here...the z limit switch is waaaay negative
             buf[1] = 0x04;
+            break;
+        case CSStagePositionZDown:
+            self.zPosition = 0;
+            buf[1] = 0x05;
             break;
     }
     
@@ -397,58 +437,61 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
 
 - (void)moveToX:(int)x Y:(int)y Z:(int)z
 {
-    if (x >= 0) {
-        int xSteps = (int)x - self.xPosition;
-        if (xSteps > 0) {
-            [self moveStageWithDirection:CSStageDirectionRight
-                                   Steps:xSteps
-                             StopOnLimit:YES
-                            DisableAfter:NO];
-            [self waitForStage];
-        } else if (xSteps < 0) {
-            [self moveStageWithDirection:CSStageDirectionLeft
-                                   Steps:ABS(xSteps)
-                             StopOnLimit:YES
-                            DisableAfter:NO];
-            [self waitForStage];
+        NSLog(@"moving to (%d, %d, %d)", x,y,z);
+    
+        if (x >= 0) {
+            int xSteps = (int)x - self.xPosition;
+            if (xSteps > 0) {
+                [self moveStageWithDirection:CSStageDirectionRight
+                                       Steps:xSteps
+                                 StopOnLimit:YES
+                                DisableAfter:YES];
+                [self waitForStage];
+            } else if (xSteps < 0) {
+                [self moveStageWithDirection:CSStageDirectionLeft
+                                       Steps:ABS(xSteps)
+                                 StopOnLimit:YES
+                                DisableAfter:YES];
+                [self waitForStage];
+            }
         }
-    }
 
-    if (y >= 0) {
-        int ySteps = (int)y - self.yPosition;
-        if (ySteps > 0) {
-            [self moveStageWithDirection:CSStageDirectionUp
-                                   Steps:ySteps
-                             StopOnLimit:YES
-                            DisableAfter:NO];
-            [self waitForStage];
-        } else if (ySteps < 0) {
-            [self moveStageWithDirection:CSStageDirectionDown
-                                   Steps:ABS(ySteps)
-                             StopOnLimit:YES
-                            DisableAfter:NO];
-            [self waitForStage];
+        if (y >= 0) {
+            int ySteps = (int)y - self.yPosition;
+            if (ySteps > 0) {
+                [self moveStageWithDirection:CSStageDirectionDown
+                                       Steps:ySteps
+                                 StopOnLimit:YES
+                                DisableAfter:YES];
+                [self waitForStage];
+            } else if (ySteps < 0) {
+                [self moveStageWithDirection:CSStageDirectionUp
+                                       Steps:ABS(ySteps)
+                                 StopOnLimit:YES
+                                DisableAfter:YES];
+                [self waitForStage];
+            }
         }
-    }
 
-    if (z >= 0) {
-        int zSteps = (int)z - self.zPosition;
-        if (zSteps > 0) {
-            [self moveStageWithDirection:CSStageDirectionFocusDown
-                                   Steps:zSteps
-                             StopOnLimit:YES
-                            DisableAfter:NO];
-            [self waitForStage];
-        } else if (zSteps < 0) {
-            [self moveStageWithDirection:CSStageDirectionFocusUp
-                                   Steps:ABS(zSteps)
-                             StopOnLimit:YES
-                            DisableAfter:NO];
-            [self waitForStage];
+        if (z >= 0) {
+            int zSteps = (int)z - self.zPosition;
+            if (zSteps > 0) {
+                [self moveStageWithDirection:CSStageDirectionFocusDown
+                                       Steps:zSteps
+                                 StopOnLimit:YES
+                                DisableAfter:YES];
+                [self waitForStage];
+            } else if (zSteps < 0) {
+                [self moveStageWithDirection:CSStageDirectionFocusUp
+                                       Steps:ABS(zSteps)
+                                 StopOnLimit:YES
+                                DisableAfter:YES];
+                [self waitForStage];
+            }
         }
-    }
 
-    [[TBScopeHardware sharedHardware] disableMotors];
+        [[TBScopeHardware sharedHardware] disableMotors];
+    
 }
 
 - (void) waitForStage
@@ -456,7 +499,6 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
     while (_isMoving)
         [NSThread sleepForTimeInterval:0.05];
     
-    //[NSThread sleepForTimeInterval:0.1]; //give stage some time to settle
 }
 
 - (void) setMicroscopeLED:(CSLED) led

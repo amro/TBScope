@@ -17,5 +17,7 @@
 @property (strong, nonatomic) BLE *ble;
 
 -(void)connectionTimer:(NSTimer *)timer;
+-(void)environmentalLoggingTimer:(NSTimer *)timer;
+
 -(void)pairBLECellScope;
 @end
