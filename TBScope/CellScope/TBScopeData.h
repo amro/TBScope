@@ -1,12 +1,12 @@
 //
-//  TBScopeHardware.h
+//  TBScopeData.h
 //  TBScope
 //
 //  Created by Frankie Myers on 2/19/14.
 //  Copyright (c) 2014 UC Berkeley Fletcher Lab. All rights reserved.
 //
 
-#define PATCHSZ 30
+#define PATCHSZ 28
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
@@ -22,6 +22,7 @@
 #import "Logs.h"
 #import "Users.h"
 #import "GTLDateTime.h"
+
 
 @interface TBScopeData : NSObject <CLLocationManagerDelegate>
 

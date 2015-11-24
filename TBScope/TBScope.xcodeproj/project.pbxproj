@@ -112,6 +112,8 @@
 		A5BC24771C0129E10068413D /* model_out.txt in Resources */ = {isa = PBXBuildFile; fileRef = A5BC24741C0129E10068413D /* model_out.txt */; };
 		A5BC24781C0129E10068413D /* train_max.csv in Resources */ = {isa = PBXBuildFile; fileRef = A5BC24751C0129E10068413D /* train_max.csv */; };
 		A5BC24791C0129E10068413D /* train_min.csv in Resources */ = {isa = PBXBuildFile; fileRef = A5BC24761C0129E10068413D /* train_min.csv */; };
+		A5BC70BF1C0426FF002E4712 /* TBScopeHardwareReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5E1BB44BE5004E30A3 /* TBScopeHardwareReal.m */; };
+		A5BC70C01C0426FF002E4712 /* TBScopeHardwareMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5B1BB44A34004E30A3 /* TBScopeHardwareMock.m */; };
 		A5C0156D18F8C9B7004BC143 /* PrintViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5C0156C18F8C9B7004BC143 /* PrintViewController.m */; };
 		A5C0157D18F8CB37004BC143 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5C0157C18F8CB37004BC143 /* CoreText.framework */; };
 		A5C0157F18FDD1D5004BC143 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5C0157E18FDD1D5004BC143 /* MessageUI.framework */; };
@@ -1410,6 +1412,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5BC70BF1C0426FF002E4712 /* TBScopeHardwareReal.m in Sources */,
+				A5BC70C01C0426FF002E4712 /* TBScopeHardwareMock.m in Sources */,
 				9B6BF0C715E19ACD002834C5 /* main.m in Sources */,
 				A5A0F3CF18F70C7300909615 /* ImageROIResultView.m in Sources */,
 				9B6BF0CB15E19ACD002834C5 /* CSAppDelegate.mm in Sources */,
@@ -1730,7 +1734,7 @@
 				);
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "CellScope/CellScope-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -1757,7 +1761,7 @@
 				GCC_PREFIX_HEADER = "CellScope/CellScope-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "CellScope/CellScope-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
