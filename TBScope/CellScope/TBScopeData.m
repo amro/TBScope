@@ -164,6 +164,14 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     [user setAccessLevel:@"ADMIN"];
     
     [self saveCoreData];
+
+    [self insertSeedData];
+}
+
+- (void)insertSeedData
+{
+    BOOL skipInsertingSeedData = [[[NSProcessInfo processInfo] arguments] containsObject:@"-SkipInsertingSeedData"];
+    if (skipInsertingSeedData) return;
     
     Exams* exam;
     Slides* slide;
@@ -214,7 +222,7 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     [image setMetadata:@"example image"];
     [slide addSlideImagesObject:image];
     
-    [[TBScopeData sharedData] saveCoreData];
+    [self saveCoreData];
     
     exam = (Exams*)[NSEntityDescription insertNewObjectForEntityForName:@"Exams" inManagedObjectContext:_managedObjectContext];
     [exam setExamID:@"HLH1010107"];
@@ -297,7 +305,7 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     [image setPath:@"DHC5_CHP21_1010195_S1_R1_HLH_I4_Fluor_N_F.tif"];
     [image setMetadata:@"example image"];
     [slide addSlideImagesObject:image];
-    
+
     [self saveCoreData];
 }
 
