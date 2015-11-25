@@ -47,7 +47,6 @@
 		8AEC0CF71BC4B240009C0D00 /* fl_04_04.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8AEC0CE31BC4B23F009C0D00 /* fl_04_04.jpg */; };
 		8AEC0CF81BC4B240009C0D00 /* fl_04_05.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8AEC0CE41BC4B23F009C0D00 /* fl_04_05.jpg */; };
 		8AFA92091C04C0D700AA3278 /* TBScopeHardwareReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5E1BB44BE5004E30A3 /* TBScopeHardwareReal.m */; };
-		8AFA92181C04C0D900AA3278 /* TBScopeHardwareMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5B1BB44A34004E30A3 /* TBScopeHardwareMock.m */; };
 		9B13455615E28E14009863DF /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B13455515E28E14009863DF /* ImageIO.framework */; };
 		9B6BF0B915E19ACD002834C5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B6BF0B815E19ACD002834C5 /* UIKit.framework */; };
 		9B6BF0BB15E19ACD002834C5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B6BF0BA15E19ACD002834C5 /* Foundation.framework */; };
@@ -114,7 +113,6 @@
 		A5BC24771C0129E10068413D /* model_out.txt in Resources */ = {isa = PBXBuildFile; fileRef = A5BC24741C0129E10068413D /* model_out.txt */; };
 		A5BC24781C0129E10068413D /* train_max.csv in Resources */ = {isa = PBXBuildFile; fileRef = A5BC24751C0129E10068413D /* train_max.csv */; };
 		A5BC24791C0129E10068413D /* train_min.csv in Resources */ = {isa = PBXBuildFile; fileRef = A5BC24761C0129E10068413D /* train_min.csv */; };
-		A5BC70BF1C0426FF002E4712 /* TBScopeHardwareReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5E1BB44BE5004E30A3 /* TBScopeHardwareReal.m */; };
 		A5BC70C01C0426FF002E4712 /* TBScopeHardwareMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5B1BB44A34004E30A3 /* TBScopeHardwareMock.m */; };
 		A5C0156D18F8C9B7004BC143 /* PrintViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A5C0156C18F8C9B7004BC143 /* PrintViewController.m */; };
 		A5C0157D18F8CB37004BC143 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5C0157C18F8CB37004BC143 /* CoreText.framework */; };
@@ -1414,7 +1412,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5BC70BF1C0426FF002E4712 /* TBScopeHardwareReal.m in Sources */,
 				A5BC70C01C0426FF002E4712 /* TBScopeHardwareMock.m in Sources */,
 				9B6BF0C715E19ACD002834C5 /* main.m in Sources */,
 				A5A0F3CF18F70C7300909615 /* ImageROIResultView.m in Sources */,
@@ -1448,7 +1445,6 @@
 				A5CF19FA187A39DF00C2C2E1 /* CameraScrollView.m in Sources */,
 				AC5E748D179F3DA700BDC4EB /* Debug.cpp in Sources */,
 				AC5E749F179F3F3200BDC4EB /* Classifier.cpp in Sources */,
-				8AFA92181C04C0D900AA3278 /* TBScopeHardwareMock.m in Sources */,
 				A5FD379A183DBE6400C67D85 /* SettingsViewController.m in Sources */,
 				A599E1111824413300B52EF2 /* ResultsTabBarController.m in Sources */,
 				AC5E74AB179F421900BDC4EB /* svm-scale.c in Sources */,
