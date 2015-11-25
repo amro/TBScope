@@ -14,7 +14,7 @@
 @property (nonatomic, strong) AVCaptureDevice *device;
 @property (nonatomic, strong) AVCaptureDeviceInput *input;
 @property (nonatomic, strong) AVCaptureStillImageOutput *stillOutput;
-@property (nonatomic) ImageQuality currentImageQuality;
+
 @property (nonatomic, strong) NSTimer *imageQualityTimer;
 @property (nonatomic) BOOL isFocusLocked;
 @property (nonatomic) BOOL isExposureLocked;

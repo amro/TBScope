@@ -14,7 +14,7 @@
 @property (nonatomic, strong) AVCaptureDeviceInput *input;
 @property (nonatomic, strong) AVCaptureStillImageOutput *stillOutput;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
-@property (nonatomic) ImageQuality currentImageQuality;
+
 @property (nonatomic) BOOL isFocusLocked;
 @property (nonatomic) BOOL isExposureLocked;
 @end
@@ -22,6 +22,7 @@
 @implementation TBScopeCameraReal
 
 @synthesize currentFocusMetric,
+            currentImageQuality,
             focusMode,
             lastImageMetadata,
             lastCapturedImage,
@@ -44,10 +45,11 @@
     self.device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     self.input = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:nil];
 
-    // Set custom white balance/iso
-    [self setExposureLock:YES];
+    // Set custom focus, white balance, iso, exposure
+    //[self setExposureLock:YES];
+    [self setFocusPosition:INFINITY_FOCUS_POSITION];
     [self _setWhiteBalanceGainsFromUserDefaults];
-    [self _setExposureAndISOFromUserDefaults];
+    //[self _setExposureAndISOFromUserDefaults];
     
     // Setup still image output
     self.stillOutput = [[AVCaptureStillImageOutput alloc] init];
@@ -155,6 +157,21 @@
         __block TBScopeCameraReal *weakSelf = self;
         [self.device setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains:gains
                                                         completionHandler:^(CMTime cmTime){
+                                                            [weakSelf.device unlockForConfiguration];
+                                                        }];
+    } else {
+        NSLog(@"Error: %@",error);
+    }
+}
+
+-(void)setFocusPosition:(float)position
+{
+    NSError* error;
+    if ([self.device lockForConfiguration:&error])
+    {
+        __block TBScopeCameraReal *weakSelf = self;
+        [self.device setFocusModeLockedWithLensPosition:position
+                                     completionHandler:^(CMTime cmTime){
                                                             [weakSelf.device unlockForConfiguration];
                                                         }];
     } else {
@@ -297,6 +314,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                         Blue:(int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraWhiteBalanceBlueGain"]];
 }
 
+//not sure we need this
 - (void)_setExposureAndISOFromUserDefaults
 {
     int isoSpeed, exposureDuration;

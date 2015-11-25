@@ -62,8 +62,8 @@ AVAudioPlayer* _avPlayer;
     
     [previewView setAutoresizesSubviews:NO];  //TODO: necessary?
     
-    [[TBScopeCamera sharedCamera] setExposureLock:YES];
-    [[TBScopeCamera sharedCamera] setFocusLock:YES];
+    //[[TBScopeCamera sharedCamera] setExposureLock:YES];
+    //[[TBScopeCamera sharedCamera] setFocusLock:YES];
     
     self.analyzeButton.enabled = NO;
     
@@ -427,10 +427,12 @@ AVAudioPlayer* _avPlayer;
         self.intensitySlider.tintColor = [UIColor greenColor];
         self.intensityLabel.textColor = [UIColor greenColor];
         
-        [[TBScopeCamera sharedCamera] setExposureLock:NO];
+        //TODO: set exp/iso
+        int bfExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationBF"];
+        int bfISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedBF"];
+        [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+        
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:intensity];
-        [NSThread sleepForTimeInterval:2.0];
-        [[TBScopeCamera sharedCamera] setExposureLock:YES];
 
         [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
         
@@ -463,12 +465,17 @@ AVAudioPlayer* _avPlayer;
         self.intensitySlider.tintColor = [UIColor blueColor];
         self.intensityLabel.textColor = [UIColor blueColor];
         
+        int flExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationFL"];
+        int flISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedFL"];
+        [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
         
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:intensity];
+        
+        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+        
         [self.flButton setTitle:NSLocalizedString(@"FL On",nil) forState:UIControlStateNormal];
         [self.flButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
 
-        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
     }
     else
     {
@@ -525,9 +532,17 @@ AVAudioPlayer* _avPlayer;
         int centerX = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterX"];
         int centerY = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterY"];
         int focusZ = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"];
+        int stageStepInterval = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"StageStepInterval"];
+        int focusStepInterval = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusStepInterval"];
         
-        [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:focusZ];
+        //move to center
+        [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
+        [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:-1];
         [[TBScopeHardware sharedHardware] waitForStage];
+        [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
+        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:focusZ];
+        [[TBScopeHardware sharedHardware] waitForStage];
+
     });
 }
 
@@ -680,7 +695,7 @@ AVAudioPlayer* _avPlayer;
     });
 }
 
-- (void) manualFocusWithFL:(int)flIntensity BF:(int)bfIntensity
+- (void) manualFocusWithFL:(int)flIntensity BF:(int)bfIntensity Exposure:(int)exp ISO:(int)iso
 {
     dispatch_async(dispatch_get_main_queue(), ^(void){
         self.scanStatusLabel.text = NSLocalizedString(@"Please Re-focus", nil);
@@ -699,6 +714,7 @@ AVAudioPlayer* _avPlayer;
     
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity]; 
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity]; //little bit of BF helps w/ focus
+    [[TBScopeCamera sharedCamera] setExposureDuration:exp ISOSpeed:iso];
     
     _manualRefocusStepCounter = 0;
     _isWaitingForFocusConfirmation = YES;
@@ -741,8 +757,16 @@ AVAudioPlayer* _avPlayer;
     int flRefocusBFRetryAttempts = [[NSUserDefaults standardUserDefaults] integerForKey:@"FLRefocusRetryAttempts"];
     float flRefocusBFRetryStackMultiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"FLRefocusRetryStackMultiplier"];
     
+    //get exposure and ISO settings
+    int bfExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationBF"];
+    int bfISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedBF"];
+    int flExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationFL"];
+    int flISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedFL"];
+    
     //speed parameters
     int stageStepInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"StageStepInterval"];
+    int focusStepInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"FocusStepInterval"];
+    
     float stageSettlingTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"StageSettlingTime"];
 
     static int autoFocusFailCount = 0;
@@ -776,10 +800,10 @@ AVAudioPlayer* _avPlayer;
     });
     
     //starting conditions
-    [[TBScopeCamera sharedCamera] setExposureLock:NO];
-    [[TBScopeCamera sharedCamera] setFocusLock:YES];
+    [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
     [self toggleBF:NO];
     [self toggleFL:NO];
+    
     [NSThread sleepForTimeInterval:0.1];
     
     [self playSound:@"scanning_started"];
@@ -800,11 +824,14 @@ AVAudioPlayer* _avPlayer;
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
     //set stage speed
-    [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
     [NSThread sleepForTimeInterval:0.1];
     
     //move to center
-    [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:focusZ];
+    [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
+    [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:-1];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
+    [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:focusZ];
     [[TBScopeHardware sharedHardware] waitForStage];
     
     //check if abort button pressed
@@ -824,29 +851,38 @@ AVAudioPlayer* _avPlayer;
     
     //do auto exposure
     //turn on BF and wait for exposure to settle
-    NSLog(@"auto expose");
-    dispatch_async(dispatch_get_main_queue(), ^(void){
-        self.scanStatusLabel.text = NSLocalizedString(@"Exposure Calibration...", nil);});
-    [[TBScopeCamera sharedCamera] setExposureLock:NO];
-    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
-    [NSThread sleepForTimeInterval:2.0];
-    [[TBScopeCamera sharedCamera] setExposureLock:YES];
+    //NSLog(@"auto expose");
+    //dispatch_async(dispatch_get_main_queue(), ^(void){
+    //    self.scanStatusLabel.text = NSLocalizedString(@"Exposure Calibration...", nil);});
+    //[[TBScopeCamera sharedCamera] setExposureLock:NO];
+    //[[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+    //[NSThread sleepForTimeInterval:2.0];
+    //[[TBScopeCamera sharedCamera] setExposureLock:YES];
     
     //focus in BF with wide range first
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AutoScanInitialFocus"]) {
-        dispatch_async(dispatch_get_main_queue(), ^(void){
-            self.scanStatusLabel.text = NSLocalizedString(@"Initial Focusing...", nil);
-        });
+    //if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AutoScanInitialFocus"]) {
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        self.scanStatusLabel.text = NSLocalizedString(@"Initial Focusing...", nil);
+    });
 
-        [[TBScopeFocusManager sharedFocusManager] autoFocus];
-    }
+    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+
+    [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
+    [[TBScopeFocusManager sharedFocusManager] autoFocus];
+    //}
      
-    [TBScopeData CSLog:@"Initial exposure calibration and BF focusing completed" inCategory:@"CAPTURE"];
+    [TBScopeData CSLog:@"Initial BF focus completed" inCategory:@"CAPTURE"];
     
+    //TODO: add some CSLog's for focus metrics
     
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+    
+    int boundaryFieldCount = 0;
+    int emptyFieldCount = 0;
+    int acquiredImageCount = 0;
+    int fieldsSinceLastFocus = 999;
     
     int yDir;
     //x iterator
@@ -876,7 +912,7 @@ AVAudioPlayer* _avPlayer;
                 dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];});
                 return; }
             
-            //re-focus, if necessary
+            //re-focus in BF, if necessary
             if (autoFocusFailCount>=maxAFFailures)
             {
                 if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DoAutoFocus"])
@@ -887,16 +923,18 @@ AVAudioPlayer* _avPlayer;
                     
                     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
                     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+                    [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+                    [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
                     
                     [NSThread sleepForTimeInterval:0.1];
                     
                     TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
 
                     if (focusResult == TBScopeFocusManagerResultFailure)
-                        [self manualFocusWithFL:flIntensity BF:1];
+                        [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
                 }
                 else {
-                    [self manualFocusWithFL:flIntensity BF:1];
+                    [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
                 }
                 autoFocusFailCount = 0;
             }
@@ -952,28 +990,36 @@ AVAudioPlayer* _avPlayer;
             //check if abort button pressed
             if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
             
+            // remaining focusing operations will be done with contrast (for fluorescence)
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
 
             // focus in fluorescence (each N frames)
-            if ((fieldNum%focusInterval)==0) {
-                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
-                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
-                [NSThread sleepForTimeInterval:0.05];
-                
-                TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
-                
-                //TODO: add ipad autofocusing here? replace?
-                
-                if (focusResult == TBScopeFocusManagerResultFailure) {
-                    autoFocusFailCount++;
-                } else {
-                    autoFocusFailCount = 0;
+            if (fieldsSinceLastFocus>focusInterval) {
+                if (![[TBScopeCamera sharedCamera] currentImageQuality].isEmpty) {
+                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
+                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+                    [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+                    [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+                    
+                    [NSThread sleepForTimeInterval:0.05];
+                    
+                    TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
+                    
+                    //TODO: add ipad autofocusing here? replace?
+                    
+                    if (focusResult == TBScopeFocusManagerResultFailure) {
+                        autoFocusFailCount++;
+                    } else {
+                        autoFocusFailCount = 0;
+                    }
+                    fieldsSinceLastFocus = 0;
                 }
             }
             
             if (_didPressManualFocus) {
                 self.refocusButton.hidden = YES;
                 
-                [self manualFocusWithFL:flIntensity BF:1];
+                [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
                 
                 self.refocusButton.hidden = NO;
                 _didPressManualFocus = NO;
@@ -982,19 +1028,23 @@ AVAudioPlayer* _avPlayer;
             
             //take an image
             [NSThread sleepForTimeInterval:stageSettlingTime];
-            // TODO: Get an ImageQuality report here and uncomment this code to
-            // if (iq.isBoundary) {
-            //     NSLog(@"Skipping image capture; image contains boundary.");
-            // } else if (iq.isEmpty) {
-            //     NSLog(@"Skipping image capture; image is empty.");
-            // } else {
-                dispatch_async(dispatch_get_main_queue(), ^(void){
-                    self.scanStatusLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Acquiring image %d of %d...", nil),fieldNum+1,numRows*numCols];
-                    self.autoScanProgressBar.progress = (float)fieldNum/(numRows*numCols);
-                });
+            ImageQuality iq = [[TBScopeCamera sharedCamera] currentImageQuality];
+             if (iq.isBoundary) {
+                 boundaryFieldCount++;
+                 [TBScopeData CSLog:@"Skipping image capture; image contains boundary." inCategory:@"CAPTURE"];
+             } else if (iq.isEmpty) {
+                 emptyFieldCount++;
+                 [TBScopeData CSLog:@"Skipping image capture; image is empty." inCategory:@"CAPTURE"];
+             } else {
+                 acquiredImageCount++;
                 [self didPressCapture:nil];
                 [NSThread sleepForTimeInterval:0.5];
-            // }
+             }
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                self.scanStatusLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Acquired Images: %d, Fields Remaining: %d", nil),acquiredImageCount,((numRows*numCols)-acquiredImageCount-boundaryFieldCount-emptyFieldCount)];
+                self.autoScanProgressBar.progress = (float)fieldNum/(numRows*numCols);
+            });
             
             //move stage in y
             [[TBScopeHardware sharedHardware] moveStageWithDirection:yDir
@@ -1018,6 +1068,8 @@ AVAudioPlayer* _avPlayer;
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
     
+    [TBScopeData CSLog:[NSString stringWithFormat:@"Scan completed with %d acquired images, %d skipped empty fields, and %d skipped boundary fields",acquiredImageCount,emptyFieldCount,boundaryFieldCount] inCategory:@"CAPTURE"];
+     
     [self playSound:@"scanning_complete"];
     
     dispatch_async(dispatch_get_main_queue(), ^(void){

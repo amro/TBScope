@@ -28,8 +28,8 @@
         [self setShowsVerticalScrollIndicator:YES];
         [self setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
         
-        [[TBScopeCamera sharedCamera] setExposureLock:NO];
-        [[TBScopeCamera sharedCamera] setFocusLock:NO];
+        //[[TBScopeCamera sharedCamera] setExposureLock:NO];
+        //[[TBScopeCamera sharedCamera] setFocusLock:NO];
     }
     return self;
 }

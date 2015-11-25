@@ -48,7 +48,10 @@
         diagnoser = [[TBDiagnoser alloc] init]; //TODO: use delegate instead
         self.hasAborted = NO;
         self.currentField = 0;
-        [self analyzeField:0]; //begin by analyzing the 0th field.
+        if (self.currentSlide.slideImages.count>0) {
+            [self analyzeField:0]; //begin by analyzing the 0th field.
+        }
+
     });
     //TODO: multithreading?
 }

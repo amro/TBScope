@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "ImageQualityAnalyzer.h"
 
+#define INFINITY_FOCUS_POSITION 1.0
+
 typedef NS_ENUM(NSInteger, TBScopeCameraServiceAutofocus) {
     TBScopeCameraFocusModeSharpness,  // BF, based on tenegrad3 averaged over last 3 frames
     TBScopeCameraFocusModeContrast    // FL, based on contrast averaged over last 3 frames
@@ -17,6 +19,7 @@ typedef NS_ENUM(NSInteger, TBScopeCameraServiceAutofocus) {
 @protocol TBScopeCameraDriver
 @optional
 @required
+@property (nonatomic) ImageQuality currentImageQuality;
 @property (nonatomic) float currentFocusMetric;
 @property (nonatomic) BOOL isPreviewRunning;
 @property (nonatomic) int focusMode;
@@ -26,6 +29,7 @@ typedef NS_ENUM(NSInteger, TBScopeCameraServiceAutofocus) {
 -(void)setUpCamera;
 -(void)setFocusLock:(BOOL)locked;
 -(void)setExposureLock:(BOOL)locked;
+-(void)setFocusPosition:(float)position;
 -(void)setExposureDuration:(int)milliseconds
                   ISOSpeed:(int)isoSpeed;
 -(void)setWhiteBalanceRed:(int)redGain

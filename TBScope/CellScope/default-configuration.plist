@@ -19,9 +19,9 @@
 	<key>FocusSettlingTime</key>
 	<real>0.075</real>
 	<key>StageStepInterval</key>
-	<integer>100</integer>
+	<integer>200</integer>
 	<key>FocusStepInterval</key>
-	<integer>100</integer>
+	<integer>50</integer>
 	<key>BFFocusThreshold</key>
 	<real>1.2</real>
 	<key>FLFocusThreshold</key>
