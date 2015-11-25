@@ -151,6 +151,10 @@ static int const kLastEmptyImageIndex = 11;
 - (void)testThatContentDetectionWorks {
     NSMutableArray *testCases = [[NSMutableArray alloc] init];
 
+    // Set focus mode to FL so ImageQuality calculates contrast
+    int focusMode = TBScopeCameraFocusModeContrast;
+    [[TBScopeCamera sharedCamera] setFocusMode:focusMode];
+
     // Calculate content scores for all images
     NSDictionary *scores = @{
                              @"content"  : [[NSMutableDictionary alloc] init],

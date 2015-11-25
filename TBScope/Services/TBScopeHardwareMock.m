@@ -131,6 +131,12 @@
     });
 }
 
+- (void) setupEnvironmentalLogging
+{
+    [self _log:@"setting up environmental logging"];
+    // Don't actually need to log anything in the mock.
+}
+
 - (BOOL)isConnected
 {
     [self _log:@"isConnected"];
