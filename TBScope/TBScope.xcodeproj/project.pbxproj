@@ -46,6 +46,8 @@
 		8AEC0CF61BC4B240009C0D00 /* fl_04_03.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8AEC0CE21BC4B23F009C0D00 /* fl_04_03.jpg */; };
 		8AEC0CF71BC4B240009C0D00 /* fl_04_04.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8AEC0CE31BC4B23F009C0D00 /* fl_04_04.jpg */; };
 		8AEC0CF81BC4B240009C0D00 /* fl_04_05.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8AEC0CE41BC4B23F009C0D00 /* fl_04_05.jpg */; };
+		8AFA92091C04C0D700AA3278 /* TBScopeHardwareReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5E1BB44BE5004E30A3 /* TBScopeHardwareReal.m */; };
+		8AFA92181C04C0D900AA3278 /* TBScopeHardwareMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5CDE5B1BB44A34004E30A3 /* TBScopeHardwareMock.m */; };
 		9B13455615E28E14009863DF /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B13455515E28E14009863DF /* ImageIO.framework */; };
 		9B6BF0B915E19ACD002834C5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B6BF0B815E19ACD002834C5 /* UIKit.framework */; };
 		9B6BF0BB15E19ACD002834C5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B6BF0BA15E19ACD002834C5 /* Foundation.framework */; };
@@ -1080,7 +1082,7 @@
 				9B6BF0B115E19ACD002834C5 /* Frameworks */,
 				9B6BF0B215E19ACD002834C5 /* Resources */,
 				7F962E17E53A8D5245EE584C /* Copy Pods Resources */,
-				B4913A032CF72520533B1CBE /* Embed Pods Frameworks */,
+				4F7F3E1584F6C32C338C67E1 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1351,6 +1353,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4F7F3E1584F6C32C338C67E1 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7F962E17E53A8D5245EE584C /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1379,21 +1396,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		B4913A032CF72520533B1CBE /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1438,6 +1440,7 @@
 				A5B45F95183039BE002F4D30 /* LoadSampleViewController.m in Sources */,
 				A50B06551835697700880350 /* ImageResultViewController.m in Sources */,
 				A500C0BD18AC0E8F00D8C569 /* BLE.m in Sources */,
+				8AFA92091C04C0D700AA3278 /* TBScopeHardwareReal.m in Sources */,
 				AC1CF6AE179E52DB007FA438 /* MatrixOperations.cpp in Sources */,
 				AC1CF6B0179E52DB007FA438 /* Region.cpp in Sources */,
 				A5CF1A38187F3EDC00C2C2E1 /* ExamListTableViewCell.m in Sources */,
@@ -1445,6 +1448,7 @@
 				A5CF19FA187A39DF00C2C2E1 /* CameraScrollView.m in Sources */,
 				AC5E748D179F3DA700BDC4EB /* Debug.cpp in Sources */,
 				AC5E749F179F3F3200BDC4EB /* Classifier.cpp in Sources */,
+				8AFA92181C04C0D900AA3278 /* TBScopeHardwareMock.m in Sources */,
 				A5FD379A183DBE6400C67D85 /* SettingsViewController.m in Sources */,
 				A599E1111824413300B52EF2 /* ResultsTabBarController.m in Sources */,
 				AC5E74AB179F421900BDC4EB /* svm-scale.c in Sources */,
