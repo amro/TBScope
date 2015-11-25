@@ -30,7 +30,8 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
             delegate,
             xPosition,
             yPosition,
-            zPosition;
+            zPosition,
+            firmwareVersion;
 
 - (instancetype)init
 {
@@ -150,7 +151,13 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
             NSLog(@"humidity = %f",humidity);
             self.humidity = humidity;
         }
-        
+        else if (data[i] == 0xFB) //fw version
+        {
+            int firmware = data[i+1];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusUpdated" object:nil];
+            NSLog(@"firmware = %d",firmware);
+            self.firmwareVersion = firmware;
+        }
         else
         {
             NSLog(@"unrecognized response from scope");
@@ -274,9 +281,9 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
 
 -(void) disableMotors
 {
-    [self moveStageWithDirection:CSStageDirectionDown Steps:0 StopOnLimit:NO DisableAfter:YES];
-    [self moveStageWithDirection:CSStageDirectionLeft Steps:0 StopOnLimit:NO DisableAfter:YES];
-    [self moveStageWithDirection:CSStageDirectionFocusUp Steps:0 StopOnLimit:NO DisableAfter:YES];
+    [self moveStageWithDirection:CSStageDirectionDown Steps:0 StopOnLimit:YES DisableAfter:YES];
+    [self moveStageWithDirection:CSStageDirectionLeft Steps:0 StopOnLimit:YES DisableAfter:YES];
+    [self moveStageWithDirection:CSStageDirectionFocusUp Steps:0 StopOnLimit:YES DisableAfter:YES];
 
 }
 

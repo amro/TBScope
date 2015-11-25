@@ -54,6 +54,9 @@ typedef NS_ENUM(int, CSStagePosition)
 @property (nonatomic) float batteryVoltage;
 @property (nonatomic) float temperature;
 @property (nonatomic) float humidity;
+
+@property (nonatomic) int firmwareVersion;
+
 @property (nonatomic) int xPosition;  // left (-)      / right (+)
 @property (nonatomic) int yPosition;  // down (-)      / up (+)
 @property (nonatomic) int zPosition;  // focusDown (-) / focusUp (+)

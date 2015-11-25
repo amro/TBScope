@@ -167,8 +167,6 @@ AVAudioPlayer* _avPlayer;
     
     [self.previewView takeDownCamera];
     
-    if ([self isMovingFromParentViewController])
-        [self.navigationController popToRootViewControllerAnimated:YES];
     
     [super viewWillDisappear:animated];
 }

@@ -46,7 +46,8 @@
 - (void)setStatusLabel
 {
     self.statusLabel.numberOfLines = 0;
-    self.statusLabel.text = [NSString stringWithFormat:@"Battery = %2.2fV\nTemperature = %2.1fC\nHumidity = %2.1f%%",
+    self.statusLabel.text = [NSString stringWithFormat:@"Firmware = %d\nBattery = %2.2fV    Temperature = %2.1fC    Humidity = %2.1f%%",
+                             [[TBScopeHardware sharedHardware] firmwareVersion],
                              [[TBScopeHardware sharedHardware] batteryVoltage],
                              [[TBScopeHardware sharedHardware] temperature],
                              [[TBScopeHardware sharedHardware] humidity]];
