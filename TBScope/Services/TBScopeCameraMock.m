@@ -23,10 +23,11 @@
 @implementation TBScopeCameraMock
 
 @synthesize currentFocusMetric,
+            currentImageQuality,
             focusMode,
-            isPreviewRunning,
+            lastImageMetadata,
             lastCapturedImage,
-            lastImageMetadata;
+            isPreviewRunning;
 
 - (instancetype)init
 {
@@ -104,6 +105,11 @@
                      Blue:(int)blueGain
 {
     [self _log:@"setWhiteBalanceRed:Green:Blue:"];
+}
+
+-(void)setFocusPosition:(float)position
+{
+    [self _log:@"setFocusPosition:"];
 }
 
 - (void)captureImage
