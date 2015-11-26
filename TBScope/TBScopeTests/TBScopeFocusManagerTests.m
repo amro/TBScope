@@ -27,7 +27,7 @@
     [self _toggleSharedHardwareSwizzling];
 
     // Reset hardware manager position to home
-    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
+    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZDown];
 
     // Set up focusManager
     self.focusManager = [TBScopeFocusManager sharedFocusManager];

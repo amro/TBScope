@@ -429,11 +429,11 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
             buf[1] = 0x03;
             break;
         case CSStagePositionZHome:
-            self.zPosition = 0; //the z limit switch is waaaay negative
+            self.zPosition = -40000; //all the way against the z limit switch is waaaay negative
             buf[1] = 0x04;
             break;
         case CSStagePositionZDown:
-            self.zPosition = 0;
+            self.zPosition = 0; //40000 steps from the z limit switch
             buf[1] = 0x05;
             break;
     }

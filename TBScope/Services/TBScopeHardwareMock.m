@@ -37,7 +37,7 @@
             self.yPosition = 0;
             break;
         case CSStagePositionZHome:
-            self.zPosition = 0;
+            self.zPosition = -40000;
             break;
         case CSStagePositionZDown:
             self.zPosition = 0;
