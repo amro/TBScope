@@ -739,21 +739,12 @@ AVAudioPlayer* _avPlayer;
               bfIntensity:(int)bfIntensity
               flIntensity:(int)flIntensity
 {
-
-    //load focusing parameters
-    int maxAFFailures = [[NSUserDefaults standardUserDefaults] integerForKey:@"MaxAFFailures"];
-    int initialBFStackSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"InitialBFFocusStackSize"];
-    int initialBFStepHeight = [[NSUserDefaults standardUserDefaults] integerForKey:@"InitialBFFocusStepSize"];
-    int initialBFRetryAttempts = [[NSUserDefaults standardUserDefaults] integerForKey:@"InitialBFFocusRetryAttempts"];
-    float initialBFRetryStackMultiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"InitialBFFocusRetryStackMultiplier"];
-    int bfRefocusBFStackSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"BFRefocusStackSize"];
-    int bfRefocusBFStepHeight = [[NSUserDefaults standardUserDefaults] integerForKey:@"BFRefocusStepSize"];
-    int bfRefocusBFRetryAttempts = [[NSUserDefaults standardUserDefaults] integerForKey:@"BFRefocusRetryAttempts"];
-    float bfRefocusBFRetryStackMultiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"BFRefocusRetryStackMultiplier"];
-    int flRefocusBFStackSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"FLRefocusStackSize"];
-    int flRefocusBFStepHeight = [[NSUserDefaults standardUserDefaults] integerForKey:@"FLRefocusStepSize"];
-    int flRefocusBFRetryAttempts = [[NSUserDefaults standardUserDefaults] integerForKey:@"FLRefocusRetryAttempts"];
-    float flRefocusBFRetryStackMultiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"FLRefocusRetryStackMultiplier"];
+    int maxAFFailures = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"MaxAFFailures"];
+    
+    //x/y center position and default focus position
+    int centerX = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterX"];
+    int centerY = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterY"];
+    int focusZ = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"];
     
     //get exposure and ISO settings
     int bfExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationBF"];
@@ -762,14 +753,10 @@ AVAudioPlayer* _avPlayer;
     int flISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedFL"];
     
     //speed parameters
-    int stageStepInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"StageStepInterval"];
-    int focusStepInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"FocusStepInterval"];
-    
+    int stageStepInterval = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"StageStepInterval"];
+    int focusStepInterval = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusStepInterval"];
     float stageSettlingTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"StageSettlingTime"];
 
-    static int autoFocusFailCount = 0;
-    autoFocusFailCount = maxAFFailures; //this will ensure that a BF fine focus gets triggered at the beginning
-    
     [TBScopeData CSLog:@"Autoscanning..." inCategory:@"CAPTURE"];
     
     //setup UI
@@ -798,14 +785,24 @@ AVAudioPlayer* _avPlayer;
     });
     
     //starting conditions
+    int autoFocusFailCount = maxAFFailures; //this will ensure that a BF focus gets triggered at the beginning
+    int fieldsSinceLastFocus = focusInterval; //this will ensure that a FL focus gets triggered at the beginning
+    int boundaryFieldCount = 0;
+    int emptyFieldCount = 0;
+    int acquiredImageCount = 0;
+
+    //set exposure/ISO
     [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
-    [self toggleBF:NO];
-    [self toggleFL:NO];
+
+    //turn off lights
+    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
     
     [NSThread sleepForTimeInterval:0.1];
     
     [self playSound:@"scanning_started"];
     
+    //home stage and move objective to "down" position
     [[TBScopeHardware sharedHardware] waitForStage];
     [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
     [[TBScopeHardware sharedHardware] waitForStage];
@@ -813,10 +810,6 @@ AVAudioPlayer* _avPlayer;
     [[TBScopeHardware sharedHardware] waitForStage];
     [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZDown];
     [[TBScopeHardware sharedHardware] waitForStage];
-    
-    int centerX = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterX"];
-    int centerY = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterY"];
-    int focusZ = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"];
     
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
@@ -847,42 +840,18 @@ AVAudioPlayer* _avPlayer;
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
-    //do auto exposure
-    //turn on BF and wait for exposure to settle
-    //NSLog(@"auto expose");
-    //dispatch_async(dispatch_get_main_queue(), ^(void){
-    //    self.scanStatusLabel.text = NSLocalizedString(@"Exposure Calibration...", nil);});
-    //[[TBScopeCamera sharedCamera] setExposureLock:NO];
-    //[[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
-    //[NSThread sleepForTimeInterval:2.0];
-    //[[TBScopeCamera sharedCamera] setExposureLock:YES];
-    
-    //focus in BF with wide range first
-    
-    //if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AutoScanInitialFocus"]) {
     dispatch_async(dispatch_get_main_queue(), ^(void){
         self.scanStatusLabel.text = NSLocalizedString(@"Initial Focusing...", nil);
     });
 
-    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
-
-    [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
-    [[TBScopeFocusManager sharedFocusManager] autoFocus];
-    //}
-     
-    [TBScopeData CSLog:@"Initial BF focus completed" inCategory:@"CAPTURE"];
-    
     //TODO: add some CSLog's for focus metrics
     
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
-    int boundaryFieldCount = 0;
-    int emptyFieldCount = 0;
-    int acquiredImageCount = 0;
-    int fieldsSinceLastFocus = 999;
-    
+
     int yDir;
+    
     //x iterator
     for (int i=0; i<numCols; i++) {
         
@@ -910,30 +879,24 @@ AVAudioPlayer* _avPlayer;
                 dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];});
                 return; }
             
-            //re-focus in BF, if necessary
+            //focus in BF if this is the initial focus or if focus failures is >maxAFFailures
             if (autoFocusFailCount>=maxAFFailures)
             {
-                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DoAutoFocus"])
-                {
-                    NSLog(@"auto focus");
-                    dispatch_async(dispatch_get_main_queue(), ^(void){
-                        self.scanStatusLabel.text = NSLocalizedString(@"Focusing...", nil);});
-                    
-                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
-                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
-                    [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
-                    [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
-                    
-                    [NSThread sleepForTimeInterval:0.1];
-                    
-                    TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
+                dispatch_async(dispatch_get_main_queue(), ^(void){
+                    self.scanStatusLabel.text = NSLocalizedString(@"Focusing...", nil);});
+                
+                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+                [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+                [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
+                
+                [NSThread sleepForTimeInterval:0.1];
+                
+                TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
 
-                    if (focusResult == TBScopeFocusManagerResultFailure)
-                        [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
-                }
-                else {
+                if (focusResult == TBScopeFocusManagerResultFailure)
                     [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
-                }
+            
                 autoFocusFailCount = 0;
             }
             
@@ -1023,7 +986,7 @@ AVAudioPlayer* _avPlayer;
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
     
-    [TBScopeData CSLog:[NSString stringWithFormat:@"Scan completed with %d acquired images, %d skipped empty fields, and %d skipped boundary fields",acquiredImageCount,emptyFieldCount,boundaryFieldCount] inCategory:@"CAPTURE"];
+    [TBScopeData CSLog:[NSString stringWithFormat:@"Scan completed with %d acquired images, %d skipped empty fields, %d skipped boundary fields, and %d failed focus attempts",acquiredImageCount,emptyFieldCount,boundaryFieldCount,autoFocusFailCount] inCategory:@"CAPTURE"];
      
     [self playSound:@"scanning_complete"];
     

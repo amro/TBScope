@@ -22,34 +22,6 @@
 	<integer>200</integer>
 	<key>FocusStepInterval</key>
 	<integer>50</integer>
-	<key>BFFocusThreshold</key>
-	<real>1.2</real>
-	<key>FLFocusThreshold</key>
-	<real>1.1</real>
-	<key>FLRefocusRetryStackMultiplier</key>
-	<real>1.5</real>
-	<key>FLRefocusRetryAttempts</key>
-	<integer>1</integer>
-	<key>FLRefocusStepSize</key>
-	<integer>60</integer>
-	<key>FLRefocusStackSize</key>
-	<integer>10</integer>
-	<key>BFRefocusRetryStackMultiplier</key>
-	<real>1.5</real>
-	<key>BFRefocusRetryAttempts</key>
-	<integer>3</integer>
-	<key>BFRefocusStepSize</key>
-	<integer>100</integer>
-	<key>BFRefocusStackSize</key>
-	<integer>20</integer>
-	<key>InitialBFFocusRetryStackMultiplier</key>
-	<real>1.5</real>
-	<key>InitialBFFocusRetryAttempts</key>
-	<integer>3</integer>
-	<key>InitialBFFocusStepSize</key>
-	<integer>200</integer>
-	<key>InitialBFFocusStackSize</key>
-	<integer>80</integer>
 	<key>MaxAFFailures</key>
 	<integer>3</integer>
 	<key>AddBFWhenManualFocusing</key>
@@ -76,6 +48,8 @@
 	<true/>
 	<key>DoAutoScan</key>
 	<true/>
+	<key>DoAutoAnalyze</key>
+	<true/>
 	<key>DefaultFLIntensity</key>
 	<integer>255</integer>
 	<key>DefaultBFIntensity</key>
@@ -96,8 +70,6 @@
 	<string>0000</string>
 	<key>PatientIDFormat</key>
 	<string>.*</string>
-	<key>DoAnalysisByDefault</key>
-	<true/>
 	<key>DefaultLocation</key>
 	<string>Fletcher Lab</string>
 	<key>CellScopeID</key>
@@ -107,9 +79,7 @@
 	<key>RedThreshold</key>
 	<real>0.95</real>
 	<key>YellowThreshold</key>
-	<real>0.9</real>
-	<key>NumFieldsPerSlide</key>
-	<integer>5</integer>
+	<real>0.8</real>
 	<key>BypassLogin</key>
 	<string>NO</string>
 	<key>ResetCoreDataOnStartup</key>
