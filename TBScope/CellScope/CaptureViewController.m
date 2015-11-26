@@ -937,53 +937,6 @@ AVAudioPlayer* _avPlayer;
                 autoFocusFailCount = 0;
             }
             
-            /*
-            if ((fieldNum%focusInterval)==0) {
-                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DoAutoFocus"]) {
-
-                    //auto focus in BF
-                    
-                    NSLog(@"auto focus");
-                    dispatch_async(dispatch_get_main_queue(), ^(void){
-                        self.scanStatusLabel.text = NSLocalizedString(@"Focusing...", nil);});
-                    
-                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
-                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
-                    
-                    [NSThread sleepForTimeInterval:0.1];
-                    
-                    BOOL focusSuccess1; BOOL focusSuccess2;
-                    TBScopeFocusManager *focusManager = [[TBScopeFocusManager alloc] init];
-                    focusSuccess1 = [focusManager autoFocusWithStackSize:20 //20
-                                                           stepsPerSlice:40 //80
-                                                             numAttempts:3
-                                         successiveIterationsGrowRangeBy:1.5
-                                                               focusMode:TBScopeCameraFocusModeSharpness];
-                    
-                    focusSuccess2 = [focusManager autoFocusWithStackSize:10 //10
-                                                           stepsPerSlice:20 //20
-                                                             numAttempts:3
-                                         successiveIterationsGrowRangeBy:1.5
-                                                               focusMode:TBScopeCameraFocusModeSharpness];
-                    
-                    if (!focusSuccess1 || !focusSuccess2)
-                        [self manualFocusWithFL:flIntensity BF:1];
-             
-                    
-                }
-                else //manual focus
-                {
-                    [self manualFocusWithFL:flIntensity BF:1];
-                }
-             
-            
-                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
-                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
-                [NSThread sleepForTimeInterval:0.1];
-                
-
-            }
-            */
             
             //check if abort button pressed
             if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
@@ -992,6 +945,7 @@ AVAudioPlayer* _avPlayer;
             [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
 
             // focus in fluorescence (each N frames)
+            fieldsSinceLastFocus++;
             if (fieldsSinceLastFocus>focusInterval) {
                 if (![[TBScopeCamera sharedCamera] currentImageQuality].isEmpty) {
                     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
@@ -1027,13 +981,16 @@ AVAudioPlayer* _avPlayer;
             //take an image
             [NSThread sleepForTimeInterval:stageSettlingTime];
             ImageQuality iq = [[TBScopeCamera sharedCamera] currentImageQuality];
-             if (iq.isBoundary) {
-                 boundaryFieldCount++;
-                 [TBScopeData CSLog:@"Skipping image capture; image contains boundary." inCategory:@"CAPTURE"];
-             } else if (iq.isEmpty) {
+
+             if (iq.isEmpty) {
                  emptyFieldCount++;
                  [TBScopeData CSLog:@"Skipping image capture; image is empty." inCategory:@"CAPTURE"];
-             } else {
+             }
+             //else if (iq.isBoundary) {
+             // boundaryFieldCount++;
+             // [TBScopeData CSLog:@"Skipping image capture; image contains boundary." inCategory:@"CAPTURE"];
+             // }
+             else {
                  acquiredImageCount++;
                 [self didPressCapture:nil];
                 [NSThread sleepForTimeInterval:0.5];

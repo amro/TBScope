@@ -157,6 +157,12 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
             [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusUpdated" object:nil];
             NSLog(@"firmware = %d",firmware);
             self.firmwareVersion = firmware;
+            
+            static BOOL hasLoggedFirmware = false;
+            if (!hasLoggedFirmware) {
+                [TBScopeData CSLog:[NSString stringWithFormat:@"Firmware Version: %d",self.firmwareVersion] inCategory:@"SYSTEM"];
+                hasLoggedFirmware = YES;
+            }
         }
         else
         {

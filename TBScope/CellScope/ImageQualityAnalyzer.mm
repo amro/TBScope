@@ -449,7 +449,7 @@ double _stdev(std::vector<int> v) {
     }
     iq.boundaryScore = boundaryScore(green);
     iq.contentScore = iq.greenContrast;  // contentScore(green);  (no sense in calculating it twice)
-    iq.isBoundary = (iq.boundaryScore >= kMinBoundaryThreshold);
+    iq.isBoundary = (iq.boundaryScore >= kMinBoundaryThreshold); //TODO: we should make this a multiplier over some baseline boundaryScore that is taken when the slide is centered (presumably that location is NOT a boundary)
     iq.isEmpty = (iq.contentScore < kMinContentThreshold);
 
     src.release();

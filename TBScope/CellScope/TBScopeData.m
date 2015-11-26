@@ -163,10 +163,20 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     [formatter setDateFormat:@"MM/dd/yyyy HH:mm a"];
 
     // Add our default user object in Core Data
-    Users *user = (Users*)[NSEntityDescription insertNewObjectForEntityForName:@"Users" inManagedObjectContext:_managedObjectContext];
-    [user setUsername:@"admin"];
-    [user setPassword:@"default"];
-    [user setAccessLevel:@"ADMIN"];
+    Users *user1 = (Users*)[NSEntityDescription insertNewObjectForEntityForName:@"Users" inManagedObjectContext:_managedObjectContext];
+    [user1 setUsername:@"admin"];
+    [user1 setPassword:@"berkeley"];
+    [user1 setAccessLevel:@"ADMIN"];
+    
+    Users *user2 = (Users*)[NSEntityDescription insertNewObjectForEntityForName:@"Users" inManagedObjectContext:_managedObjectContext];
+    [user2 setUsername:@"tech"];
+    [user2 setPassword:@"cellscope"];
+    [user2 setAccessLevel:@"TECH"];
+    
+    Users *user3 = (Users*)[NSEntityDescription insertNewObjectForEntityForName:@"Users" inManagedObjectContext:_managedObjectContext];
+    [user3 setUsername:@"qc"];
+    [user3 setPassword:@"cellscope"];
+    [user3 setAccessLevel:@"QC"];
     
     [self saveCoreData];
 

@@ -128,7 +128,7 @@
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
-   
+    //only allow slide scanning if there is a cellscope detected
     if([identifier isEqualToString:@"ScanSlideSegue"]) {
         if (![[TBScopeHardware sharedHardware] isConnected] && ![[NSUserDefaults standardUserDefaults] boolForKey:@"AllowScanWithoutCellScope"]) {
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"CellScope Not Connected", nil)
@@ -141,9 +141,19 @@
             [alert show];
             return NO;
         }
+        else
+            return YES;
     }
-    
-    return YES;
+    //only allow admin to go to config
+    else if ([identifier isEqualToString:@"ConfigurationSegue"]) {
+        if ([[[[TBScopeData sharedData] currentUser] accessLevel] isEqualToString:@"ADMIN"]) {
+            return YES;
+        }
+        else
+            return NO;
+    }
+    else
+        return YES;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -166,6 +176,7 @@
     }
     
 }
+
 
 
 - (void)didPressLogout:(id)sender
