@@ -100,10 +100,27 @@
         
         
         [TBScopeData CSLog:@"Image view presented" inCategory:@"USER"];
-    }
-    else {
+    } else {
         [self.imageViewModeButton setTitle:NSLocalizedString(@"Show Images",nil) forState:UIControlStateNormal];
         self.imageViewModeButton.tag = 1;
+
+        // Disable button if no images exist locally
+        NSManagedObjectContext *tmpMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        tmpMOC.parentContext = [[TBScopeData sharedData] managedObjectContext];
+        __block NSArray* result;
+        [tmpMOC performBlockAndWait:^{
+            NSPredicate* pred = [NSPredicate predicateWithFormat:@"(slide = %@) AND (path != nil)", self.currentSlide];
+            result = [CoreDataHelper searchObjectsForEntity:@"Images"
+                                              withPredicate:pred
+                                                 andSortKey:nil
+                                           andSortAscending:YES
+                                                 andContext:tmpMOC];
+        }];
+        if ([result count] > 0) {
+            self.imageViewModeButton.hidden = NO;
+        } else {
+            self.imageViewModeButton.hidden = YES;
+        }
         
         //show ROIs
         self.roiGridView.hidden = NO;
