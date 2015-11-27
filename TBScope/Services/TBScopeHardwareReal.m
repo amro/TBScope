@@ -72,7 +72,7 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
 
 - (void) setupEnvironmentalLogging
 {
-    [NSTimer scheduledTimerWithTimeInterval:(float)60.0 target:self selector:@selector(environmentalLoggingTimer:) userInfo:nil repeats:YES];
+    [NSTimer scheduledTimerWithTimeInterval:(float)300.0 target:self selector:@selector(environmentalLoggingTimer:) userInfo:nil repeats:YES];
 }
 
 - (BOOL)isConnected

@@ -98,6 +98,7 @@ AVAudioPlayer* _avPlayer;
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DebugMode"]) {
         [NSTimer scheduledTimerWithTimeInterval:(float)0.5 target:self selector:@selector(updateCoordinateLabel) userInfo:nil repeats:YES];
+        self.coordinateLabel.hidden = NO;
     }
 
     

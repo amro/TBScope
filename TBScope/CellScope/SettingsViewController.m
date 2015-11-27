@@ -53,9 +53,9 @@
     self.numPatchesToAverage.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"NumPatchesToAverage"]];
     self.defaultLocation.text = [prefs stringForKey:@"DefaultLocation"];
     self.patientIDFormat.text = [[NSString alloc] initWithFormat:@"%@",[prefs stringForKey:@"PatientIDFormat"]];
-    self.redThreshold.text = [[NSString alloc] initWithFormat:@"%f",[prefs floatForKey:@"RedThreshold"]];
-    self.yellowThreshold.text = [[NSString alloc] initWithFormat:@"%f",[prefs floatForKey:@"YellowThreshold"]];
-    self.diagnosticThreshold.text = [[NSString alloc] initWithFormat:@"%f",[prefs floatForKey:@"DiagnosticThreshold"]];
+    self.redThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"RedThreshold"]];
+    self.yellowThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"YellowThreshold"]];
+    self.diagnosticThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"DiagnosticThreshold"]];
     self.autoAnalyzeSwitch.on = [prefs boolForKey:@"DoAutoAnalyze"];
     self.bypassLogin.on = [prefs boolForKey:@"BypassLogin"];
     self.resetCoreData.on = [prefs boolForKey:@"ResetCoreDataOnStartup"];
@@ -90,8 +90,8 @@
     self.focusStepDuration.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"FocusStepInterval"]];
     
     self.backlash.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"StageBacklashSteps"]];
-    self.emptyFieldThreshold.text = [[NSString alloc] initWithFormat:@"%f",[prefs floatForKey:@"EmptyContentThreshold"]];
-    self.boundaryFieldThreshold.text = [[NSString alloc] initWithFormat:@"%f",[prefs floatForKey:@"BoundaryScoreThreshold"]];
+    self.emptyFieldThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"EmptyContentThreshold"]];
+    self.boundaryFieldThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"BoundaryScoreThreshold"]];
     self.uploadSwitch.on = [prefs boolForKey:@"UploadEnabled"];
     self.downloadSwitch.on = [prefs boolForKey:@"DownloadEnabled"];
     self.debuggingSwitch.on = [prefs boolForKey:@"DebugMode"];

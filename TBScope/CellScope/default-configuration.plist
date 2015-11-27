@@ -11,9 +11,9 @@
 	<key>BoundaryScoreThreshold</key>
 	<integer>100</integer>
 	<key>DebugMode</key>
-	<true/>
+	<false/>
 	<key>StageBacklashSteps</key>
-	<integer>500</integer>
+	<integer>300</integer>
 	<key>FocusBroadSweepRange</key>
 	<real>13000</real>
 	<key>FocusBroadSweepStepSize</key>
