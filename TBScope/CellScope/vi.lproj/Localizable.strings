@@ -20,7 +20,7 @@
 "Review Results" = "Kết Quả";
 "Configuration" = "Cấu Hình";
 "Logout" = "Đăng Xuất";
-"Bluetooth Connected" = "Blu-tút đã được kết nối";
+"CellScope Connected" = "CellScope đã được kết nối";
 "CellScope Not Connected" = "CellScope không được kết nối";
 
 //Edit Exam
@@ -64,7 +64,7 @@
 "BLOOD" = "Máu";
 "SALIVA" = "Nước bọt";
 "BLOOD+SALIVA" = "Máu + Nước bọt";
-"MUCUS" = "Mucus";
+"MUCUS" = "Niêm dịch";
 "New Slide" = "Tiêu bản mới";
 "Date Collected" = "Ngày lấy mẫu"; //field longer
 "Sputum Quality" = "Chất lượng mẫu";
@@ -92,6 +92,7 @@
 "Loading sample..." = "Đang tải mẫu...";
 "Focusing..." = "Đang lấy nét...";
 "Acquiring image %d of %d..." = "Đang chụp ảnh %d của %d...";
+"Acquired Images: %d, Fields Remaining: %d" = "Đang chụp ảnh %d của %d..."; //this is not correct
 "Next field..." = "Vi trường tiếp theo..";
 "Acquisition complete..." = "Kết thúc chụp ảnh...";
 "Focus" = "Lấy nét";
@@ -103,6 +104,10 @@
 "Exposure Calibration..." = "Chỉnh độ sáng";
 "Initial Focusing..." = "Lấy nét ban đầu";
 "Re-Focus" = "Lấy nét";
+"Set Center" = "trung tâm tập";
+"Move to Home" = "về nhà";
+"Move to Center" = "trung tâm đi";
+"Calibration Mode" = "Hiệu Chuẩn";
 
 //Analysis
 "Analyzing..." = "Phân tích kết quả ảnh đã chụp...";
@@ -169,7 +174,7 @@
 "Analysis Results" = "Kết quả phân tích";
 "First Collection Date" = "Ngày lấy mẫu đầu tiên";
 "Exam Registry" = "Số xét nghiệm"; //make sure this is in title
-//change exam # to Exam ID
+"Eval All" = "Toàn bộ";
 
 //Print Registry
 "Print TB Registry" = "In sổ xét nghiệm TB"; //fix
@@ -194,6 +199,7 @@
 //System Status
 "Battery Warning" = "pin Cảnh báo";
 "CellScope's battery is low and it will shut off soon. Please plug it in." = "Pin CellScope là thấp và nó sẽ tắt ngay. Hãy sạc pin cho nó.";
+"Please ensure Bluetooth is enabled and CellScope is powered on." = "Hãy đảm bảo Bluetooth được kích hoạt và CellScope được cung cấp trên.";
 
 
 

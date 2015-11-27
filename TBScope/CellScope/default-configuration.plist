@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>DownloadEnabled</key>
+	<false/>
+	<key>UploadEnabled</key>
+	<true/>
 	<key>EmptyContentThreshold</key>
 	<string>1.15</string>
 	<key>BoundaryScoreThreshold</key>
@@ -14,6 +18,10 @@
 	<real>13000</real>
 	<key>FocusBroadSweepStepSize</key>
 	<integer>500</integer>
+	<key>DeadBatteryVoltage</key>
+	<real>7</real>
+	<key>MaxBatteryVoltage</key>
+	<real>8.4</real>
 	<key>BatteryWarningVoltage</key>
 	<real>7.2</real>
 	<key>DefaultFocusZ</key>
@@ -58,10 +66,6 @@
 	<true/>
 	<key>DoAutoAnalyze</key>
 	<true/>
-	<key>DefaultFLIntensity</key>
-	<integer>255</integer>
-	<key>DefaultBFIntensity</key>
-	<integer>5</integer>
 	<key>DefaultEmailRecipient</key>
 	<string>fbmyers@gmail.com</string>
 	<key>SyncRetryInterval</key>
@@ -81,7 +85,7 @@
 	<key>DefaultLocation</key>
 	<string>Fletcher Lab</string>
 	<key>CellScopeID</key>
-	<string>UCB-001</string>
+	<string>DEFAULT</string>
 	<key>MaxNameLocationAddressLength</key>
 	<string>50</string>
 	<key>RedThreshold</key>

@@ -43,6 +43,8 @@ AVAudioPlayer* _avPlayer;
     [self.fastSlowButton setTitle:NSLocalizedString(@"Fast",nil) forState:UIControlStateNormal];
     [self.autoFocusButton setTitle:NSLocalizedString(@"Focus", nil) forState:UIControlStateNormal];
     [self.autoScanButton setTitle:NSLocalizedString(@"Auto Scan", nil) forState:UIControlStateNormal];
+    [self.abortButton setTitle:NSLocalizedString(@"Abort", nil) forState:UIControlStateNormal];
+    [self.refocusButton setTitle:NSLocalizedString(@"Re-Focus", nil) forState:UIControlStateNormal];
     
     
     //setup the camera view
@@ -125,11 +127,14 @@ AVAudioPlayer* _avPlayer;
 
 - (void)updatePrompt
 {
+    /*
     if (self.currentField<[[NSUserDefaults standardUserDefaults] integerForKey:@"NumFieldsPerSlide"])
         self.navigationItem.title = [NSString stringWithFormat:NSLocalizedString(@"Capture Field %d of %d",nil),self.currentField+1,[[NSUserDefaults standardUserDefaults] integerForKey:@"NumFieldsPerSlide"]];
     else
         self.navigationItem.title = NSLocalizedString(@"Capture Complete",nil);
+    */
     
+    self.navigationItem.title = NSLocalizedString(@"Calibration Mode",nil);
 }
 
 - (void)updateCoordinateLabel
@@ -217,16 +222,9 @@ AVAudioPlayer* _avPlayer;
 
         weakSelf.currentField++;
 
-        [weakSelf updatePrompt];
-
-        if (weakSelf.currentField==[[NSUserDefaults standardUserDefaults] integerForKey:@"NumFieldsPerSlide"]) {
-            //done
-            weakSelf.snapButton.enabled = NO;
-            weakSelf.snapButton.alpha = 0.4;
-            weakSelf.analyzeButton.enabled = YES;
-            weakSelf.analyzeButton.tintColor = [UIColor whiteColor];
-        }
-
+        weakSelf.analyzeButton.enabled = YES;
+        weakSelf.analyzeButton.tintColor = [UIColor whiteColor];
+        
         [TBScopeData CSLog:[NSString stringWithFormat:@"Saved image for %@ - %d-%d, to filename: %@",
                             weakSelf.currentSlide.exam.examID,
                             weakSelf.currentSlide.slideNumber,
@@ -419,7 +417,7 @@ AVAudioPlayer* _avPlayer;
 {
     if (on)
     {
-        int intensity = [[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultBFIntensity"];
+        int intensity = [[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanBFIntensity"];
         self.intensitySlider.hidden = NO;
         self.intensityLabel.hidden = NO;
         [self.intensitySlider setValue:(float)intensity/255];
@@ -457,7 +455,7 @@ AVAudioPlayer* _avPlayer;
 {
     if (on)
     {
-        int intensity = [[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFLIntensity"];
+        int intensity = [[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanFluorescentIntensity"];
         self.intensitySlider.hidden = NO;
         self.intensityLabel.hidden = NO;
         [self.intensitySlider setValue:(float)intensity/255];
@@ -495,14 +493,14 @@ AVAudioPlayer* _avPlayer;
     {
         int intensity = self.intensitySlider.value*255;
         [self.intensityLabel setText:[NSString stringWithFormat:@"%d",intensity]];
-        [[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"DefaultBFIntensity"];
+        [[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"AutoScanBFIntensity"];
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:intensity];
     }
     else if (_FLOn)
     {
         int intensity = self.intensitySlider.value*255;
         [self.intensityLabel setText:[NSString stringWithFormat:@"%d",intensity]];
-        [[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"DefaultFLIntensity"];
+        [[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"AutoScanFluorescentIntensity"];
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:intensity];
     }
 }
@@ -898,7 +896,7 @@ AVAudioPlayer* _avPlayer;
                 for (int i=0; i<NUM_FOCUS_REPOSITIONING_ATTEMPTS; i++) {
                     [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
                     focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
-                    if (focusResult==TBScopeFocusManagerResultFailure) {
+                    if (focusResult!=TBScopeFocusManagerResultSuccess) {
                         [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
                         [[TBScopeHardware sharedHardware] moveStageWithDirection:yDir
                                                                            Steps:FOCUS_REPOSITIONING_STEPS
@@ -943,7 +941,7 @@ AVAudioPlayer* _avPlayer;
                     for (int i=0; i<NUM_FOCUS_REPOSITIONING_ATTEMPTS; i++) {
                         [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
                         focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
-                        if (focusResult==TBScopeFocusManagerResultFailure) {
+                        if (focusResult!=TBScopeFocusManagerResultSuccess) {
                             [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
                             [[TBScopeHardware sharedHardware] moveStageWithDirection:yDir
                                                                                Steps:FOCUS_REPOSITIONING_STEPS

@@ -98,12 +98,12 @@
         [self _updateLastGoodPositionAndMetric];
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.currentIterationBestPosition];
         [[TBScopeHardware sharedHardware] waitForStage];
-        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful (coarse), best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
+        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful, best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultSuccess;
     } else if (self.lastGoodPosition >= 0) {
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.lastGoodPosition];
         [[TBScopeHardware sharedHardware] waitForStage];
-        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful (fine), best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
+        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus failed, returning to last good position.",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultReturn;
     }
 

@@ -25,6 +25,12 @@
 @property (weak, nonatomic) IBOutlet UITextField* numPatchesToAverage;
 @property (weak, nonatomic) IBOutlet UITextField *syncInterval;
 @property (weak, nonatomic) IBOutlet UISwitch *wifiOnlyButton;
+@property (weak, nonatomic) IBOutlet UISwitch *debuggingSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *downloadSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *uploadSwitch;
+@property (weak, nonatomic) IBOutlet UITextField *emptyFieldThreshold;
+@property (weak, nonatomic) IBOutlet UITextField *boundaryFieldThreshold;
+@property (weak, nonatomic) IBOutlet UITextField *backlash;
 
 
 @property (weak, nonatomic) IBOutlet UISwitch* bypassLogin;

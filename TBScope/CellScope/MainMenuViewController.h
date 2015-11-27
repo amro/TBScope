@@ -28,6 +28,14 @@
 @property (weak, nonatomic) IBOutlet UIButton *reviewResultsButton;
 @property (weak, nonatomic) IBOutlet UIButton *configurationButton;
 @property (weak, nonatomic) IBOutlet UIButton *logoutButton;
+@property (weak, nonatomic) IBOutlet UILabel *batteryIndicatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *temperatureIndicatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *humidityIndicatorLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *bluetoothIcon;
+@property (weak, nonatomic) IBOutlet UILabel *firmwareIndicatorLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *batteryIcon;
+@property (weak, nonatomic) IBOutlet UIImageView *temperatureIcon;
+@property (weak, nonatomic) IBOutlet UIImageView *humidityIcon;
 
 @property (weak, nonatomic) IBOutlet UILabel* bluetoothIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;

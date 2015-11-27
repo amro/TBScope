@@ -39,6 +39,8 @@ typedef NS_ENUM(int, GoogleDriveSyncError) {
 
 @property (nonatomic) BOOL syncEnabled;
 @property (nonatomic) BOOL isSyncing;
+@property (nonatomic) BOOL uploadEnabled;
+@property (nonatomic) BOOL downloadEnabled;
 
 - (void)doSync;
 

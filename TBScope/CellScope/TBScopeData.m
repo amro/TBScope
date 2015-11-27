@@ -120,9 +120,11 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
 {
     //TODO: come back to this. it's not updating.
     self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;    
+    [self.locationManager requestWhenInUseAuthorization];
     self.locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest; // 10 m
-    self.locationManager.delegate = self;
+
     [self.locationManager startMonitoringSignificantLocationChanges];
 }
 
@@ -183,10 +185,11 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     [self insertSeedData];
 }
 
+//TODO: remove
 - (void)insertSeedData
 {
     BOOL skipInsertingSeedData = [[[NSProcessInfo processInfo] arguments] containsObject:@"-SkipInsertingSeedData"];
-    if (skipInsertingSeedData) return;
+    if (YES) return;
     
     Exams* exam;
     Slides* slide;

@@ -21,37 +21,32 @@
                                              selector:@selector(setSyncIndicator)
                                                  name:@"GoogleSyncStarted"
                                                object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setSyncIndicator)
                                                  name:@"GoogleSyncStopped"
                                                object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setBTIndicator)
-                                                 name:@"BluetoothConnected"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setBTIndicator)
-                                                 name:@"BluetoothDisconnected"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setStatusLabel)
+                                             selector:@selector(setStatusLabels)
                                                  name:@"StatusUpdated"
                                                object:nil];
+    
 }
 
-- (void)setStatusLabel
+- (void)setStatusLabels
 {
-    self.statusLabel.numberOfLines = 0;
-    self.statusLabel.text = [NSString stringWithFormat:@"Firmware = %d\nBattery = %2.2fV    Temperature = %2.1fC    Humidity = %2.1f%%",
-                             [[TBScopeHardware sharedHardware] firmwareVersion],
-                             [[TBScopeHardware sharedHardware] batteryVoltage],
-                             [[TBScopeHardware sharedHardware] temperature],
-                             [[TBScopeHardware sharedHardware] humidity]];
+    float batt = [[TBScopeHardware sharedHardware] batteryVoltage];
+    float min = [[NSUserDefaults standardUserDefaults] floatForKey:@"DeadBatteryVoltage"];
+    float max = [[NSUserDefaults standardUserDefaults] floatForKey:@"MaxBatteryVoltage"];
+    
+    int batteryPercentage = MIN(MAX(0,round(((batt-min)/(max-min))*100)),100);
+    
+    self.batteryIndicatorLabel.text = [NSString stringWithFormat:@"%d%%",batteryPercentage];
+    self.temperatureIndicatorLabel.text = [NSString stringWithFormat:@"%2.1f°C",[[TBScopeHardware sharedHardware] temperature]];
+    self.humidityIndicatorLabel.text = [NSString stringWithFormat:@"%2.1f%%",[[TBScopeHardware sharedHardware] humidity]];
+    self.firmwareIndicatorLabel.text = [NSString stringWithFormat:@"Firmware %d",[[TBScopeHardware sharedHardware] firmwareVersion]];
+    
 }
+
 - (void)setSyncIndicator
 {
     if ([[GoogleDriveSync sharedGDS] isSyncing]) {
@@ -72,7 +67,7 @@
     [self.navigationItem setTitle:NSLocalizedString(@"Main Menu",nil)];
     self.loggedInAs.text = [NSString stringWithFormat:NSLocalizedString(@"Logged in as: %@",nil),[[[TBScopeData sharedData] currentUser] username]];
     self.syncLabel.text = NSLocalizedString(@"Syncing...", nil);
-    self.bluetoothIndicator.text = NSLocalizedString(@"Bluetooth Connected", nil);
+    self.bluetoothIndicator.text = NSLocalizedString(@"CellScope Connected", nil);
     
     self.cellscopeIDLabel.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"CellScopeID"];
     self.locationLabel.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"DefaultLocation"];
@@ -85,13 +80,9 @@
     [TBScopeData CSLog:@"Main menu screen presented" inCategory:@"USER"];
     
     [self setSyncIndicator];
-    [self setBTIndicator];
     [self setMenuPermissions];
     
     self.statusUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(getStatusUpdate) userInfo:nil repeats:YES];
-    
-
-    
 
 }
 
@@ -103,7 +94,21 @@
 
 - (void)getStatusUpdate
 {
-    [[TBScopeHardware sharedHardware] requestStatusUpdate];
+    BOOL isConnected = [[TBScopeHardware sharedHardware] isConnected];
+
+    if (isConnected) {
+        [[TBScopeHardware sharedHardware] requestStatusUpdate];
+    }
+
+    self.bluetoothIndicator.hidden = !isConnected;
+    self.bluetoothIcon.hidden = !isConnected;
+    self.temperatureIcon.hidden = !isConnected;
+    self.temperatureIndicatorLabel.hidden = !isConnected;
+    self.humidityIcon.hidden = !isConnected;
+    self.humidityIndicatorLabel.hidden = !isConnected;
+    self.batteryIcon.hidden = !isConnected;
+    self.batteryIndicatorLabel.hidden = !isConnected;
+    self.firmwareIndicatorLabel.hidden = !isConnected;
 }
 
 - (void)setMenuPermissions
@@ -121,10 +126,6 @@
 
 }
 
-- (void)setBTIndicator
-{
-    self.bluetoothIndicator.hidden = ![[TBScopeHardware sharedHardware] isConnected];
-}
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {

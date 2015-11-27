@@ -89,6 +89,14 @@
     self.stageStepDuration.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"StageStepInterval"]];
     self.focusStepDuration.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"FocusStepInterval"]];
     
+    self.backlash.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"StageBacklashSteps"]];
+    self.emptyFieldThreshold.text = [[NSString alloc] initWithFormat:@"%f",[prefs floatForKey:@"EmptyContentThreshold"]];
+    self.boundaryFieldThreshold.text = [[NSString alloc] initWithFormat:@"%f",[prefs floatForKey:@"BoundaryScoreThreshold"]];
+    self.uploadSwitch.on = [prefs boolForKey:@"UploadEnabled"];
+    self.downloadSwitch.on = [prefs boolForKey:@"DownloadEnabled"];
+    self.debuggingSwitch.on = [prefs boolForKey:@"DebugMode"];
+    
+    
 }
 
 - (void)saveValuesToPreferences
@@ -148,7 +156,14 @@
     [prefs setFloat:self.focusSettlingTime.text.floatValue forKey:@"FocusSettlingTime"];
     [prefs setFloat:self.stageSettlingTime.text.floatValue forKey:@"StageSettlingTime"];
     
+    [prefs setInteger:self.backlash.text.integerValue forKey:@"StageBacklashSteps"];
+    [prefs setFloat:self.emptyFieldThreshold.text.floatValue forKey:@"EmptyContentThreshold"];
+    [prefs setFloat:self.boundaryFieldThreshold.text.floatValue forKey:@"BoundaryScoreThreshold"];
+    [prefs setBool:self.uploadSwitch.on forKey:@"UploadEnabled"];
+    [prefs setBool:self.downloadSwitch.on forKey:@"DownloadEnabled"];
+    [prefs setBool:self.debuggingSwitch.on forKey:@"DebugMode"];
     
+        
     if ([alertString isEqualToString:@""])
         [prefs synchronize];
     
