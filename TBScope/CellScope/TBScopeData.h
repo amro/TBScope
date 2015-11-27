@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 UC Berkeley Fletcher Lab. All rights reserved.
 //
 
-#define PATCH_WIDTH 48
-#define PATCH_HEIGHT 48
+#define PATCH_WIDTH 24
+#define PATCH_HEIGHT 24
 #define SPRITESHEET_PATCHES_PER_ROW 25
 #define SPRITESHEET_BORDER_WIDTH 2
 
