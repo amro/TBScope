@@ -39,8 +39,6 @@ typedef struct
 
 + (ImageQuality) calculateFocusMetricFromIplImage:(IplImage *)iplImage;
 
-+ (UIImage*) maskCircleFromImage:(UIImage*)inputImage;
-
 + (UIImage *)cropImage:(UIImage*)image withBounds:(CGRect)rect;
 
 @end

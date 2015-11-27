@@ -2,8 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>DebugMode</key>
+	<true/>
+	<key>StageBacklashSteps</key>
+	<integer>500</integer>
 	<key>FocusBroadSweepRange</key>
-	<integer>13000</integer>
+	<real>13000</real>
 	<key>FocusBroadSweepStepSize</key>
 	<integer>500</integer>
 	<key>BatteryWarningVoltage</key>
@@ -15,9 +19,9 @@
 	<key>SlideCenterX</key>
 	<integer>3600</integer>
 	<key>StageSettlingTime</key>
-	<real>0.1</real>
+	<real>0.2</real>
 	<key>FocusSettlingTime</key>
-	<real>0.075</real>
+	<real>0.2</real>
 	<key>StageStepInterval</key>
 	<integer>200</integer>
 	<key>FocusStepInterval</key>
@@ -93,9 +97,9 @@
 	<key>CameraISOSpeedBF</key>
 	<integer>64</integer>
 	<key>CameraExposureDurationFL</key>
-	<integer>150</integer>
+	<integer>100</integer>
 	<key>CameraISOSpeedFL</key>
-	<integer>200</integer>
+	<integer>300</integer>
 	<key>CameraWhiteBalanceBlueGain</key>
 	<integer>1</integer>
 	<key>CameraWhiteBalanceGreenGain</key>

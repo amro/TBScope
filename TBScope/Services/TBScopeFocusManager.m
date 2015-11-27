@@ -307,10 +307,10 @@
 // Not sure whether pausing briefly after moving the lens up/down helps
 // get a less noisy image quality metric. We'll set it arbitrarily for
 // now, but would be worth some investigation later.
+// ...testing different values
 - (void)pauseForSettling
 {
-    float focusSettlingTime = 0.3;
-    [NSThread sleepForTimeInterval:focusSettlingTime];
+    [NSThread sleepForTimeInterval:[[NSUserDefaults standardUserDefaults] floatForKey:@"FocusSettlingTime"]];
 }
 
 @end

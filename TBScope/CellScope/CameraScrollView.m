@@ -54,13 +54,14 @@
     // If we're debugging, add a label to display image quality metrics
     self.imageQualityLabel = [[UILabel alloc] init];
     [self addSubview:self.imageQualityLabel];
-    [self.imageQualityLabel setBounds:CGRectMake(0,0,400,400)];
-    [self.imageQualityLabel setCenter:CGPointMake(1000, 100)];
+    [self.imageQualityLabel setBounds:CGRectMake(0,0,400,500)];
+    [self.imageQualityLabel setCenter:CGPointMake(350, 80)];
     self.imageQualityLabel.textColor = [UIColor whiteColor];
+    self.imageQualityLabel.font = [UIFont fontWithName:@"Courier" size:14.0];
     [self bringSubviewToFront:self.imageQualityLabel];
     self.imageQualityLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.imageQualityLabel.numberOfLines = 0;
-    self.imageQualityLabel.hidden = YES; //remove for now
+    self.imageQualityLabel.hidden = ![[NSUserDefaults standardUserDefaults] boolForKey:@"DebugMode"];
     
     //TODO: are these necessary?
     [previewLayerView setNeedsDisplay];
@@ -76,12 +77,19 @@
               ImageQuality iq;
               [iqAsObject getValue:&iq];
               NSString *text = [NSString stringWithFormat:@"\n"
-                  "tgrad3:        %@ (%3.3f)\n"
-                  "greenContrast: %@ (%3.3f)\n\n",
+                  "sharpness:  %@ (%3.3f)\n"
+                  "contrast:   %@ (%3.3f)\n"
+                  "boundryScr: %@ (%3.3f)\n"
+                  "isBoundary:  %@\n"
+                  "isEmpty:     %@\n\n",
                   [@"" stringByPaddingToLength:(int)MIN(80, (iq.tenengrad3/14.375)) withString: @"|" startingAtIndex:0],
                   iq.tenengrad3,
                   [@"" stringByPaddingToLength:(int)MIN(80, (iq.greenContrast/0.0875)) withString: @"|" startingAtIndex:0],
-                  iq.greenContrast
+                  iq.greenContrast,
+                  [@"" stringByPaddingToLength:(int)MIN(80, (iq.boundaryScore/10.0)) withString: @"|" startingAtIndex:0],
+                  iq.boundaryScore,
+                  iq.isBoundary?@"YES":@"NO",
+                  iq.isEmpty?@"YES":@"NO"
               ];
               dispatch_async(dispatch_get_main_queue(), ^{
                   // NSLog(@"Image quality report: %@", text);

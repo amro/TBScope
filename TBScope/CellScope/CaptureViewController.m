@@ -94,7 +94,10 @@ AVAudioPlayer* _avPlayer;
     self.scanStatusLabel.hidden = YES;
     self.abortButton.hidden = YES;
     
-    [NSTimer scheduledTimerWithTimeInterval:(float)0.5 target:self selector:@selector(updateCoordinateLabel) userInfo:nil repeats:YES];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DebugMode"]) {
+        [NSTimer scheduledTimerWithTimeInterval:(float)0.5 target:self selector:@selector(updateCoordinateLabel) userInfo:nil repeats:YES];
+    }
+
     
     [TBScopeData CSLog:@"Capture screen presented" inCategory:@"USER"];
 
@@ -104,7 +107,6 @@ AVAudioPlayer* _avPlayer;
     }
     else
     {
-        [self toggleBF:YES];
         [self didPressMoveCenter:nil];
     }
 }
@@ -201,9 +203,6 @@ AVAudioPlayer* _avPlayer;
     
     UIImage* image = [[TBScopeCamera sharedCamera] lastCapturedImage]; //[self convertImageToGrayScale:previewView.lastCapturedImage];
     
-    //Crop the circle out of it
-    //image = [ImageQualityAnalyzer maskCircleFromImage:image];
-
     __weak typeof(self) weakSelf = self;
     void (^saveBlock)(NSURL *);
     saveBlock = ^(NSURL *assetURL){
@@ -294,6 +293,10 @@ AVAudioPlayer* _avPlayer;
     else if (buttonPressed.tag==6) //z-
         self.currentDirection = CSStageDirectionFocusDown;
     
+    if (self.currentDirection==CSStageDirectionFocusDown || self.currentDirection==CSStageDirectionFocusUp)
+        [[TBScopeHardware sharedHardware] setStepperInterval:[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusStepInterval"]];
+    else
+        [[TBScopeHardware sharedHardware] setStepperInterval:[[NSUserDefaults standardUserDefaults] integerForKey:@"StageStepInterval"]];
     
     holdTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(moveStage:) userInfo:nil repeats:YES];
     
@@ -635,14 +638,7 @@ AVAudioPlayer* _avPlayer;
 //timer function
 -(void) moveStage:(NSTimer *)timer
 {
-        //this is a hack, want to keep track of how far user moves focus in manual mode for debug purposes.
-        if (_isWaitingForFocusConfirmation) {
-            if (self.currentDirection == CSStageDirectionFocusDown)
-                _manualRefocusStepCounter = _manualRefocusStepCounter - 20;
-            else if (self.currentDirection == CSStageDirectionFocusUp)
-                _manualRefocusStepCounter = _manualRefocusStepCounter + 20;
-        }
-        
+
         if (self.currentSpeed==CSStageSpeedSlow)
             [[TBScopeHardware sharedHardware] moveStageWithDirection:self.currentDirection Steps:20 StopOnLimit:YES DisableAfter:YES];
         else if (self.currentSpeed==CSStageSpeedFast)
@@ -757,6 +753,9 @@ AVAudioPlayer* _avPlayer;
     int focusStepInterval = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusStepInterval"];
     float stageSettlingTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"StageSettlingTime"];
 
+    //backlash compensation on serpentine turnaround
+    int backlashSteps = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"StageBacklashSteps"];
+    
     [TBScopeData CSLog:@"Autoscanning..." inCategory:@"CAPTURE"];
     
     //setup UI
@@ -773,9 +772,6 @@ AVAudioPlayer* _avPlayer;
         self.scanStatusLabel.hidden = NO;
         self.abortButton.hidden = NO;
         self.refocusButton.hidden = NO;
-        self.moveCenterButton.hidden = YES;
-        self.moveHomeButton.hidden = YES;
-        self.setCenterButton.hidden = YES;
         
         self.autoScanProgressBar.hidden = NO;
         self.autoScanProgressBar.progress = 0;
@@ -814,10 +810,9 @@ AVAudioPlayer* _avPlayer;
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
-    //set stage speed
     [NSThread sleepForTimeInterval:0.1];
     
-    //move to center
+    //set stage speed and move to center
     [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
     [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:-1];
     [[TBScopeHardware sharedHardware] waitForStage];
@@ -828,10 +823,13 @@ AVAudioPlayer* _avPlayer;
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
+    [NSThread sleepForTimeInterval:0.1];
+    
     //move to first position in grid
     //backup in both X and Y by half the row/col distance
-    int xSteps = (numCols/2)*stepsBetween;
-    int ySteps = (numRows/2)*stepsBetween;
+    long xSteps = (numCols/2)*stepsBetween;
+    long ySteps = (numRows/2)*stepsBetween;
+    [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
     [[TBScopeHardware sharedHardware] moveStageWithDirection:CSStageDirectionRight Steps:ySteps StopOnLimit:YES DisableAfter:YES];
     [[TBScopeHardware sharedHardware] waitForStage];
     [[TBScopeHardware sharedHardware] moveStageWithDirection:CSStageDirectionUp Steps:xSteps StopOnLimit:YES DisableAfter:YES];
@@ -839,6 +837,8 @@ AVAudioPlayer* _avPlayer;
     
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+    
+    [NSThread sleepForTimeInterval:0.1];
     
     dispatch_async(dispatch_get_main_queue(), ^(void){
         self.scanStatusLabel.text = NSLocalizedString(@"Initial Focusing...", nil);
@@ -849,7 +849,6 @@ AVAudioPlayer* _avPlayer;
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
-
     int yDir;
     
     //x iterator
@@ -862,12 +861,12 @@ AVAudioPlayer* _avPlayer;
             yDir = CSStageDirectionRight;
         
         //backlash compensation
+        [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
         [[TBScopeHardware sharedHardware] moveStageWithDirection:yDir
-                                                           Steps:BACKLASH_STEPS
+                                                           Steps:backlashSteps
                                                      StopOnLimit:YES
                                                     DisableAfter:YES];
         [[TBScopeHardware sharedHardware] waitForStage];
-        
         
         //y iterator
         for (int j=0; j<numRows; j++) {
@@ -892,11 +891,20 @@ AVAudioPlayer* _avPlayer;
                 
                 [NSThread sleepForTimeInterval:0.1];
                 
+                [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
                 TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
 
                 if (focusResult == TBScopeFocusManagerResultFailure)
                     [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
-            
+                
+                //switch to fluorescence
+                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
+                [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+                [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+                [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+                
+                [NSThread sleepForTimeInterval:0.1];
+                
                 autoFocusFailCount = 0;
             }
             
@@ -909,18 +917,11 @@ AVAudioPlayer* _avPlayer;
 
             // focus in fluorescence (each N frames)
             fieldsSinceLastFocus++;
-            if (fieldsSinceLastFocus>focusInterval) {
+            if (fieldsSinceLastFocus>=focusInterval) {
                 if (![[TBScopeCamera sharedCamera] currentImageQuality].isEmpty) {
-                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
-                    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
-                    [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
-                    [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
-                    
-                    [NSThread sleepForTimeInterval:0.05];
-                    
+
+                    [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
                     TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
-                    
-                    //TODO: add ipad autofocusing here? replace?
                     
                     if (focusResult == TBScopeFocusManagerResultFailure) {
                         autoFocusFailCount++;
@@ -931,6 +932,7 @@ AVAudioPlayer* _avPlayer;
                 }
             }
             
+            //gives the user the option to intervene...
             if (_didPressManualFocus) {
                 self.refocusButton.hidden = YES;
                 
@@ -939,13 +941,12 @@ AVAudioPlayer* _avPlayer;
                 self.refocusButton.hidden = NO;
                 _didPressManualFocus = NO;
                 autoFocusFailCount = 0;
+                fieldsSinceLastFocus = 0;
             }
             
-            //take an image
-            [NSThread sleepForTimeInterval:stageSettlingTime];
-            ImageQuality iq = [[TBScopeCamera sharedCamera] currentImageQuality];
-
-             if (iq.isEmpty) {
+            //check image content score, and take an image if it's not empty
+            
+             if ([[TBScopeCamera sharedCamera] currentImageQuality].isEmpty) {
                  emptyFieldCount++;
                  [TBScopeData CSLog:@"Skipping image capture; image is empty." inCategory:@"CAPTURE"];
              }
@@ -954,9 +955,9 @@ AVAudioPlayer* _avPlayer;
              // [TBScopeData CSLog:@"Skipping image capture; image contains boundary." inCategory:@"CAPTURE"];
              // }
              else {
-                 acquiredImageCount++;
                 [self didPressCapture:nil];
-                [NSThread sleepForTimeInterval:0.5];
+                 acquiredImageCount++;
+                //[NSThread sleepForTimeInterval:0.5]; //TODO: is this necessary?
              }
             
             dispatch_async(dispatch_get_main_queue(), ^(void){
@@ -965,24 +966,28 @@ AVAudioPlayer* _avPlayer;
             });
             
             //move stage in y
+            [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
             [[TBScopeHardware sharedHardware] moveStageWithDirection:yDir
                                                                Steps:stepsBetween
                                                          StopOnLimit:YES
                                                         DisableAfter:YES];
             [[TBScopeHardware sharedHardware] waitForStage];
-            
+            [NSThread sleepForTimeInterval:stageSettlingTime];
+
         }
         
         //move stage in x (next column)
+        [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
         [[TBScopeHardware sharedHardware] moveStageWithDirection:CSStageDirectionDown
                                                            Steps:stepsBetween
                                                      StopOnLimit:YES
                                                     DisableAfter:YES];
         [[TBScopeHardware sharedHardware] waitForStage];
+        [NSThread sleepForTimeInterval:stageSettlingTime];
+
     }
     
     //turn off BF and FL
-    NSLog(@"lights off");
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
     
@@ -1008,9 +1013,6 @@ AVAudioPlayer* _avPlayer;
         self.abortButton.hidden = YES;
         self.refocusButton.hidden = YES;
         self.autoScanProgressBar.hidden = YES;
-        self.moveCenterButton.hidden = NO;
-        self.moveHomeButton.hidden = NO;
-        self.setCenterButton.hidden = NO;
 
     });
     

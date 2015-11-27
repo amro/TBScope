@@ -16,7 +16,7 @@
 @implementation ImageQualityAnalyzer
 
 static int const kMinBoundaryThreshold = 70.0;  // The minimum boundaryScore at which we consider an image to be a boundary
-static int const kMinContentThreshold = 1.80;   // The minimum contentScore at which we consider an image to have content
+static float const kMinContentThreshold = 1.80;   // The minimum contentScore at which we consider an image to have content
 
 using namespace cv;
 
@@ -336,7 +336,7 @@ double contrast(cv::Mat src) {
     double meanLow = meanOfVector(filterByPercentile(pixelVals, 0.25, 0.75));
     double meanHigh = meanOfVector(filterByPercentile(pixelVals, 0.995, 1.0));
     double contrast = meanHigh/MAX(1.0, meanLow);
-
+    
     // std::vector<int> low = filterByPercentile(pixelVals, 0.25, 0.75);
     // std::vector<int> high = filterByPercentile(pixelVals, 0.99, 1.0);
     // NSLog(@"low: %d-%d  high: %d-%d", low.front(), low.back(), high.front(), high.back());
@@ -423,10 +423,10 @@ double _stdev(std::vector<int> v) {
 */
 
     // Calculate base metrics (used for contrast etc)
-    Scalar mean, stDev;
-    double minVal, maxVal;
-    meanStdDev(src, mean, stDev);
-    minMaxIdx(src, &minVal, &maxVal);
+    //Scalar mean, stDev;
+    //double minVal, maxVal;
+    //meanStdDev(src, mean, stDev);
+    //minMaxIdx(src, &minVal, &maxVal);
 
     iq.entropy = 0;  //computeShannonEntropy(src);
     iq.normalizedGraylevelVariance = 0;  // normalizedGraylevelVariance(src);
@@ -454,111 +454,12 @@ double _stdev(std::vector<int> v) {
 
     src.release();
     green.release();
-    
-    //lap.release();
     cvReleaseImage(&iplImage);
-    
     
     return iq;
     
-    
-    
-    /*
-    IplImage* img = [ImageQualityAnalyzer createIplImageFromSampleBuffer:sampleBuffer];
-    
-    // assumes that your image is already in planner yuv or 8 bit greyscale
-    //IplImage* in = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,1);
-    IplImage* out = cvCreateImage(cvSize(img->width,img->height),IPL_DEPTH_16S,1);
-    //memcpy(in->imageData,data,width*height);
-    
-    
-    // aperture size of 1 corresponds to the correct matrix
-    cvLaplace(img, out, 1);
-    
-    short maxLap = -32767;
-    short* imgData = (short*)out->imageData;
-    for(int i =0;i<(out->imageSize/2);i++)
-    {
-        if(imgData[i] > maxLap) maxLap = imgData[i];
-    }
-    
-    cvReleaseImage(&img);
-    cvReleaseImage(&out);
-    
-    return maxLap;
-     */
 }
 
-//TODO: remove the unnecessary conversion functions in this file
-/*
-+ (UIImage*) maskCircleFromImage:(UIImage*)inputImage
-{
-    CGImageRef maskRef = [UIImage imageNamed:@"circlemask.png"].CGImage;
-
-    CGImageRef mask = CGImageMaskCreate(CGImageGetWidth(maskRef),
-                                        CGImageGetHeight(maskRef),
-                                        CGImageGetBitsPerComponent(maskRef),
-                                        CGImageGetBitsPerPixel(maskRef),
-                                        CGImageGetBytesPerRow(maskRef),
-                                        CGImageGetDataProvider(maskRef), NULL, false);
-
-    CGImageRef masked = CGImageCreateWithMask([inputImage CGImage], mask);
-    CGImageRelease(mask);
-
-    UIImage *maskedImage = [UIImage imageWithCGImage:masked];
-
-    CGImageRelease(masked);
-    
-    return maskedImage;
-}
-*/
-
-+ (UIImage*)maskCircleFromImage:(UIImage *)image {
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
-    UIImage *maskImage = [UIImage imageNamed:@"circlemask.png"];
-    CGImageRef maskImageRef = [maskImage CGImage];
-    
-    // create a bitmap graphics context the size of the image
-    CGContextRef mainViewContentContext = CGBitmapContextCreate (NULL, maskImage.size.width, maskImage.size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
-    
-    
-    if (mainViewContentContext==NULL)
-        return NULL;
-    
-    CGFloat ratio = 0;
-    
-    ratio = maskImage.size.width/ image.size.width;
-    
-    if(ratio * image.size.height < maskImage.size.height) {
-        ratio = maskImage.size.height/ image.size.height;
-    }
-    
-    CGRect rect1  = {{0, 0}, {maskImage.size.width, maskImage.size.height}};
-    CGRect rect2  = {{-((image.size.width*ratio)-maskImage.size.width)/2 , -((image.size.height*ratio)-maskImage.size.height)/2}, {image.size.width*ratio, image.size.height*ratio}};
-    
-    CGContextSetRGBFillColor(mainViewContentContext, 0.0, 0.0, 0.0, 1.0);
-    CGContextFillRect(mainViewContentContext, rect1); //???
-    CGContextClipToMask(mainViewContentContext, rect1, maskImageRef);
-
-    CGContextDrawImage(mainViewContentContext, rect2, image.CGImage);
-    
-    
-    // Create CGImageRef of the main view bitmap content, and then
-    // release that bitmap context
-    CGImageRef newImage = CGBitmapContextCreateImage(mainViewContentContext);
-    CGContextRelease(mainViewContentContext);
-    
-    UIImage *theImage = [UIImage imageWithCGImage:newImage];
-    
-    CGImageRelease(newImage);
-    
-    // return the image
-    return theImage;
-}
-
-//TODO: rename this class to "image tools" or something
 
 + (UIImage *)cropImage:(UIImage*)image withBounds:(CGRect)rect {
     if (image.scale > 1.0f) {

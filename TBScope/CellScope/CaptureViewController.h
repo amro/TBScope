@@ -17,13 +17,6 @@
 #import "CameraScrollView.h"
 #import "AnalysisViewController.h"
 
-#define FOCUS_IMPROVEMENT_THRESHOLD_SHARPNESS 1.2
-#define FOCUS_IMPROVEMENT_THRESHOLD_CONTRAST 1.1
-
-#define BACKLASH_STEPS 500  // TODO: make this a config setting
-
-#define MAX_FLUORESCENCE_AF_FAILURES 3
-
 @interface CaptureViewController : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate, TBScopeHardwareDelegate>
 
 
