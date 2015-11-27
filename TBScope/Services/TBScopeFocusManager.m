@@ -9,6 +9,7 @@
 #import "TBScopeFocusManager.h"
 #import "TBScopeCamera.h"
 #import "TBScopeHardware.h"
+#import "TBScopeData.h"
 
 @interface TBScopeFocusManager ()
 @property (nonatomic) int currentIterationBestPosition;
@@ -97,16 +98,19 @@
         [self _updateLastGoodPositionAndMetric];
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.currentIterationBestPosition];
         [[TBScopeHardware sharedHardware] waitForStage];
+        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful (coarse), best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultSuccess;
     } else if (self.lastGoodPosition >= 0) {
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.lastGoodPosition];
         [[TBScopeHardware sharedHardware] waitForStage];
+        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful (fine), best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultReturn;
     }
 
     // Utter failure to focus, return to starting position
     [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:startingZPosition];
     [[TBScopeHardware sharedHardware] waitForStage];
+    [TBScopeData CSLog:@"Auto focus failure" inCategory:@"CAPTURE"];
     return TBScopeFocusManagerResultFailure;
 }
 

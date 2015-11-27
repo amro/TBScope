@@ -17,6 +17,9 @@
 #import "CameraScrollView.h"
 #import "AnalysisViewController.h"
 
+#define NUM_FOCUS_REPOSITIONING_ATTEMPTS 3
+#define FOCUS_REPOSITIONING_STEPS 50
+
 @interface CaptureViewController : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate, TBScopeHardwareDelegate>
 
 

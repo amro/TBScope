@@ -15,8 +15,8 @@
 
 @implementation ImageQualityAnalyzer
 
-static int const kMinBoundaryThreshold = 70.0;  // The minimum boundaryScore at which we consider an image to be a boundary
-static float const kMinContentThreshold = 1.80;   // The minimum contentScore at which we consider an image to have content
+//static float const kMinBoundaryThreshold = 70.0;  // The minimum boundaryScore at which we consider an image to be a boundary
+//static float const kMinContentThreshold = 1.80;   // The minimum contentScore at which we consider an image to have content
 
 using namespace cv;
 
@@ -448,9 +448,9 @@ double _stdev(std::vector<int> v) {
         iq.greenContrast = contrast(green);
     }
     iq.boundaryScore = boundaryScore(green);
-    iq.contentScore = iq.greenContrast;  // contentScore(green);  (no sense in calculating it twice)
-    iq.isBoundary = (iq.boundaryScore >= kMinBoundaryThreshold); //TODO: we should make this a multiplier over some baseline boundaryScore that is taken when the slide is centered (presumably that location is NOT a boundary)
-    iq.isEmpty = (iq.contentScore < kMinContentThreshold);
+    iq.contentScore = iq.greenContrast;
+    iq.isBoundary = (iq.boundaryScore >= [[NSUserDefaults standardUserDefaults] floatForKey:@"BoundaryScoreThreshold"]);
+    iq.isEmpty = (iq.contentScore < [[NSUserDefaults standardUserDefaults] floatForKey:@"EmptyContentThreshold"]);
 
     src.release();
     green.release();

@@ -54,8 +54,8 @@
     // If we're debugging, add a label to display image quality metrics
     self.imageQualityLabel = [[UILabel alloc] init];
     [self addSubview:self.imageQualityLabel];
-    [self.imageQualityLabel setBounds:CGRectMake(0,0,400,500)];
-    [self.imageQualityLabel setCenter:CGPointMake(350, 80)];
+    [self.imageQualityLabel setBounds:CGRectMake(0,0,500,500)];
+    [self.imageQualityLabel setCenter:CGPointMake(400, 80)];
     self.imageQualityLabel.textColor = [UIColor whiteColor];
     self.imageQualityLabel.font = [UIFont fontWithName:@"Courier" size:14.0];
     [self bringSubviewToFront:self.imageQualityLabel];

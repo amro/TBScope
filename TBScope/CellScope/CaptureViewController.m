@@ -709,6 +709,7 @@ AVAudioPlayer* _avPlayer;
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity]; 
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity]; //little bit of BF helps w/ focus
     [[TBScopeCamera sharedCamera] setExposureDuration:exp ISOSpeed:iso];
+    [NSThread sleepForTimeInterval:0.5]; //TODO: for some reason, the exposure still isn't getting set immediately
     
     _manualRefocusStepCounter = 0;
     _isWaitingForFocusConfirmation = YES;
@@ -718,7 +719,7 @@ AVAudioPlayer* _avPlayer;
     [TBScopeData CSLog:[NSString stringWithFormat:@"Manual re-focus completed with deltaSteps=%d",_manualRefocusStepCounter] inCategory:@"CAPTURE"];
     
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
-    
+    [NSThread sleepForTimeInterval:0.1];
     
     dispatch_async(dispatch_get_main_queue(), ^(void){
 
@@ -844,7 +845,8 @@ AVAudioPlayer* _avPlayer;
         self.scanStatusLabel.text = NSLocalizedString(@"Initial Focusing...", nil);
     });
 
-    //TODO: add some CSLog's for focus metrics
+    //reset focus manager
+    [[TBScopeFocusManager sharedFocusManager] clearLastGoodPositionAndMetric];
     
     //check if abort button pressed
     if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
@@ -867,6 +869,7 @@ AVAudioPlayer* _avPlayer;
                                                      StopOnLimit:YES
                                                     DisableAfter:YES];
         [[TBScopeHardware sharedHardware] waitForStage];
+        [NSThread sleepForTimeInterval:stageSettlingTime];
         
         //y iterator
         for (int j=0; j<numRows; j++) {
@@ -891,12 +894,28 @@ AVAudioPlayer* _avPlayer;
                 
                 [NSThread sleepForTimeInterval:0.1];
                 
-                [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
-                TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
-
-                if (focusResult == TBScopeFocusManagerResultFailure)
-                    [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
+                TBScopeFocusManagerResult focusResult;
+                for (int i=0; i<NUM_FOCUS_REPOSITIONING_ATTEMPTS; i++) {
+                    [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
+                    focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
+                    if (focusResult==TBScopeFocusManagerResultFailure) {
+                        [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
+                        [[TBScopeHardware sharedHardware] moveStageWithDirection:yDir
+                                                                           Steps:FOCUS_REPOSITIONING_STEPS
+                                                                     StopOnLimit:YES
+                                                                    DisableAfter:YES];
+                        [[TBScopeHardware sharedHardware] waitForStage];
+                        [NSThread sleepForTimeInterval:stageSettlingTime];
+                    }
+                    else
+                        break;
+                }
                 
+                if (focusResult == TBScopeFocusManagerResultFailure) {
+                    [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
+                    [[TBScopeFocusManager sharedFocusManager] setLastGoodPosition:[[TBScopeHardware sharedHardware] zPosition]];
+                    fieldsSinceLastFocus = 0;
+                }
                 //switch to fluorescence
                 [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
                 [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
@@ -920,15 +939,30 @@ AVAudioPlayer* _avPlayer;
             if (fieldsSinceLastFocus>=focusInterval) {
                 if (![[TBScopeCamera sharedCamera] currentImageQuality].isEmpty) {
 
-                    [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
-                    TBScopeFocusManagerResult focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
+                    TBScopeFocusManagerResult focusResult;
+                    for (int i=0; i<NUM_FOCUS_REPOSITIONING_ATTEMPTS; i++) {
+                        [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
+                        focusResult = [[TBScopeFocusManager sharedFocusManager] autoFocus];
+                        if (focusResult==TBScopeFocusManagerResultFailure) {
+                            [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
+                            [[TBScopeHardware sharedHardware] moveStageWithDirection:yDir
+                                                                               Steps:FOCUS_REPOSITIONING_STEPS
+                                                                         StopOnLimit:YES
+                                                                        DisableAfter:YES];
+                            [[TBScopeHardware sharedHardware] waitForStage];
+                            [NSThread sleepForTimeInterval:stageSettlingTime];
+                        }
+                        else
+                            break;
+                    }
+
                     
                     if (focusResult == TBScopeFocusManagerResultFailure) {
                         autoFocusFailCount++;
                     } else {
                         autoFocusFailCount = 0;
+                        fieldsSinceLastFocus = 0;
                     }
-                    fieldsSinceLastFocus = 0;
                 }
             }
             
@@ -937,7 +971,7 @@ AVAudioPlayer* _avPlayer;
                 self.refocusButton.hidden = YES;
                 
                 [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
-                
+                [[TBScopeFocusManager sharedFocusManager] setLastGoodPosition:[[TBScopeHardware sharedHardware] zPosition]];
                 self.refocusButton.hidden = NO;
                 _didPressManualFocus = NO;
                 autoFocusFailCount = 0;
@@ -957,7 +991,6 @@ AVAudioPlayer* _avPlayer;
              else {
                 [self didPressCapture:nil];
                  acquiredImageCount++;
-                //[NSThread sleepForTimeInterval:0.5]; //TODO: is this necessary?
              }
             
             dispatch_async(dispatch_get_main_queue(), ^(void){
@@ -983,7 +1016,6 @@ AVAudioPlayer* _avPlayer;
                                                      StopOnLimit:YES
                                                     DisableAfter:YES];
         [[TBScopeHardware sharedHardware] waitForStage];
-        [NSThread sleepForTimeInterval:stageSettlingTime];
 
     }
     

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>EmptyContentThreshold</key>
+	<string>1.15</string>
+	<key>BoundaryScoreThreshold</key>
+	<integer>100</integer>
 	<key>DebugMode</key>
 	<true/>
 	<key>StageBacklashSteps</key>
