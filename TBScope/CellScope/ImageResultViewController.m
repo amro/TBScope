@@ -91,13 +91,7 @@
                 [av dismissWithClickedButtonIndex:0 animated:YES];
             });
         }];
-        
-        self.tabBarController.navigationItem.title = [NSString stringWithFormat:NSLocalizedString(@"Exam %@, Slide %d, Image %d of %ld",nil),
-                                                        self.currentSlide.exam.examID,
-                                                        self.currentSlide.slideNumber,
-                                                        self.currentImageIndex+1,
-                                                        self.currentSlide.slideImages.count];
-        
+        [self refreshTitle];
         
         [TBScopeData CSLog:@"Image view presented" inCategory:@"USER"];
     } else {
@@ -105,18 +99,8 @@
         self.imageViewModeButton.tag = 1;
 
         // Disable button if no images exist locally
-        NSManagedObjectContext *tmpMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        tmpMOC.parentContext = [[TBScopeData sharedData] managedObjectContext];
-        __block NSArray* result;
-        [tmpMOC performBlockAndWait:^{
-            NSPredicate* pred = [NSPredicate predicateWithFormat:@"(slide = %@) AND (path != nil)", self.currentSlide];
-            result = [CoreDataHelper searchObjectsForEntity:@"Images"
-                                              withPredicate:pred
-                                                 andSortKey:nil
-                                           andSortAscending:YES
-                                                 andContext:tmpMOC];
-        }];
-        if ([result count] > 0) {
+        NSArray *localImages = [self localImages];
+        if ([localImages count] > 0) {
             self.imageViewModeButton.hidden = NO;
         } else {
             self.imageViewModeButton.hidden = YES;
@@ -140,10 +124,7 @@
             [av dismissWithClickedButtonIndex:0 animated:YES];
         });
         
-        self.tabBarController.navigationItem.title = [NSString stringWithFormat:NSLocalizedString(@"Exam %@, Slide %d, Analyzed Patches",nil),
-                                     self.currentSlide.exam.examID,
-                                     self.currentSlide.slideNumber];
-        
+        [self refreshTitle];
         
         [TBScopeData CSLog:@"ROI view presented" inCategory:@"USER"];
     }
@@ -153,23 +134,95 @@
 - (IBAction)didPressArrow:(id)sender
 {
     UIAlertView* av = [self showWaitIndicator];
-    
-    if (sender==self.rightArrow && (self.currentImageIndex<(self.currentSlide.slideImages.count-1)))
+
+    NSArray *localImages = [self localImages];
+    if (sender==self.rightArrow && (self.currentImageIndex<(localImages.count-1)))
         self.currentImageIndex++;
     else if (sender==self.leftArrow && self.currentImageIndex>0)
         self.currentImageIndex--;
-    
+
     [self loadImage:self.currentImageIndex completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [av dismissWithClickedButtonIndex:0 animated:YES];
-            
-            self.tabBarController.navigationItem.title = [NSString stringWithFormat:NSLocalizedString(@"Exam %@, Slide %d, Image %d of %ld",nil),
-                                                          self.currentSlide.exam.examID,
-                                                          self.currentSlide.slideNumber,
-                                                          self.currentImageIndex+1,
-                                                          self.currentSlide.slideImages.count];
+            [self refreshTitle];
         });
     }];
+    [self refreshArrowStates];
+}
+
+- (void)refreshTitle
+{
+    UINavigationItem *navItem = self.tabBarController.navigationItem;
+    if (self.imageViewModeButton.tag==1) {
+        // rois are showing
+        navItem.title = [NSString stringWithFormat:NSLocalizedString(@"Exam %@, Slide %d, Analyzed Patches",nil),
+                         self.currentSlide.exam.examID,
+                         self.currentSlide.slideNumber];
+    } else {
+        // images are showing
+        Images *currentImage = [self imageAtIndex:self.currentImageIndex];
+        __block NSString *examID;
+        __block NSInteger *slideNumber;
+        __block NSInteger *fieldNumber;
+        __block NSInteger *totalImages;
+        [currentImage.managedObjectContext performBlockAndWait:^{
+            examID = self.currentSlide.exam.examID;
+            slideNumber = self.currentSlide.slideNumber;
+            fieldNumber = currentImage.fieldNumber;
+            totalImages = self.currentSlide.slideImages.count;
+        }];
+        if (!examID) {
+            NSLog(@"examID is nil.");
+        }
+        navItem.title = [NSString stringWithFormat:NSLocalizedString(@"Exam %@, Slide %d, Image %d of %ld",nil),
+                         examID,
+                         slideNumber,
+                         fieldNumber,
+                         totalImages];
+    }
+}
+
+- (void)refreshArrowStates
+{
+    // Re-enable both buttons
+    self.leftArrow.enabled = YES;
+    self.leftArrow.hidden = NO;
+    self.rightArrow.enabled = YES;
+    self.rightArrow.hidden = NO;
+
+    NSArray *localImages = [self localImages];
+    if ([self currentImageIndex] == 0) {
+        // We're at the beginning, disable the previous button
+        self.leftArrow.enabled = NO;
+        self.leftArrow.hidden = YES;
+    } else if ([self currentImageIndex] == (int)localImages.count-1) {
+        // We're at the end, disable the next button
+        self.rightArrow.enabled = NO;
+        self.rightArrow.hidden = YES;
+    }
+}
+
+- (NSArray *)localImages
+{
+    NSManagedObjectContext *moc = [[TBScopeData sharedData] managedObjectContext];
+    __block NSArray *results;
+    [moc performBlockAndWait:^{
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"(slide = %@) && (path != nil)", self.currentSlide];
+        results = [CoreDataHelper searchObjectsForEntity:@"Images"
+                                           withPredicate:pred
+                                              andSortKey:@"fieldNumber"
+                                        andSortAscending:YES
+                                              andContext:moc];
+    }];
+    return results;
+}
+
+- (Images *)imageAtIndex:(int)index
+{
+    NSArray *localImages = [self localImages];
+    if (index < 0) index = 0;
+    if (index >= [localImages count]) index = (int)[localImages count]-1;
+    return [localImages objectAtIndex:index];
 }
 
 - (void) viewWillDisappear:(BOOL)animated
@@ -198,37 +251,42 @@
     return altpleasewait;
 }
 
-
-- (void) loadImage:(int)index completionHandler:(void(^)())completionBlock
+//load the image at index currentImageIndex and display w/ ROIs
+- (void)loadImage:(int)index completionHandler:(void(^)())completionBlock
 {
-    //load the image at index currentImageIndex and display w/ ROIs
-    
-    if (self.currentSlide.slideImages.count<=index) {
+    // Load a list of Images objects that belong to this slide and
+    // have a local path (have been downloaded)
+    NSArray *localImages = [self localImages];
+
+    // If index is past the end of the list, call completionBlock
+    if (index >= localImages.count) {
         completionBlock();
         return;
     }
-    
-    Images* currentImage = (Images*)[[self.currentSlide slideImages] objectAtIndex:index];
-    
-    [TBScopeData getImage:currentImage resultBlock:^(UIImage* image, NSError* err){
-        if (err==nil)
-        {
-            //do the slideViewer settings need to be set after image set?
-            [slideViewer setImage:image];
-            [slideViewer.subView setRoiList:currentImage.imageAnalysisResults.imageROIs];
-            [slideViewer.subView setBoxesVisible:YES];
-            [slideViewer.subView setScoresVisible:YES];
-            [slideViewer setMaximumZoomScale:10.0];
-            [slideViewer setShowsHorizontalScrollIndicator:YES];
-            [slideViewer setShowsVerticalScrollIndicator:YES];
-            [slideViewer setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
-            [slideViewer setNeedsDisplay];
 
-        }
-        completionBlock();
+    // Load image
+    Images* currentImage = [self imageAtIndex:index];
+    [currentImage.managedObjectContext performBlock:^{
+        [TBScopeData getImage:currentImage resultBlock:^(UIImage* image, NSError* err){
+            if (err==nil) {
+                //do the slideViewer settings need to be set after image set?
+                [slideViewer setImage:image];
+                [slideViewer.subView setRoiList:currentImage.imageAnalysisResults.imageROIs];
+                [slideViewer.subView setBoxesVisible:YES];
+                [slideViewer.subView setScoresVisible:YES];
+                [slideViewer setMaximumZoomScale:10.0];
+                [slideViewer setShowsHorizontalScrollIndicator:YES];
+                [slideViewer setShowsVerticalScrollIndicator:YES];
+                [slideViewer setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
+                [slideViewer setNeedsDisplay];
+
+            }
+
+            NSString *message = [NSString stringWithFormat:@"Image viewer screen presented, field #%d", currentImage.fieldNumber];
+            [TBScopeData CSLog:message inCategory:@"USER"];
+            completionBlock();
+        }];
     }];
-    
-    [TBScopeData CSLog:[NSString stringWithFormat:@"Image viewer screen presented, field #%d",currentImage.fieldNumber] inCategory:@"USER"];
 }
 
 @end
