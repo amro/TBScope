@@ -55,14 +55,16 @@ float threshold_score = 1;
     // Initialize DSSSpriteSheet for the given set of ROIs
     if (slide.roiSpritePath) {
         _spriteSheetPromise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            [TBScopeImageAsset getImageAtPath:slide.roiSpritePath].then(^(UIImage *sheet){
-                DSSSpriteSheet *spriteSheet = [[DSSSpriteSheet alloc] loadFromSheet:sheet
-                                                                              width:PATCH_WIDTH
-                                                                             height:PATCH_HEIGHT
-                                                                        itemsPerRow:SPRITESHEET_PATCHES_PER_ROW
-                                                                        borderWidth:SPRITESHEET_BORDER_WIDTH];
-                resolve(spriteSheet);
-            });
+            [slide.managedObjectContext performBlock:^{
+                [TBScopeImageAsset getImageAtPath:slide.roiSpritePath].then(^(UIImage *sheet){
+                    DSSSpriteSheet *spriteSheet = [[DSSSpriteSheet alloc] loadFromSheet:sheet
+                                                                                  width:PATCH_WIDTH
+                                                                                 height:PATCH_HEIGHT
+                                                                            itemsPerRow:SPRITESHEET_PATCHES_PER_ROW
+                                                                            borderWidth:SPRITESHEET_BORDER_WIDTH];
+                    resolve(spriteSheet);
+                });
+            }];
         }];
     }
 }

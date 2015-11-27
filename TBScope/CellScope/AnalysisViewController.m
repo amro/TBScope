@@ -241,27 +241,32 @@
 
                         // Get the image belonging to the ROI
                         ROIs *roi = [sortedROIs objectAtIndex:(NSInteger)index];
-                        Images *image = (Images *)roi.imageAnalysisResult.image;
-                        PMKPromise *promise = [TBScopeData getImage:image];
-                        promise.then(^(UIImage *uiImage){
-                            // Get an roiImage representing just the ROI area
-                            UIImage *roiImage = [TBScopeData getPatchFromImage:uiImage X:roi.x Y:roi.y];
+                        __block NSString *imagePath;
+                        [roi.managedObjectContext performBlockAndWait:^{
+                            Images *image = (Images *)roi.imageAnalysisResult.image;
+                            imagePath = image.path;
+                        }];
+                        [TBScopeImageAsset getImageAtPath:imagePath].then(^(UIImage *uiImage){
+                            [roi.managedObjectContext performBlock:^{
+                                // Get an roiImage representing just the ROI area
+                                UIImage *roiImage = [TBScopeData getPatchFromImage:uiImage X:roi.x Y:roi.y];
 
-                            // TODO: add border based on score
-                            UIColor *borderColor;
-                            if (roi.score > redThreshold) {
-                                borderColor = [UIColor redColor];
-                            } else if (roi.score > yellowThreshold) {
-                                borderColor = [UIColor yellowColor];
-                            } else {
-                                borderColor = [UIColor greenColor];
-                            }
-                            [spriteSheet addImage:roiImage withBorderColor:borderColor];
+                                // Add border based on score
+                                UIColor *borderColor;
+                                if (roi.score > redThreshold) {
+                                    borderColor = [UIColor redColor];
+                                } else if (roi.score > yellowThreshold) {
+                                    borderColor = [UIColor yellowColor];
+                                } else {
+                                    borderColor = [UIColor greenColor];
+                                }
+                                [spriteSheet addImage:roiImage withBorderColor:borderColor];
 
-                            // Recurse (async to avoid stack too deep)
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                addROIAtIndex(index+1);
-                            });
+                                // Recurse (async to avoid stack too deep)
+                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                    addROIAtIndex(index+1);
+                                });
+                            }];
                         });
                     };
                     addROIAtIndex(0);
