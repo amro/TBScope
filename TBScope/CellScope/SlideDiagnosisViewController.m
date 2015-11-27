@@ -128,6 +128,7 @@
         self.sputumQualityLabel3.text = NSLocalizedString(slide.sputumQuality, nil);
         self.imageQualityLabel3.text = NSLocalizedString(@"Not Evaluated", nil);
         self.numFieldsLabel3.text = [[NSString alloc] initWithFormat:@"%d",(int)slide.slideImages.count];
+        [self refreshReanalyzeButton:self.reanalyzeButton3 forSlide:slide];
         
         //display diagnosis info
         if (slide.slideAnalysisResults!=nil)
@@ -199,6 +200,7 @@
         self.sputumQualityLabel2.text = NSLocalizedString(slide.sputumQuality, nil);
         self.imageQualityLabel2.text = NSLocalizedString(@"Not Evaluated", nil);
         self.numFieldsLabel2.text = [[NSString alloc] initWithFormat:@"%d",(int)slide.slideImages.count];
+        [self refreshReanalyzeButton:self.reanalyzeButton2 forSlide:slide];
         
         //display diagnosis info
         if (slide.slideAnalysisResults!=nil)
@@ -269,6 +271,7 @@
         self.sputumQualityLabel1.text = NSLocalizedString(slide.sputumQuality, nil);
         self.imageQualityLabel1.text = NSLocalizedString(@"Not Evaluated", nil);
         self.numFieldsLabel1.text = [[NSString alloc] initWithFormat:@"%d",(int)slide.slideImages.count];
+        [self refreshReanalyzeButton:self.reanalyzeButton1 forSlide:slide];
         
         //display diagnosis info
         if (slide.slideAnalysisResults!=nil)
@@ -349,6 +352,25 @@
     }
     
     [TBScopeData CSLog:@"Slide diagnosis screen presented" inCategory:@"USER"];    
+}
+
+- (void)refreshReanalyzeButton:(UIButton *)button
+                      forSlide:(Slides *)slide
+{
+    __block BOOL hasImages;
+    __block BOOL allImagesAreLocal;
+    [slide.managedObjectContext performBlockAndWait:^{
+        hasImages = [slide.slideImages count] > 0;
+        allImagesAreLocal = [slide allImagesAreLocal];
+    }];
+
+    if (hasImages && allImagesAreLocal) {
+        button.enabled = YES;
+        button.backgroundColor = [UIColor colorWithRed:0.50196081399917603 green:0.0 blue:0.0 alpha:1.0];
+    } else {
+        button.enabled = NO;
+        button.backgroundColor = [UIColor darkGrayColor];
+    }
 }
 
 - (void) displayScore:(SlideAnalysisResults*)results

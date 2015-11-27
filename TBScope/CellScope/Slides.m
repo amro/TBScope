@@ -51,6 +51,18 @@
     self.slideImages = tempSet;
 }
 
+- (BOOL)allImagesAreLocal
+{
+    // If we don't have any images return true
+    if ([self.slideImages count] <= 0) return YES;
+
+    // Otherwise check each for empty path
+    for (Images *image in self.slideImages) {
+        if (!image.path) return NO;
+    }
+    return YES;
+}
+
 - (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive
 {
     __block NSString *remoteMd5;

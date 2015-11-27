@@ -91,6 +91,37 @@
     [[[mock stub] andReturn:promise] getImageAtPath:[OCMArg any]];
 }
 
+#pragma allImagesAreLocal tests
+
+- (void)testThatAllImagesAreLocalReturnsTrueIfThereAreNoImages
+{
+    [self.moc performBlockAndWait:^{
+        XCTAssertTrue([self.slide allImagesAreLocal]);
+    }];
+}
+
+- (void)testThatAllImagesAreLocalReturnsTrueIfAllImagesAreLocal
+{
+    // Add an image with a local path
+    [self.moc performBlockAndWait:^{
+        Images *image = [NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        image.path = @"asset-library://path/to/image.jpg";
+        [self.slide addSlideImagesObject:image];
+        XCTAssertTrue([self.slide allImagesAreLocal]);
+    }];
+}
+
+- (void)testThatAllImagesAreLocalReturnsTrueIfASingleImageIsNotLocal
+{
+    // Add an image without a local path
+    [self.moc performBlockAndWait:^{
+        Images *image = [NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        image.path = nil;
+        [self.slide addSlideImagesObject:image];
+        XCTAssertFalse([self.slide allImagesAreLocal]);
+    }];
+}
+
 #pragma uploadToGoogleDrive tests
 
 - (void)testThatUploadRoiSpriteSheetToGoogleDriveDoesNotUploadIfPathIsNil
