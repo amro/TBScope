@@ -335,16 +335,16 @@ BOOL _hasAttemptedLogUpload;
     }
     
     [TBScopeData CSLog:@"Processing next item in sync queue..." inCategory:@"SYNC"];
-    if (self.imageUploadQueue.count>0 && self.syncEnabled) {
+    if (self.imageUploadQueue.count>0 && self.syncEnabled && [self uploadIsEnabled]) {
         [self uploadImage:(Images*)self.imageUploadQueue[0]
         completionHandler:completionBlock];
-    } else if (self.examUploadQueue.count>0 && self.syncEnabled) {
+    } else if (self.examUploadQueue.count>0 && self.syncEnabled && [self uploadIsEnabled]) {
         [self uploadExam:(Exams*)self.examUploadQueue[0]
        completionHandler:completionBlock];
-    } else if (self.examDownloadQueue.count>0 && self.syncEnabled) {
+    } else if (self.examDownloadQueue.count>0 && self.syncEnabled && [self downloadIsEnabled]) {
         [self downloadExam:(GTLDriveFile*)self.examDownloadQueue[0]
          completionHandler:completionBlock];
-    } else if (self.imageDownloadQueue.count>0 && self.syncEnabled) {
+    } else if (self.imageDownloadQueue.count>0 && self.syncEnabled && [self downloadIsEnabled]) {
         [self downloadImage:(Images*)self.imageDownloadQueue[0]
           completionHandler:completionBlock];
     } else if (_hasAttemptedLogUpload==NO && self.syncEnabled) {
@@ -368,6 +368,13 @@ BOOL _hasAttemptedLogUpload;
 
 - (void)uploadImage:(Images*)image completionHandler:(void(^)(NSError*))completionBlock
 {
+    // Don't upload if "UploadEnabled" config option is turned off
+    if (![self uploadIsEnabled]) {
+        NSLog(@"Not uploading image because UploadEnabled config setting is turned off");
+        completionBlock(nil);
+        return;
+    }
+
     // Create a child managed object context
     __block NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     moc.parentContext = [[TBScopeData sharedData] managedObjectContext];
@@ -400,6 +407,13 @@ BOOL _hasAttemptedLogUpload;
 
 - (void)uploadExam:(Exams*)exam completionHandler:(void(^)(NSError*))completionBlock
 {
+    // Don't upload if "UploadEnabled" config option is turned off
+    if (![self uploadIsEnabled]) {
+        NSLog(@"Not uploading exam because UploadEnabled config setting is turned off");
+        completionBlock(nil);
+        return;
+    }
+
     // Create a child managed object context
     __block NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     moc.parentContext = [[TBScopeData sharedData] managedObjectContext];
@@ -432,6 +446,13 @@ BOOL _hasAttemptedLogUpload;
 
 - (void)downloadExam:(GTLDriveFile*)file completionHandler:(void(^)(NSError*))completionBlock
 {
+    // Don't download if "DownloadEnabled" config option is turned off
+    if (![self downloadIsEnabled]) {
+        NSLog(@"Not downloading exam because DownloadEnabled config setting is turned off");
+        completionBlock(nil);
+        return;
+    }
+
     // Set up dependencies
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     moc.parentContext = [[TBScopeData sharedData] managedObjectContext];
@@ -461,6 +482,13 @@ BOOL _hasAttemptedLogUpload;
 
 - (void)downloadImage:(Images*)image completionHandler:(void(^)(NSError*))completionBlock
 {
+    // Don't download if "DownloadEnabled" config option is turned off
+    if (![self downloadIsEnabled]) {
+        NSLog(@"Not downloading image because DownloadEnabled config setting is turned off");
+        completionBlock(nil);
+        return;
+    }
+
     // Set up dependencies
     __block NSManagedObjectContext *moc;
     __block Images *localImage;
@@ -551,6 +579,16 @@ BOOL _hasAttemptedLogUpload;
         }).catch(^(NSError *error) {
             completionBlock(error);
         });
+}
+
+- (BOOL)uploadIsEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"UploadEnabled"];
+}
+
+- (BOOL)downloadIsEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"DownloadEnabled"];
 }
 
 @end
