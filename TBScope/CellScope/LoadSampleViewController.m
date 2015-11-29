@@ -24,7 +24,11 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DoAutoLoadSlide"])
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DoAutoLoadSlide"]  && [self isMovingToParentViewController])
+    {
+        [self performSegueWithIdentifier:@"ScanSlideSegue" sender:self];
+    }
+    else
     {
         NSString *url   =   [[NSBundle mainBundle] pathForResource:@"slideloading" ofType:@"mp4"];
         
@@ -52,8 +56,7 @@
 
 
     }
-    else
-        [self performSegueWithIdentifier:@"ScanSlideSegue" sender:self];
+
 
 }
 

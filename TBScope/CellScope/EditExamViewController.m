@@ -112,7 +112,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"BypassDataEntry"]) {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"BypassDataEntry"]  && [self isMovingToParentViewController]) {
         self.examIDTextField.text = @"1234";
         self.patientIDTextField.text = @"1234";
         self.nameTextField.text = @"Test Slide";

@@ -65,6 +65,8 @@
     
     self.autoLoadSwitch.on = [prefs boolForKey:@"DoAutoLoadSlide"];
     self.autoScanSwitch.on = [prefs boolForKey:@"DoAutoScan"];
+    self.runWithoutCellScopeSwitch.on = [prefs boolForKey:@"AllowScanWithoutCellScope"];
+    
     self.scanColumns.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"AutoScanCols"]];
     self.scanRows.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"AutoScanRows"]];
     self.fieldSpacing.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"AutoScanStepsBetweenFields"]];
@@ -133,6 +135,7 @@
     [prefs setBool:self.autoScanSwitch.on forKey:@"DoAutoScan"];
     [prefs setBool:self.autoLoadSwitch.on forKey:@"DoAutoLoadSlide"];
     [prefs setBool:self.bypassDataEntrySwitch.on forKey:@"BypassDataEntry"];
+    [prefs setBool:self.runWithoutCellScopeSwitch.on forKey:@"AllowScanWithoutCellScope"];
     
     [prefs setInteger:self.scanColumns.text.integerValue forKey:@"AutoScanCols"];
     [prefs setInteger:self.scanRows.text.integerValue forKey:@"AutoScanRows"];

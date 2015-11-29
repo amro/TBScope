@@ -46,6 +46,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *bfIntensity;
 @property (weak, nonatomic) IBOutlet UITextField *fluorIntensity;
 @property (weak, nonatomic) IBOutlet UISwitch *bypassDataEntrySwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *runWithoutCellScopeSwitch;
 
 @property (weak, nonatomic) IBOutlet UITextField *maxAFFailures;
 

@@ -441,8 +441,16 @@
                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First Collection Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cU8-f7-QIx">
-                                    <rect key="frame" x="851" y="5" width="173" height="21"/>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cU8-f7-QIx">
+                                    <rect key="frame" x="858" y="5" width="88" height="21"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <animations/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sync" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="S6Z-Di-0Sk">
+                                    <rect key="frame" x="965" y="5" width="61" height="21"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <animations/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -478,7 +486,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cyU-pD-Xda">
-                                            <rect key="frame" x="851" y="5" width="95" height="21"/>
+                                            <rect key="frame" x="858" y="5" width="95" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -537,7 +545,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="r2r-l4-gEo">
-                                            <rect key="frame" x="851" y="23" width="95" height="21"/>
+                                            <rect key="frame" x="858" y="23" width="95" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -545,7 +553,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="PkN-BH-vhO">
-                                            <rect key="frame" x="981" y="14" width="20" height="20"/>
+                                            <rect key="frame" x="968" y="14" width="20" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
                                         </imageView>
@@ -652,6 +660,7 @@
                         <outlet property="patientHeaderLabel" destination="WS8-pV-xgA" id="Maf-7o-MeX"/>
                         <outlet property="printButton" destination="yyN-LV-EgV" id="wrt-Hc-wzO"/>
                         <outlet property="resultsHeaderLabel" destination="zxs-28-eKZ" id="HZ0-lX-D7Q"/>
+                        <outlet property="syncHeader" destination="S6Z-Di-0Sk" id="IIv-9M-xhv"/>
                         <outlet property="syncLabel" destination="MzF-UG-caN" id="wlU-mk-RFf"/>
                         <outlet property="syncSpinner" destination="qRj-TM-m2I" id="5RU-68-mw5"/>
                     </connections>
@@ -1680,8 +1689,8 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Debug AF" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="590-bD-TiT">
-                                                    <rect key="frame" x="542" y="27" width="76" height="21"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Debug Scanning" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="590-bD-TiT">
+                                                    <rect key="frame" x="520" y="27" width="140" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1689,10 +1698,23 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="jh7-Eg-61G">
-                                                    <rect key="frame" x="632" y="23" width="51" height="31"/>
+                                                    <rect key="frame" x="655" y="23" width="51" height="31"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
                                                 </switch>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="j8E-Cm-goT">
+                                                    <rect key="frame" x="920" y="23" width="51" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
+                                                </switch>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Run Without CellScope" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6iQ-VB-KSg">
+                                                    <rect key="frame" x="730" y="27" width="200" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <animations/>
                                         </tableViewCellContentView>
@@ -1779,6 +1801,7 @@
                         <outlet property="redThreshold" destination="q2m-XQ-pkN" id="jKJ-it-wrp"/>
                         <outlet property="refocusInterval" destination="FMR-D9-t1e" id="tiM-nx-Xfi"/>
                         <outlet property="resetCoreData" destination="VGY-fS-r6L" id="S4l-PM-Mu8"/>
+                        <outlet property="runWithoutCellScopeSwitch" destination="j8E-Cm-goT" id="EGX-J6-zE8"/>
                         <outlet property="scanColumns" destination="XG5-w2-dhK" id="6FW-ms-UDg"/>
                         <outlet property="scanRows" destination="HSl-Jq-1u0" id="ocJ-8x-l1e"/>
                         <outlet property="stageSettlingTime" destination="SN8-CU-Rgj" id="aDf-du-Ted"/>
@@ -3707,7 +3730,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <button hidden="YES" opaque="NO" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="I05-Lh-RGK">
-                                <rect key="frame" x="462" y="675" width="100" height="50"/>
+                                <rect key="frame" x="462" y="580" width="100" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.25098040699958801" green="0.50196081399917603" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -3753,7 +3776,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="yxg-3g-dad">
-                                        <rect key="frame" x="0.0" y="110" width="100" height="80"/>
+                                        <rect key="frame" x="0.0" y="88" width="100" height="80"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <animations/>
                                         <state key="normal" image="zup.png">
@@ -3763,19 +3786,6 @@
                                             <action selector="didTouchDownStageButton:" destination="102-pc-xxo" eventType="touchDown" id="uY7-XH-wwd"/>
                                             <action selector="didTouchUpStageButton:" destination="102-pc-xxo" eventType="touchUpInside" id="Dda-S0-DnT"/>
                                             <action selector="didTouchUpStageButton:" destination="102-pc-xxo" eventType="touchUpOutside" id="OJT-09-kaa"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Zf1-cC-bE9">
-                                        <rect key="frame" x="0.0" y="210" width="100" height="80"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <state key="normal" image="zdown.png">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="didTouchDownStageButton:" destination="102-pc-xxo" eventType="touchDown" id="cwb-NZ-4zc"/>
-                                            <action selector="didTouchUpStageButton:" destination="102-pc-xxo" eventType="touchUpInside" id="jrK-Vd-PXt"/>
-                                            <action selector="didTouchUpStageButton:" destination="102-pc-xxo" eventType="touchUpOutside" id="zzq-wQ-GNA"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="cS0-5r-1nN">
@@ -3844,7 +3854,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="W2L-va-E6w">
-                                        <rect key="frame" x="0.0" y="549" width="100" height="40"/>
+                                        <rect key="frame" x="0.0" y="280" width="100" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -3883,6 +3893,18 @@
                                             <action selector="didPressMoveHome:" destination="102-pc-xxo" eventType="touchUpInside" id="mx7-Vr-5G4"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="xis-1e-tyB">
+                                        <rect key="frame" x="0.0" y="559" width="100" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.25484724520000002" green="0.66762107329999998" blue="0.2046560036" alpha="1" colorSpace="calibratedRGB"/>
+                                        <state key="normal" title="Auto Test">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="didPressAutoTest:" destination="102-pc-xxo" eventType="touchUpInside" id="FjJ-Zi-UpO"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aYv-Kz-xHJ">
                                         <rect key="frame" x="0.0" y="659" width="100" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -3907,6 +3929,19 @@
                                             <action selector="didPressSetCenter:" destination="102-pc-xxo" eventType="touchUpInside" id="Tet-tK-8mt"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Zf1-cC-bE9">
+                                        <rect key="frame" x="0.0" y="178" width="100" height="80"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <state key="normal" image="zdown.png">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="didTouchDownStageButton:" destination="102-pc-xxo" eventType="touchDown" id="cwb-NZ-4zc"/>
+                                            <action selector="didTouchUpStageButton:" destination="102-pc-xxo" eventType="touchUpInside" id="jrK-Vd-PXt"/>
+                                            <action selector="didTouchUpStageButton:" destination="102-pc-xxo" eventType="touchUpOutside" id="zzq-wQ-GNA"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -3915,7 +3950,7 @@
                                 <rect key="frame" x="850" y="80" width="150" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <fontDescription key="fontDescription" name="Courier" family="Courier" pointSize="14"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -4021,7 +4056,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="RDB-A0-cdK">
-                                <rect key="frame" x="0.0" y="600" width="1024" height="30"/>
+                                <rect key="frame" x="0.0" y="366" width="1024" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
@@ -4333,8 +4368,8 @@
     <inferredMetricsTieBreakers>
         <segue reference="1cV-dX-AVr"/>
         <segue reference="TNh-qe-tab"/>
-        <segue reference="Qqg-aL-Bjx"/>
         <segue reference="eav-O7-CnL"/>
         <segue reference="1Zz-Hb-NdL"/>
+        <segue reference="IXk-9w-CrT"/>
     </inferredMetricsTieBreakers>
 </document>

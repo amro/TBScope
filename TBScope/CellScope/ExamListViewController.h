@@ -28,6 +28,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *clinicHeaderLabel;
 @property (weak, nonatomic) IBOutlet UILabel *resultsHeaderLabel;
 @property (weak, nonatomic) IBOutlet UILabel *firstCollectionHeaderLabel;
+@property (weak, nonatomic) IBOutlet UILabel *syncHeader;
 
 @property (weak, nonatomic) IBOutlet UILabel *syncLabel;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *syncSpinner;

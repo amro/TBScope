@@ -69,7 +69,8 @@
     self.patientHeaderLabel.text = NSLocalizedString(@"Patient", nil);
     self.clinicHeaderLabel.text = NSLocalizedString(@"Clinic/User", nil);
     self.resultsHeaderLabel.text = NSLocalizedString(@"Analysis Results", nil);
-    self.firstCollectionHeaderLabel.text = NSLocalizedString(@"First Collection Date", nil);
+    self.firstCollectionHeaderLabel.text = NSLocalizedString(@"Date", nil);
+    self.firstCollectionHeaderLabel.text = NSLocalizedString(@"Sync", nil);
     
     //setup date/time formatters
     self.dateFormatter = [[NSDateFormatter alloc] init];

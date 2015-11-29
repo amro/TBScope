@@ -116,7 +116,7 @@
 
     // Trigger the notifications that BLE would send
     dispatch_async(dispatch_get_main_queue(), ^(void){
-        self.batteryVoltage = 1.5;
+        self.batteryVoltage = 8.2;
         NSLog(@"battery = %f", self.batteryVoltage);
         [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusUpdated" object:nil];
     });
@@ -128,6 +128,11 @@
     dispatch_async(dispatch_get_main_queue(), ^(void){
         self.humidity = 30.0;
         NSLog(@"humidity = %f", self.humidity);
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusUpdated" object:nil];
+    });
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        self.firmwareVersion = 999;
+        NSLog(@"firmware = %d", self.firmwareVersion);
         [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusUpdated" object:nil];
     });
 }

@@ -128,12 +128,6 @@ AVAudioPlayer* _avPlayer;
 
 - (void)updatePrompt
 {
-    /*
-    if (self.currentField<[[NSUserDefaults standardUserDefaults] integerForKey:@"NumFieldsPerSlide"])
-        self.navigationItem.title = [NSString stringWithFormat:NSLocalizedString(@"Capture Field %d of %d",nil),self.currentField+1,[[NSUserDefaults standardUserDefaults] integerForKey:@"NumFieldsPerSlide"]];
-    else
-        self.navigationItem.title = NSLocalizedString(@"Capture Complete",nil);
-    */
     
     self.navigationItem.title = NSLocalizedString(@"Calibration Mode",nil);
 }
@@ -181,7 +175,7 @@ AVAudioPlayer* _avPlayer;
 
 - (void)abortCapture
 {
-
+    [TBScopeData CSLog:@"Scan aborted by user." inCategory:@"USER"];
     [[self navigationController] popViewControllerAnimated:YES];
 }
 
@@ -693,13 +687,31 @@ AVAudioPlayer* _avPlayer;
     });
 }
 
-- (void) manualFocusWithFL:(int)flIntensity BF:(int)bfIntensity Exposure:(int)exp ISO:(int)iso
+- (IBAction)didPressAutoTest:(id)sender
 {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        [self takeCalibrationImages];
+    });
+}
+
+- (void) manualFocus
+{
+    [self manualFocus:NSLocalizedString(@"Please Re-focus", nil)];
+}
+
+- (void) manualFocus:(NSString*)prompt
+{
+    
     dispatch_async(dispatch_get_main_queue(), ^(void){
-        self.scanStatusLabel.text = NSLocalizedString(@"Please Re-focus", nil);
+        self.scanStatusLabel.text = prompt;
         self.manualScanFocusDown.hidden = NO;
         self.manualScanFocusUp.hidden = NO;
         self.manualScanFocusOk.hidden = NO;
+        self.upButton.hidden = NO;
+        self.downButton.hidden = NO;
+        self.leftButton.hidden = NO;
+        self.rightButton.hidden = NO;
+        
 
     });
     
@@ -710,17 +722,15 @@ AVAudioPlayer* _avPlayer;
     
     self.currentSpeed = CSStageSpeedSlow;
     
-    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity]; 
-    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity]; //little bit of BF helps w/ focus
-    [[TBScopeCamera sharedCamera] setExposureDuration:exp ISOSpeed:iso];
-    [NSThread sleepForTimeInterval:0.5]; //TODO: for some reason, the exposure still isn't getting set immediately
-    
-    _manualRefocusStepCounter = 0;
     _isWaitingForFocusConfirmation = YES;
     while (_isWaitingForFocusConfirmation && !_isAborting)
         [NSThread sleepForTimeInterval:0.1];
     
-    [TBScopeData CSLog:[NSString stringWithFormat:@"Manual re-focus completed with deltaSteps=%d",_manualRefocusStepCounter] inCategory:@"CAPTURE"];
+    [TBScopeData CSLog:[NSString stringWithFormat:@"Manual re-focus completed with coordinates: (%d, %d, %d)",
+                        [[TBScopeHardware sharedHardware] xPosition],
+                        [[TBScopeHardware sharedHardware] yPosition],
+                        [[TBScopeHardware sharedHardware] zPosition]]
+            inCategory:@"CALIBRATION"];
     
     [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
     [NSThread sleepForTimeInterval:0.1];
@@ -730,6 +740,10 @@ AVAudioPlayer* _avPlayer;
         self.manualScanFocusDown.hidden = YES;
         self.manualScanFocusUp.hidden = YES;
         self.manualScanFocusOk.hidden = YES;
+        self.upButton.hidden = YES;
+        self.downButton.hidden = YES;
+        self.leftButton.hidden = YES;
+        self.rightButton.hidden = YES;
     });
 }
 
@@ -917,7 +931,7 @@ AVAudioPlayer* _avPlayer;
                 }
                 
                 if (focusResult == TBScopeFocusManagerResultFailure) {
-                    [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
+                    [self manualFocus];
                     [[TBScopeFocusManager sharedFocusManager] setLastGoodPosition:[[TBScopeHardware sharedHardware] zPosition]];
                     fieldsSinceLastFocus = 0;
                 }
@@ -975,7 +989,7 @@ AVAudioPlayer* _avPlayer;
             if (_didPressManualFocus) {
                 self.refocusButton.hidden = YES;
                 
-                [self manualFocusWithFL:flIntensity BF:1 Exposure:flExposureDuration ISO:flISOSpeed];
+                [self manualFocus];
                 [[TBScopeFocusManager sharedFocusManager] setLastGoodPosition:[[TBScopeHardware sharedHardware] zPosition]];
                 self.refocusButton.hidden = NO;
                 _didPressManualFocus = NO;
@@ -1057,8 +1071,172 @@ AVAudioPlayer* _avPlayer;
     
 }
 
+//TODO: much of this code is copied from autoScan above. Would be a good idea to refactor these once we see where the common denominators are
 -(void) takeCalibrationImages
 {
+    [TBScopeData CSLog:@"Beginning auto calibration routine." inCategory:@"CALIBRATION"];
+    
+    //setup UI
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        self.controlPanelView.hidden = YES;
+        self.leftButton.hidden = YES;
+        self.rightButton.hidden = YES;
+        self.downButton.hidden = YES;
+        self.upButton.hidden = YES;
+        self.intensitySlider.hidden = YES;
+        self.intensityLabel.hidden = YES;
+        self.autoFocusButton.hidden = YES;
+        self.autoScanButton.hidden = YES;
+        self.scanStatusLabel.hidden = NO;
+        self.abortButton.hidden = NO;
+        self.refocusButton.hidden = YES;
+
+        self.autoScanProgressBar.hidden = NO;
+        self.autoScanProgressBar.progress = 0;
+        
+        self.scanStatusLabel.text = NSLocalizedString(@"Beginning calibration procedure...", nil);
+        
+        [[self navigationController] setNavigationBarHidden:YES animated:YES];
+    });
+    
+    //LED intensity
+    int bfIntensity = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanBFIntensity"];
+    int flIntensity = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanFluorescentIntensity"];
+    
+    
+    //x/y center position and default focus position
+    int centerX = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterX"];
+    int centerY = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterY"];
+    int focusZ = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"];
+    
+    //get exposure and ISO settings
+    int bfExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationBF"];
+    int bfISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedBF"];
+    int flExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationFL"];
+    int flISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedFL"];
+    
+    //speed parameters
+    int stageStepInterval = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"StageStepInterval"];
+    int focusStepInterval = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusStepInterval"];
+    float stageSettlingTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"StageSettlingTime"];
+    float focusSettlingTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"FocusSettlingTime"];
+    
+    
+    //set exposure/ISO
+    [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+    
+    //turn off lights
+    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+    
+    [NSThread sleepForTimeInterval:0.1];
+    
+    //home stage and move objective to "down" position
+    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZHome];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionHome];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] moveToPosition:CSStagePositionZDown];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    
+    //check if abort button pressed
+    if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+    
+    [NSThread sleepForTimeInterval:0.1];
+    
+    //set stage speed and move to center
+    [[TBScopeHardware sharedHardware] setStepperInterval:stageStepInterval];
+    [[TBScopeHardware sharedHardware] moveToX:centerX Y:centerY Z:-1];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
+    [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:focusZ];
+    [[TBScopeHardware sharedHardware] waitForStage];
+    
+    //check if abort button pressed
+    if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+    
+    [NSThread sleepForTimeInterval:0.1];
+    
+
+    for (int fieldNum = 0; fieldNum<5; fieldNum++) {
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            self.autoScanProgressBar.progress = (float)fieldNum/5.0;
+        });
+        
+        //start in fluorescence
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+        [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+
+        [NSThread sleepForTimeInterval:0.1];
+        
+        //have the user manually focus the scope
+        [self manualFocus:NSLocalizedString(@"Move the scope to a uniform field of beads and focus.", nil)];
+        
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            self.scanStatusLabel.text = NSLocalizedString(@"Please wait...", nil);
+
+        });
+        
+        //snap a fluorescent picture
+        [self didPressCapture:nil];
+        [NSThread sleepForTimeInterval:0.5];
+        
+        //sweep through an 11-slice z stack and take pictures at each slice
+        int manualFocusPosition = [[TBScopeHardware sharedHardware] zPosition];
+        [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
+        for (int i=-100; i<=100; i+=20) {
+            [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:(manualFocusPosition+i)];
+            [[TBScopeHardware sharedHardware] waitForStage];
+            [NSThread sleepForTimeInterval:stageSettlingTime];
+            
+            [self didPressCapture:nil];
+            [NSThread sleepForTimeInterval:0.5];
+        }
+        
+        //move back to manual focus position
+        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:manualFocusPosition];
+        [[TBScopeHardware sharedHardware] waitForStage];
+        [NSThread sleepForTimeInterval:stageSettlingTime];
+        
+        //switch to brightfield
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+        [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
+        
+        [NSThread sleepForTimeInterval:0.1];
+        
+        //snap a BF picture
+        [self didPressCapture:nil];
+        [NSThread sleepForTimeInterval:0.5];
+        
+    }
+
+    //turn off LEDs
+    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+    [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+    
+    
+    //restore UI
+    dispatch_async(dispatch_get_main_queue(), ^(void){
+        self.controlPanelView.hidden = NO;
+        self.leftButton.hidden = NO;
+        self.rightButton.hidden = NO;
+        self.downButton.hidden = NO;
+        self.upButton.hidden = NO;
+        self.intensitySlider.hidden = YES;
+        self.intensityLabel.hidden = YES;
+        self.autoFocusButton.hidden = NO;
+        self.autoScanButton.hidden = NO;
+        self.scanStatusLabel.hidden = YES;
+        self.abortButton.hidden = YES;
+        self.autoScanProgressBar.hidden = YES;
+        
+        [[self navigationController] setNavigationBarHidden:NO animated:YES];
+    });
     
 }
 
