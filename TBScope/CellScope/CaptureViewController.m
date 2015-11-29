@@ -493,14 +493,14 @@ AVAudioPlayer* _avPlayer;
     {
         int intensity = self.intensitySlider.value*255;
         [self.intensityLabel setText:[NSString stringWithFormat:@"%d",intensity]];
-        [[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"AutoScanBFIntensity"];
+        //[[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"AutoScanBFIntensity"];
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:intensity];
     }
     else if (_FLOn)
     {
         int intensity = self.intensitySlider.value*255;
         [self.intensityLabel setText:[NSString stringWithFormat:@"%d",intensity]];
-        [[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"AutoScanFluorescentIntensity"];
+        //[[NSUserDefaults standardUserDefaults] setInteger:intensity forKey:@"AutoScanFluorescentIntensity"];
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:intensity];
     }
 }
@@ -1094,15 +1094,15 @@ AVAudioPlayer* _avPlayer;
         self.autoScanProgressBar.hidden = NO;
         self.autoScanProgressBar.progress = 0;
         
-        self.scanStatusLabel.text = NSLocalizedString(@"Beginning calibration procedure...", nil);
+        self.scanStatusLabel.text = NSLocalizedString(@"Beginning auto test procedure...", nil);
         
         [[self navigationController] setNavigationBarHidden:YES animated:YES];
     });
     
     //LED intensity
     int bfIntensity = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanBFIntensity"];
-    int flIntensity = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanFluorescentIntensity"];
-    
+    int flIntensitySmears = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanFluorescentIntensity"];
+    int flIntensityCalibration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CalibrationFluorescentIntensity"];
     
     //x/y center position and default focus position
     int centerX = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"SlideCenterX"];
@@ -1165,12 +1165,12 @@ AVAudioPlayer* _avPlayer;
         });
         
         //start in fluorescence
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensityCalibration];
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
         [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
         [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
 
-        [NSThread sleepForTimeInterval:0.1];
+        [NSThread sleepForTimeInterval:0.5];
         
         //have the user manually focus the scope
         [self manualFocus:NSLocalizedString(@"Move the scope to a uniform field of beads and focus.", nil)];
@@ -1180,26 +1180,17 @@ AVAudioPlayer* _avPlayer;
 
         });
         
-        //snap a fluorescent picture
+        //snap a fluorescent picture at low brightness
         [self didPressCapture:nil];
         [NSThread sleepForTimeInterval:0.5];
         
-        //sweep through an 11-slice z stack and take pictures at each slice
-        int manualFocusPosition = [[TBScopeHardware sharedHardware] zPosition];
-        [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
-        for (int i=-100; i<=100; i+=20) {
-            [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:(manualFocusPosition+i)];
-            [[TBScopeHardware sharedHardware] waitForStage];
-            [NSThread sleepForTimeInterval:stageSettlingTime];
-            
-            [self didPressCapture:nil];
-            [NSThread sleepForTimeInterval:0.5];
-        }
+        //snap a fluorescent picture at full (smear) brightness
+        //this is useful for gauging background
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensitySmears];
+        [NSThread sleepForTimeInterval:0.5];
         
-        //move back to manual focus position
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:manualFocusPosition];
-        [[TBScopeHardware sharedHardware] waitForStage];
-        [NSThread sleepForTimeInterval:stageSettlingTime];
+        [self didPressCapture:nil];
+        [NSThread sleepForTimeInterval:0.5];
         
         //switch to brightfield
         [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
@@ -1207,11 +1198,49 @@ AVAudioPlayer* _avPlayer;
         [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
         [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
         
-        [NSThread sleepForTimeInterval:0.1];
+        [NSThread sleepForTimeInterval:0.5];
         
+        //check if abort button pressed
+        if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+    
         //snap a BF picture
         [self didPressCapture:nil];
         [NSThread sleepForTimeInterval:0.5];
+
+        
+        //switch back to low brightness fluorescence
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensityCalibration];
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+        [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+        
+        [NSThread sleepForTimeInterval:0.5];
+        
+        //check if abort button pressed
+        if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+    
+        //sweep through an 11-slice z stack at reduced LED intensity and take pictures at each slice
+        int manualFocusPosition = [[TBScopeHardware sharedHardware] zPosition];
+        [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
+        for (int i=-1000; i<=1000; i+=200) {
+            [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:(manualFocusPosition+i)];
+            [[TBScopeHardware sharedHardware] waitForStage];
+            [NSThread sleepForTimeInterval:stageSettlingTime];
+            
+            [self didPressCapture:nil];
+            [NSThread sleepForTimeInterval:0.5];
+            
+            //check if abort button pressed
+            if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+        }
+        
+        //move back to manual focus position
+        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:manualFocusPosition];
+        [[TBScopeHardware sharedHardware] waitForStage];
+        [NSThread sleepForTimeInterval:stageSettlingTime];
+        
+        //check if abort button pressed
+        if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
         
     }
 

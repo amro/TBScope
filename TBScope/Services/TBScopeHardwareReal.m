@@ -17,7 +17,7 @@ const int MIN_X_POSITION = 0; // limit switch
 const int MAX_X_POSITION = 6300; //just before it ejects (x axis is the axis that extents out of the scope)
 const int MIN_Y_POSITION = 0; //limit switch
 const int MAX_Y_POSITION = 2000; //just before it hits stage on the right side
-const int MIN_Z_POSITION = -30000; //the limit switch is at -40000, but I don't want it going back up that far
+const int MIN_Z_POSITION = -40000; //the limit switch is at -40000
 const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plane, so we should never need to go this low
 
 //The range of -30000 to 50000 is meant to be wide enough to account for variations in objective positions from scope to scope. Realistically this is much narrower. "0" in this case is defined as 40000 steps below the limit switch.
