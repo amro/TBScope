@@ -11,7 +11,8 @@
 #import "TBScopeData.h"
 
 
-@interface LogEntryDetailViewController : UIViewController
+@interface LogEntryDetailViewController : UIViewController <UIGestureRecognizerDelegate>
+
 @property (weak, nonatomic) IBOutlet UITextView *logEntryTextView;
 
 @property (strong,nonatomic) Logs* currentLogEntry;

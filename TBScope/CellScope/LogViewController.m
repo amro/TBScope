@@ -67,7 +67,6 @@
     
     [predicateString appendString:@"(category == '')"];
     
-    NSLog(predicateString);
     
     NSPredicate* pred = [NSPredicate predicateWithFormat:predicateString];
     

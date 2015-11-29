@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *slide3Label;
 @property (weak, nonatomic) IBOutlet UILabel *xpertMTBLabel;
 @property (weak, nonatomic) IBOutlet UILabel *xpertRIFLabel;
+@property (weak, nonatomic) IBOutlet UILabel *manualCellScopeLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *slide1NAButton;
 @property (weak, nonatomic) IBOutlet UIButton *slide10Button;
@@ -40,6 +41,16 @@
 @property (weak, nonatomic) IBOutlet UIButton *slide31Button;
 @property (weak, nonatomic) IBOutlet UIButton *slide32Button;
 @property (weak, nonatomic) IBOutlet UIButton *slide33Button;
+@property (weak, nonatomic) IBOutlet UIButton *slide1ManualPosButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide1ManualNegButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide1ManualNAButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide2ManualPosButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide2ManualNegButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide2ManualNAButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide3ManualPosButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide3ManualNegButton;
+@property (weak, nonatomic) IBOutlet UIButton *slide3ManualNAButton;
+
 
 @property (weak, nonatomic) IBOutlet UIButton *xpertNAButton;
 @property (weak, nonatomic) IBOutlet UIButton *xpertNegativeButton;
@@ -47,7 +58,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *xpertIndeterminateButton;
 @property (weak, nonatomic) IBOutlet UIButton *xpertSusceptibleButton;
 @property (weak, nonatomic) IBOutlet UIButton *xpertResistantButton;
+@property (weak, nonatomic) IBOutlet UIView *xpertRIFBar;
 
 - (IBAction)didPressButton:(id)sender;
+- (IBAction)test:(id)sender;
 
 @end

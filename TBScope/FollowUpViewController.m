@@ -26,6 +26,7 @@ BOOL _hasChanges = NO;
     [self.slide1Label setText:[NSString stringWithFormat:NSLocalizedString(@"Slide %d", nil),1]];
     [self.slide2Label setText:[NSString stringWithFormat:NSLocalizedString(@"Slide %d", nil),2]];
     [self.slide3Label setText:[NSString stringWithFormat:NSLocalizedString(@"Slide %d", nil),3]];
+    [self.manualCellScopeLabel setText:NSLocalizedString(@"Manual CellScope",nil)];
     
     [self.slide1NAButton setTitle:NSLocalizedString(@"N/A",nil) forState:UIControlStateNormal];
     [self.slide2NAButton setTitle:NSLocalizedString(@"N/A",nil) forState:UIControlStateNormal];
@@ -34,9 +35,6 @@ BOOL _hasChanges = NO;
     [self.slide1ScantyButton setTitle:NSLocalizedString(@"Scanty",nil) forState:UIControlStateNormal];
     [self.slide2ScantyButton setTitle:NSLocalizedString(@"Scanty",nil) forState:UIControlStateNormal];
     [self.slide3ScantyButton setTitle:NSLocalizedString(@"Scanty",nil) forState:UIControlStateNormal];
-    [self.xpertNegativeButton setTitle:NSLocalizedString(@"Negative",nil) forState:UIControlStateNormal];
-    [self.xpertPositiveButton setTitle:NSLocalizedString(@"Positive",nil) forState:UIControlStateNormal];
-    [self.xpertIndeterminateButton setTitle:NSLocalizedString(@"Indeterminate",nil) forState:UIControlStateNormal];
     [self.xpertSusceptibleButton setTitle:NSLocalizedString(@"Susceptible",nil) forState:UIControlStateNormal];
     [self.xpertResistantButton setTitle:NSLocalizedString(@"Resistant",nil) forState:UIControlStateNormal];
     
@@ -46,6 +44,9 @@ BOOL _hasChanges = NO;
     self.slide11Button.hidden = !(self.currentExam.examSlides.count>0);
     self.slide12Button.hidden = !(self.currentExam.examSlides.count>0);
     self.slide13Button.hidden = !(self.currentExam.examSlides.count>0);
+    self.slide1ManualPosButton.hidden = !(self.currentExam.examSlides.count>0);
+    self.slide1ManualNegButton.hidden = !(self.currentExam.examSlides.count>0);
+    self.slide1ManualNAButton.hidden = !(self.currentExam.examSlides.count>0);
     
     self.slide2NAButton.hidden = !(self.currentExam.examSlides.count>1);
     self.slide2ScantyButton.hidden = !(self.currentExam.examSlides.count>1);
@@ -53,15 +54,46 @@ BOOL _hasChanges = NO;
     self.slide21Button.hidden = !(self.currentExam.examSlides.count>1);
     self.slide22Button.hidden = !(self.currentExam.examSlides.count>1);
     self.slide23Button.hidden = !(self.currentExam.examSlides.count>1);
-
+    self.slide2ManualPosButton.hidden = !(self.currentExam.examSlides.count>1);
+    self.slide2ManualNegButton.hidden = !(self.currentExam.examSlides.count>1);
+    self.slide2ManualNAButton.hidden = !(self.currentExam.examSlides.count>1);
+    
     self.slide3NAButton.hidden = !(self.currentExam.examSlides.count>2);
     self.slide3ScantyButton.hidden = !(self.currentExam.examSlides.count>2);
     self.slide30Button.hidden = !(self.currentExam.examSlides.count>2);
     self.slide31Button.hidden = !(self.currentExam.examSlides.count>2);
     self.slide32Button.hidden = !(self.currentExam.examSlides.count>2);
     self.slide33Button.hidden = !(self.currentExam.examSlides.count>2);
+    self.slide3ManualPosButton.hidden = !(self.currentExam.examSlides.count>2);
+    self.slide3ManualNegButton.hidden = !(self.currentExam.examSlides.count>2);
+    self.slide3ManualNAButton.hidden = !(self.currentExam.examSlides.count>2);
     
     NSString* stringVal;
+    
+    stringVal = self.currentExam.examFollowUpData.slide1HumanReadResult;
+    if (stringVal==nil)
+        [self.slide1ManualNAButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    else if ([stringVal isEqualToString:@"+"])
+        [self.slide1ManualPosButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    else if ([stringVal isEqualToString:@"-"])
+        [self.slide1ManualNegButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+
+    stringVal = self.currentExam.examFollowUpData.slide2HumanReadResult;
+    if (stringVal==nil)
+        [self.slide2ManualNAButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    else if ([stringVal isEqualToString:@"+"])
+        [self.slide2ManualPosButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    else if ([stringVal isEqualToString:@"-"])
+        [self.slide2ManualNegButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+
+    stringVal = self.currentExam.examFollowUpData.slide3HumanReadResult;
+    if (stringVal==nil)
+        [self.slide3ManualNAButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    else if ([stringVal isEqualToString:@"+"])
+        [self.slide3ManualPosButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    else if ([stringVal isEqualToString:@"-"])
+        [self.slide3ManualNegButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    
     
     stringVal = self.currentExam.examFollowUpData.slide1ZNResult;
     if (stringVal==nil)
@@ -115,9 +147,12 @@ BOOL _hasChanges = NO;
     else if ([stringVal isEqualToString:@"?"])
         [self.xpertIndeterminateButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
 
+    
+    
     self.xpertResistantButton.hidden = ![stringVal isEqualToString:@"+"];
     self.xpertSusceptibleButton.hidden = ![stringVal isEqualToString:@"+"];
     self.xpertRIFLabel.hidden = ![stringVal isEqualToString:@"+"];
+    self.xpertRIFBar.hidden = ![stringVal isEqualToString:@"+"];
     
     stringVal = self.currentExam.examFollowUpData.xpertRIFResult;
     if ([stringVal isEqualToString:@"S"])
@@ -142,6 +177,27 @@ BOOL _hasChanges = NO;
         }
         
         NSString* stringVal;
+        
+        stringVal = nil;
+        if (self.slide1ManualNegButton.titleLabel.textColor==[UIColor yellowColor])
+            stringVal = @"-";
+        else if (self.slide1ManualPosButton.titleLabel.textColor==[UIColor yellowColor])
+            stringVal = @"+";
+        self.currentExam.examFollowUpData.slide1HumanReadResult = stringVal;
+
+        stringVal = nil;
+        if (self.slide2ManualNegButton.titleLabel.textColor==[UIColor yellowColor])
+            stringVal = @"-";
+        else if (self.slide2ManualPosButton.titleLabel.textColor==[UIColor yellowColor])
+            stringVal = @"+";
+        self.currentExam.examFollowUpData.slide2HumanReadResult = stringVal;
+        
+        stringVal = nil;
+        if (self.slide3ManualNegButton.titleLabel.textColor==[UIColor yellowColor])
+            stringVal = @"-";
+        else if (self.slide3ManualPosButton.titleLabel.textColor==[UIColor yellowColor])
+            stringVal = @"+";
+        self.currentExam.examFollowUpData.slide3HumanReadResult = stringVal;
         
         stringVal = nil;
         if (self.slide10Button.titleLabel.textColor==[UIColor yellowColor])
@@ -204,9 +260,37 @@ BOOL _hasChanges = NO;
     
 }
 
+
 - (IBAction)didPressButton:(id)sender
 {
-    if (sender==self.slide1NAButton || sender==self.slide10Button || sender==self.slide1ScantyButton || sender==self.slide11Button || sender==self.slide12Button || sender==self.slide13Button) {
+    if (sender==self.slide1ManualNAButton || sender==self.slide1ManualNegButton || sender==self.slide1ManualPosButton) {
+        
+        [self.slide1ManualNAButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [self.slide1ManualNegButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [self.slide1ManualPosButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+
+        UIButton* btnPressed = (UIButton*)sender;
+        [btnPressed setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    }
+    else if (sender==self.slide2ManualNAButton || sender==self.slide2ManualNegButton || sender==self.slide2ManualPosButton) {
+        
+        [self.slide2ManualNAButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [self.slide2ManualNegButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [self.slide2ManualPosButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        
+        UIButton* btnPressed = (UIButton*)sender;
+        [btnPressed setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    }
+    if (sender==self.slide3ManualNAButton || sender==self.slide3ManualNegButton || sender==self.slide3ManualPosButton) {
+        
+        [self.slide3ManualNAButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [self.slide3ManualNegButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [self.slide3ManualPosButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        
+        UIButton* btnPressed = (UIButton*)sender;
+        [btnPressed setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    }
+    else if (sender==self.slide1NAButton || sender==self.slide10Button || sender==self.slide1ScantyButton || sender==self.slide11Button || sender==self.slide12Button || sender==self.slide13Button) {
         
         [self.slide1NAButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
         [self.slide10Button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
@@ -218,7 +302,6 @@ BOOL _hasChanges = NO;
         UIButton* btnPressed = (UIButton*)sender;
         [btnPressed setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
         
-        //self.currentExam.followUpData.slide1ZN = btnPressed.tag;
         
     }
     else if (sender==self.slide2NAButton || sender==self.slide20Button || sender==self.slide2ScantyButton || sender==self.slide21Button || sender==self.slide22Button || sender==self.slide23Button) {
@@ -260,6 +343,7 @@ BOOL _hasChanges = NO;
         self.xpertResistantButton.hidden = !(btnPressed==self.xpertPositiveButton);
         self.xpertSusceptibleButton.hidden = !(btnPressed==self.xpertPositiveButton);
         self.xpertRIFLabel.hidden = !(btnPressed==self.xpertPositiveButton);
+        self.xpertRIFBar.hidden = !(btnPressed==self.xpertPositiveButton);
         
     }
     else if (sender==self.xpertResistantButton || sender==self.xpertSusceptibleButton) {

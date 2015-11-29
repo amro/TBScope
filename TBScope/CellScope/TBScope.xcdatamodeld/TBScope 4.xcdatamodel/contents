@@ -26,12 +26,13 @@
     </entity>
     <entity name="FollowUpData" representedClassName="FollowUpData" syncable="YES">
         <attribute name="cultureResult" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="humanReadResult" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="qcStatus" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="slide1ManualCSResult" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="slide1HumanReadResult" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="slide1ZNResult" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="slide2ManualCSResult" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="slide2HumanReadResult" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="slide2ZNResult" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="slide3ManualCSResult" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="slide3HumanReadResult" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="slide3ZNResult" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="xpertMTBResult" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="xpertRIFResult" optional="YES" attributeType="String" syncable="YES"/>
@@ -103,7 +104,7 @@
     </entity>
     <elements>
         <element name="Exams" positionX="-344" positionY="-193" width="128" height="375"/>
-        <element name="FollowUpData" positionX="-155" positionY="-198" width="128" height="210"/>
+        <element name="FollowUpData" positionX="-155" positionY="-198" width="128" height="225"/>
         <element name="ImageAnalysisResults" positionX="196" positionY="218" width="128" height="148"/>
         <element name="Images" positionX="25" positionY="99" width="128" height="240"/>
         <element name="Logs" positionX="288" positionY="-214" width="128" height="103"/>

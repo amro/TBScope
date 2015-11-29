@@ -20,6 +20,8 @@
 @dynamic cultureResult;
 @dynamic qcStatus;
 @dynamic exam;
-@dynamic humanReadResult;
+@dynamic slide1HumanReadResult;
+@dynamic slide2HumanReadResult;
+@dynamic slide3HumanReadResult;
 
 @end

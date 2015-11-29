@@ -574,6 +574,7 @@
 		A5A218991AF6CCE4005334FB /* ConfigurationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigurationViewController.m; sourceTree = "<group>"; };
 		A5A2A7761C09408600F2CB49 /* TBScope 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TBScope 3.xcdatamodel"; sourceTree = "<group>"; };
 		A5A2A7941C0A99DD00F2CB49 /* slideloading.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = slideloading.mp4; sourceTree = "<group>"; };
+		A5A2A79A1C0ABF7F00F2CB49 /* TBScope 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TBScope 4.xcdatamodel"; sourceTree = "<group>"; };
 		A5B45F93183039BE002F4D30 /* LoadSampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadSampleViewController.h; sourceTree = "<group>"; };
 		A5B45F94183039BE002F4D30 /* LoadSampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadSampleViewController.m; sourceTree = "<group>"; };
 		A5B45F9618303E51002F4D30 /* ExamListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExamListViewController.h; sourceTree = "<group>"; };
@@ -2065,11 +2066,12 @@
 		A52BDEB51859236F00B4ECB2 /* TBScope.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				A5A2A79A1C0ABF7F00F2CB49 /* TBScope 4.xcdatamodel */,
 				A5A2A7761C09408600F2CB49 /* TBScope 3.xcdatamodel */,
 				A513226319E7796200B11AEE /* TBScope 2.xcdatamodel */,
 				A52BDEB61859236F00B4ECB2 /* TBScope.xcdatamodel */,
 			);
-			currentVersion = A5A2A7761C09408600F2CB49 /* TBScope 3.xcdatamodel */;
+			currentVersion = A5A2A79A1C0ABF7F00F2CB49 /* TBScope 4.xcdatamodel */;
 			name = TBScope.xcdatamodeld;
 			path = CellScope/TBScope.xcdatamodeld;
 			sourceTree = "<group>";

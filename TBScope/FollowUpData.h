@@ -19,7 +19,9 @@
 @property (nonatomic, retain) NSString * xpertMTBResult;
 @property (nonatomic, retain) NSString * xpertRIFResult;
 @property (nonatomic, retain) NSString * cultureResult;
-@property (nonatomic, retain) NSString * humanReadResult;
+@property (nonatomic, retain) NSString * slide1HumanReadResult;
+@property (nonatomic, retain) NSString * slide2HumanReadResult;
+@property (nonatomic, retain) NSString * slide3HumanReadResult;
 @property (nonatomic, retain) NSString * qcStatus;
 @property (nonatomic, retain) Exams *exam;
 

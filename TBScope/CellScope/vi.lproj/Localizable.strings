@@ -164,6 +164,7 @@
 "Susceptible" = "Nhạy cảm";
 "Resistant" = "Kháng";
 "Scanty" = "Ít";
+"Manual CellScope" = "Xác nhận"; //TODO: change to appropriate translation
 
 //Exam List
 "Review Results" = "kết quả rà soát";
