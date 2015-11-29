@@ -235,7 +235,7 @@
 
 - (void)didReceiveMemoryWarning
 {
-    [TBScopeData CSLog:@"ExamListViewController received memory warning" inCategory:@"MEMORY"];
+    [TBScopeData CSLog:@"ExamListViewController received memory warning" inCategory:@"ERROR"];
 }
 
 //TODO: should throw up a confirmation dialog box when user deletes a slide

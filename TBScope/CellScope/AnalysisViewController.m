@@ -156,7 +156,7 @@
 
 - (void)didReceiveMemoryWarning
 {
-    [TBScopeData CSLog:@"AnalysisViewController received memory warning" inCategory:@"MEMORY"];
+    [TBScopeData CSLog:@"AnalysisViewController received memory warning" inCategory:@"ERROR"];
 }
 
 - (void)analysisCompleteCallback

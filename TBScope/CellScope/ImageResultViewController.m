@@ -68,7 +68,7 @@
 
 - (void)didReceiveMemoryWarning
 {
-    [TBScopeData CSLog:@"ImageResultViewController received memory warning" inCategory:@"MEMORY"];
+    [TBScopeData CSLog:@"ImageResultViewController received memory warning" inCategory:@"ERROR"];
 }
 
 - (void) switchImageViewMode

@@ -75,7 +75,6 @@
     NSString *buildId = [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
     self.versionLabel.text = [NSString stringWithFormat:@"TBScope %@ (%@)", versionNumber, buildId];
     
-    [TBScopeData CSLog:[NSString stringWithFormat:@"TBScope Version %@ (%@)", versionNumber, buildId] inCategory:@"SYSTEM"];
     
     [TBScopeData CSLog:@"Main menu screen presented" inCategory:@"USER"];
     

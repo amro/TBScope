@@ -654,7 +654,7 @@ AVAudioPlayer* _avPlayer;
 {
     [[TBScopeCamera sharedCamera] clearLastCapturedImage];
 
-    [TBScopeData CSLog:@"CaptureViewController received memory warning" inCategory:@"MEMORY"];
+    [TBScopeData CSLog:@"CaptureViewController received memory warning" inCategory:@"ERROR"];
 }
 
 - (void)didPressFastSlow:(id)sender

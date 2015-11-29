@@ -436,7 +436,7 @@
 
 - (void)didReceiveMemoryWarning
 {
-    [TBScopeData CSLog:@"SlideDiagnosisViewController received memory warning" inCategory:@"MEMORY"];
+    [TBScopeData CSLog:@"SlideDiagnosisViewController received memory warning" inCategory:@"ERROR"];
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

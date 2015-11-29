@@ -63,7 +63,7 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
         ble.peripherals = nil;
     
     
-    [TBScopeData CSLog:@"Searching for Bluetooth CellScope" inCategory:@"HARDWARE"];
+    [TBScopeData CSLog:@"Searching for Bluetooth CellScope" inCategory:@"SYSTEM"];
     
     //now connect
     [ble findBLEPeripherals:2];
@@ -87,7 +87,7 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
     [ble findBLEPeripherals:2];
     [NSTimer scheduledTimerWithTimeInterval:(float)1.0 target:self selector:@selector(connectionTimer:) userInfo:nil repeats:NO];
     
-    [TBScopeData CSLog:@"Bluetooth Disconnected" inCategory:@"HARDWARE"];
+    [TBScopeData CSLog:@"Bluetooth Disconnected" inCategory:@"SYSTEM"];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"BluetoothDisconnected" object:nil];
     
@@ -102,7 +102,7 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
 // When connected, this will be called
 -(void) bleDidConnect
 {
-    [TBScopeData CSLog:@"Bluetooth Connected" inCategory:@"HARDWARE"];
+    [TBScopeData CSLog:@"Bluetooth Connected" inCategory:@"SYSTEM"];
     
     [self setMicroscopeLED:CSLEDBrightfield Level:0];
     [self setMicroscopeLED:CSLEDFluorescent Level:0];
@@ -193,9 +193,11 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
     }
 
     if (self.batteryVoltage>0)
+    {
         lastBatteryVoltage = self.batteryVoltage;
+        [TBScopeData CSLog:[NSString stringWithFormat:@"Battery: %3.2fV, Temperature: %3.1fC, Humidity: %3.1f%%",self.batteryVoltage,self.temperature,self.humidity] inCategory:@"SYSTEM"];
+    }
 
-    [TBScopeData CSLog:[NSString stringWithFormat:@"Battery: %3.2fV, Temperature: %3.1fC, Humidity: %3.1f%%",self.batteryVoltage,self.temperature,self.humidity] inCategory:@"SYSTEM"];
     
 }
 
@@ -213,7 +215,7 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
         {
             if ([p.name isEqualToString:@"TB Scope"]) {
                 [TBScopeData CSLog:[NSString stringWithFormat:@"TB Scope detected w/ UUID: %@",p.identifier.UUIDString]
-                        inCategory:@"HARDWARE"];
+                        inCategory:@"SYSTEM"];
                 
                 _tbScopePeripheral = p;
                 
@@ -237,7 +239,7 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
     }
     else if (NewTBScopeWasFound) {
 
-        [TBScopeData CSLog:@"Currently paired CellScope was not detected." inCategory:@"HARDWARE"];
+        [TBScopeData CSLog:@"Currently paired CellScope was not detected." inCategory:@"SYSTEM"];
         
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Bluetooth Connection", nil)
                                                          message:NSLocalizedString(@"A new CellScope has been detected. Pair this iPad with this CellScope?",nil)
@@ -278,7 +280,7 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
         [ble connectPeripheral:_tbScopePeripheral];
         
         [TBScopeData CSLog:[NSString stringWithFormat:@"This iPad is now paired with CellScope Bluetooth UUID: %@",newUUID]
-                inCategory:@"HARDWARE"];
+                inCategory:@"SYSTEM"];
         
     }
     

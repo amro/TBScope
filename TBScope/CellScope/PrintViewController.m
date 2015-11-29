@@ -174,16 +174,16 @@ UITapGestureRecognizer* recognizer;
     switch (result)
     {
         case MFMailComposeResultCancelled:
-            [TBScopeData CSLog:@"Email canceled" inCategory:@"PRINT"];
+            [TBScopeData CSLog:@"Email canceled" inCategory:@"USER"];
             break;
         case MFMailComposeResultSaved:
-            [TBScopeData CSLog:@"Email saved" inCategory:@"PRINT"];
+            [TBScopeData CSLog:@"Email saved" inCategory:@"USER"];
             break;
         case MFMailComposeResultSent:
-            [TBScopeData CSLog:@"Email sent" inCategory:@"PRINT"];
+            [TBScopeData CSLog:@"Email sent" inCategory:@"USER"];
             break;
         case MFMailComposeResultFailed:
-            [TBScopeData CSLog:[NSString stringWithFormat:@"Email send failure: %@",error.description] inCategory:@"PRINT"];
+            [TBScopeData CSLog:[NSString stringWithFormat:@"Email send failure: %@",error.description] inCategory:@"USER"];
             break;
         default:
             break;

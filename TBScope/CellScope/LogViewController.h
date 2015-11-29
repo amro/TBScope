@@ -20,10 +20,15 @@
 @property (strong,nonatomic) NSDateFormatter* timeFormatter;
 
 @property (weak, nonatomic) IBOutlet UIButton *userFilterButton;
-@property (weak, nonatomic) IBOutlet UIButton *hardwareFilterButton;
-@property (weak, nonatomic) IBOutlet UIButton *syncFilterButton;
+@property (weak, nonatomic) IBOutlet UIButton *calibrationFilterButton;
 @property (weak, nonatomic) IBOutlet UIButton *systemFilterButton;
+@property (weak, nonatomic) IBOutlet UIButton *captureFilterButton;
 @property (weak, nonatomic) IBOutlet UIButton *analysisFilterButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *syncFilterButton;
+@property (weak, nonatomic) IBOutlet UIButton *dataFilterButton;
+
+
 @property (weak, nonatomic) IBOutlet UIButton *errorFilterButton;
 
 @property (weak, nonatomic) IBOutlet UIView *filterBarView;

@@ -12,8 +12,8 @@
 
 void onUncaughtException(NSException* exception)
 {
-    [TBScopeData CSLog:[exception description] inCategory:@"CRASH"];
-    [TBScopeData CSLog:[[NSThread callStackSymbols] description] inCategory:@"CRASH"];
+    [TBScopeData CSLog:[exception description] inCategory:@"ERROR"];
+    [TBScopeData CSLog:[[NSThread callStackSymbols] description] inCategory:@"ERROR"];
     [[TBScopeData sharedData] saveCoreData];
 }
 
@@ -21,7 +21,10 @@ void onUncaughtException(NSException* exception)
 {
     NSSetUncaughtExceptionHandler(&onUncaughtException);
     
-    [TBScopeData CSLog:@"App started" inCategory:@"SYSTEM"];
+    NSString *versionNumber = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+    NSString *buildId = [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
+    
+    [TBScopeData CSLog:[NSString stringWithFormat:@"TBScope App Started, Version %@ (%@)", versionNumber, buildId] inCategory:@"SYSTEM"];
     
     //provide some general stats on the iPad state (mem? other apps? battery? GPS location? what else is useful?)
     [TBScopeData CSLog:[NSString stringWithFormat:@"Current language: %@" ,[[NSLocale preferredLanguages] objectAtIndex:0]]

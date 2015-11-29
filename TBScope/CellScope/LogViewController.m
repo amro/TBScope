@@ -17,9 +17,19 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    //I'm not sure why I can't get this view to appear in the top navigation bar. It seems that when a tab bar is present, nothing shows up in the top
+    //self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.filterBarView];
     
-   
-    [self.navigationItem.rightBarButtonItem setCustomView:self.filterBarView];
+    self.tabBarController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.filterBarView];
+    
+    [self.analysisFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    [self.captureFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    [self.calibrationFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    [self.syncFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    [self.dataFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    [self.systemFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    [self.errorFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+    [self.userFilterButton setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
     
     //setup date/time formatters
     self.dateFormatter = [[NSDateFormatter alloc] init];
@@ -37,11 +47,15 @@
 {
     
     NSMutableString* predicateString = [NSMutableString stringWithString:@""];
-    
+
+    if (self.captureFilterButton.titleLabel.textColor == [UIColor yellowColor])
+        [predicateString appendString:@"(category == 'CAPTURE') ||"];
+    if (self.dataFilterButton.titleLabel.textColor == [UIColor yellowColor])
+        [predicateString appendString:@"(category == 'DATA') ||"];
     if (self.userFilterButton.titleLabel.textColor == [UIColor yellowColor])
         [predicateString appendString:@"(category == 'USER') ||"];
-    if (self.hardwareFilterButton.titleLabel.textColor == [UIColor yellowColor])
-        [predicateString appendString:@"(category == 'HARDWARE') ||"];
+    if (self.calibrationFilterButton.titleLabel.textColor == [UIColor yellowColor])
+        [predicateString appendString:@"(category == 'CALIBRATION') ||"];
     if (self.syncFilterButton.titleLabel.textColor == [UIColor yellowColor])
         [predicateString appendString:@"(category == 'SYNC') ||"];
     if (self.systemFilterButton.titleLabel.textColor == [UIColor yellowColor])
@@ -53,9 +67,11 @@
     
     [predicateString appendString:@"(category == '')"];
     
+    NSLog(predicateString);
+    
     NSPredicate* pred = [NSPredicate predicateWithFormat:predicateString];
     
-    self.logData  = [CoreDataHelper searchObjectsForEntity:@"Logs" withPredicate:nil andSortKey:@"date" andSortAscending:NO andContext:[[TBScopeData sharedData] managedObjectContext]];
+    self.logData  = [CoreDataHelper searchObjectsForEntity:@"Logs" withPredicate:pred andSortKey:@"date" andSortAscending:NO andContext:[[TBScopeData sharedData] managedObjectContext]];
     [[self tableView] reloadData];
 }
 
@@ -106,10 +122,11 @@
 {
     UIButton* button = (UIButton*)sender;
     if (button.titleLabel.textColor==[UIColor yellowColor]) {
-        button.titleLabel.textColor = [UIColor lightGrayColor];
+        [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        
     }
     else
-        button.titleLabel.textColor = [UIColor yellowColor];
+        [button setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
     
     [self reloadData];
 }

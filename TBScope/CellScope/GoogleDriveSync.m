@@ -65,9 +65,9 @@ BOOL _hasAttemptedLogUpload;
 - (void) handleNetworkChange:(NSNotification *)notice
 {
     NetworkStatus remoteHostStatus = [self.reachability currentReachabilityStatus];
-    if(remoteHostStatus == NotReachable) {[TBScopeData CSLog:@"No Connection" inCategory:@"NETWORK"];}
-    else if (remoteHostStatus == ReachableViaWiFi) {[TBScopeData CSLog:@"WiFi Connected" inCategory:@"NETWORK"];}
-    else if (remoteHostStatus == ReachableViaWWAN) {[TBScopeData CSLog:@"Cell WWAN Connected" inCategory:@"NETWORK"];}
+    if(remoteHostStatus == NotReachable) {[TBScopeData CSLog:@"No Connection" inCategory:@"SYNC"];}
+    else if (remoteHostStatus == ReachableViaWiFi) {[TBScopeData CSLog:@"WiFi Connected" inCategory:@"SYNC"];}
+    else if (remoteHostStatus == ReachableViaWWAN) {[TBScopeData CSLog:@"Cell WWAN Connected" inCategory:@"SYNC"];}
     
 }
 
@@ -85,7 +85,7 @@ BOOL _hasAttemptedLogUpload;
 }
 
 - (void)doSync {
-    [TBScopeData CSLog:@"Checking if we should sync..." inCategory:@"SYNC"];
+    //[TBScopeData CSLog:@"Checking if we should sync..." inCategory:@"SYNC"];
 
     _hasAttemptedLogUpload = NO;
 

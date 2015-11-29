@@ -158,6 +158,8 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     }];
 }
 
+//NOTE: CD never actually gets cleared?
+
 //assumes CD has already been cleared
 - (void) resetCoreData
 {
@@ -182,14 +184,15 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     
     [self saveCoreData];
 
-    [self insertSeedData];
+    //[self insertSeedData]; //no longer needed
+    
 }
 
 //TODO: remove
 - (void)insertSeedData
 {
     BOOL skipInsertingSeedData = [[[NSProcessInfo processInfo] arguments] containsObject:@"-SkipInsertingSeedData"];
-    if (YES) return;
+    if (skipInsertingSeedData) return;
     
     Exams* exam;
     Slides* slide;
