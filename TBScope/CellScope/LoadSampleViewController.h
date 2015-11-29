@@ -27,6 +27,6 @@
 @property (strong, nonatomic) MPMoviePlayerController* moviePlayer;
 
 @property (weak, nonatomic) IBOutlet UILabel *promptLabel;
-@property (weak, nonatomic) IBOutlet UITextView *directionsLabel;
+@property (weak, nonatomic) IBOutlet UILabel *directionsLabel;
 
 @end

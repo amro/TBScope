@@ -24,6 +24,8 @@
 @property (nonatomic, retain) NSString * dateScanned;
 @property (nonatomic, retain) NSString * roiSpritePath;
 @property (nonatomic, retain) NSString * roiSpriteGoogleDriveFileID;
+@property (nonatomic) int32_t numSkippedBorderFields;
+@property (nonatomic) int32_t numSkippedEmptyFields;
 @property (nonatomic, retain) SlideAnalysisResults *slideAnalysisResults;
 @property (nonatomic, retain) NSOrderedSet *slideImages;
 @property (nonatomic, retain) Exams *exam;

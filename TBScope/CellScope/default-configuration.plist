@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AllowScanWithoutCellScope</key>
+	<true/>
 	<key>DownloadEnabled</key>
 	<false/>
 	<key>UploadEnabled</key>
@@ -31,9 +33,9 @@
 	<key>SlideCenterX</key>
 	<integer>3600</integer>
 	<key>StageSettlingTime</key>
-	<real>0.2</real>
+	<real>0.3</real>
 	<key>FocusSettlingTime</key>
-	<real>0.2</real>
+	<real>0.3</real>
 	<key>StageStepInterval</key>
 	<integer>200</integer>
 	<key>FocusStepInterval</key>

@@ -40,6 +40,7 @@
 @dynamic userName;
 @dynamic examSlides;
 @dynamic examFollowUpData;
+@dynamic isCalibration;
 
 - (void)addExamSlidesObject:(Slides *)value {
     NSMutableOrderedSet* tempSet = [NSMutableOrderedSet orderedSetWithOrderedSet:self.examSlides];

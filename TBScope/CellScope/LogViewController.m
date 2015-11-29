@@ -19,6 +19,8 @@
 {
     
    
+    [self.navigationItem.rightBarButtonItem setCustomView:self.filterBarView];
+    
     //setup date/time formatters
     self.dateFormatter = [[NSDateFormatter alloc] init];
     [self.dateFormatter setDateStyle:NSDateFormatterShortStyle];

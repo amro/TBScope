@@ -210,26 +210,23 @@
     
     //figure out sync indicator color
     if (currentExam.googleDriveFileID!=nil) {
-        cell.syncIcon.backgroundColor = [UIColor greenColor]; //default, fully synced
+        cell.syncIcon.image = [UIImage imageNamed:@"check.png"]; //cell.syncIcon.backgroundColor = [UIColor greenColor]; //default, fully synced
         
         for (Slides* sl in currentExam.examSlides)
             for (Images* im in sl.slideImages)
                   if (im.path==nil)
-                     cell.syncIcon.backgroundColor = [UIColor purpleColor]; //some images pending download
+                      cell.syncIcon.image = [UIImage imageNamed:@"download.png"];  //cell.syncIcon.backgroundColor = [UIColor purpleColor]; //some images pending download
         
-        //NSDate* lastSyncDate = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastSyncDate"];
-        //NSDate* examModifiedDate = [TBScopeData dateFromString:currentExam.dateModified];
-        //if ([examModifiedDate timeIntervalSinceDate:lastSyncDate]>0)
         if (currentExam.synced==NO)
-            cell.syncIcon.backgroundColor = [UIColor yellowColor]; //has been modified locally
+            cell.syncIcon.image = [UIImage imageNamed:@"upload.png"]; //cell.syncIcon.backgroundColor = [UIColor yellowColor]; //has been modified locally
     }
     else {
-        cell.syncIcon.backgroundColor = [UIColor clearColor]; //default, hasn't synced at all
+        cell.syncIcon.image = nil; //cell.syncIcon.backgroundColor = [UIColor clearColor]; //default, hasn't synced at all
         
         for (Slides* sl in currentExam.examSlides)
             for (Images* im in sl.slideImages)
                 if (im.googleDriveFileID!=nil)
-                    cell.syncIcon.backgroundColor = [UIColor redColor]; //some images pending upload
+                    cell.syncIcon.image = [UIImage imageNamed:@"upload.png"]; //cell.syncIcon.backgroundColor = [UIColor redColor]; //some images pending upload
     }
     
     

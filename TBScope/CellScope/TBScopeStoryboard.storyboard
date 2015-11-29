@@ -455,7 +455,7 @@
                         </view>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="Cell" id="RAn-Io-Ood" customClass="ExamListTableViewCell">
-                                <rect key="frame" x="0.0" y="33" width="1024" height="50"/>
+                                <rect key="frame" x="0.0" y="97" width="1024" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RAn-Io-Ood" id="Uhk-MD-akk">
                                     <rect key="frame" x="0.0" y="0.0" width="1024" height="49.5"/>
@@ -676,7 +676,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="C5q-H7-o6I">
-                                <rect key="frame" x="0.0" y="22" width="1024" height="44"/>
+                                <rect key="frame" x="0.0" y="86" width="1024" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="C5q-H7-o6I" id="VgB-qq-SgM">
                                     <rect key="frame" x="0.0" y="0.0" width="1024" height="43.5"/>
@@ -764,100 +764,90 @@
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
                     <tabBarItem key="tabBarItem" title="Logs" image="notebook.png" selectedImage="notebook.png" id="bF0-5Y-yGG"/>
-                    <navigationItem key="navigationItem" id="Eod-JJ-j13">
-                        <nil key="title"/>
-                        <view key="titleView" contentMode="scaleToFill" id="OQl-yf-pis">
-                            <rect key="frame" x="212" y="5.5" width="600" height="33"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4CB-w4-ZRN">
-                                    <rect key="frame" x="23" y="0.0" width="41" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" title="USER">
-                                        <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="wRQ-Zf-NgY"/>
-                                    </connections>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="FKd-Ln-AoL">
-                                    <rect key="frame" x="109" y="0.0" width="86" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" title="HARDWARE">
-                                        <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="pOy-uV-v21"/>
-                                    </connections>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="MHI-mL-Xbr">
-                                    <rect key="frame" x="231" y="0.0" width="42" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" title="SYNC">
-                                        <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="Q5W-Mz-h8Q"/>
-                                    </connections>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="rO8-TC-bKU">
-                                    <rect key="frame" x="527" y="0.0" width="53" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" title="ERROR">
-                                        <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="Wtl-ss-QRl"/>
-                                    </connections>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="XZb-wf-0Os">
-                                    <rect key="frame" x="416" y="0.0" width="72" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" title="ANALYSIS">
-                                        <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="Kpz-QG-S8C"/>
-                                    </connections>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="po2-Vv-3JB">
-                                    <rect key="frame" x="316" y="0.0" width="61" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" title="SYSTEM">
-                                        <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                    </state>
-                                    <connections>
-                                        <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="0pg-Zu-22a"/>
-                                    </connections>
-                                </button>
-                            </subviews>
-                            <animations/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        </view>
-                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
-                        <outlet property="analysisFilterButton" destination="XZb-wf-0Os" id="dWf-WM-gtE"/>
-                        <outlet property="errorFilterButton" destination="rO8-TC-bKU" id="dX1-ho-Kbq"/>
-                        <outlet property="filterBarView" destination="OQl-yf-pis" id="crO-ZL-eCn"/>
-                        <outlet property="hardwareFilterButton" destination="FKd-Ln-AoL" id="WTq-eT-ctg"/>
-                        <outlet property="syncFilterButton" destination="MHI-mL-Xbr" id="XsJ-L1-07n"/>
-                        <outlet property="systemFilterButton" destination="po2-Vv-3JB" id="Wuc-Vi-cyG"/>
-                        <outlet property="userFilterButton" destination="4CB-w4-ZRN" id="CU6-tm-Fkf"/>
+                        <outlet property="filterBarView" destination="2ca-cI-nth" id="bsO-JR-x0I"/>
                     </connections>
                 </tableViewController>
+                <view opaque="NO" contentMode="scaleToFill" id="2ca-cI-nth">
+                    <rect key="frame" x="0.0" y="0.0" width="400" height="33"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="1Mt-qi-FXZ">
+                            <rect key="frame" x="179" y="2" width="41" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
+                            <state key="normal" title="USER">
+                                <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="UQ3-dv-BJf"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Cja-br-4eW">
+                            <rect key="frame" x="157" y="2" width="86" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
+                            <state key="normal" title="HARDWARE">
+                                <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="dbA-4g-XCm"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="YuM-fd-me8">
+                            <rect key="frame" x="179" y="2" width="42" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
+                            <state key="normal" title="SYNC">
+                                <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="RAb-6s-adS"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Z3D-mQ-zNr">
+                            <rect key="frame" x="173" y="2" width="53" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
+                            <state key="normal" title="ERROR">
+                                <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="HEf-vq-mp5"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="DJM-Hl-KoF">
+                            <rect key="frame" x="164" y="2" width="72" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
+                            <state key="normal" title="ANALYSIS">
+                                <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="V55-dS-JJH"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7Q2-f6-GiJ">
+                            <rect key="frame" x="169" y="2" width="61" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <animations/>
+                            <state key="normal" title="SYSTEM">
+                                <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="didPressFilterButton:" destination="kB7-RT-jXw" eventType="touchUpInside" id="cvO-31-6kT"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <animations/>
+                </view>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KCI-AH-ykx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3222" y="3638"/>
@@ -1035,7 +1025,7 @@
                             <tableViewSection headerTitle="Identity" id="2gI-L3-KWq">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="74" id="VjD-vC-puG">
-                                        <rect key="frame" x="0.0" y="22" width="1024" height="74"/>
+                                        <rect key="frame" x="0.0" y="86" width="1024" height="74"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VjD-vC-puG" id="nYd-Ur-oFf">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="73.5"/>
@@ -1094,7 +1084,7 @@
                             <tableViewSection headerTitle="Operation" id="2Hu-x8-InV">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="68" id="oYw-Ij-6UB">
-                                        <rect key="frame" x="0.0" y="118" width="1024" height="68"/>
+                                        <rect key="frame" x="0.0" y="182" width="1024" height="68"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oYw-Ij-6UB" id="1Zo-Fs-C1l">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="67.5"/>
@@ -1149,7 +1139,7 @@
                             <tableViewSection headerTitle="Scan Settings" id="ZUp-qV-Ngu">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="220" id="kgB-m8-6Gh">
-                                        <rect key="frame" x="0.0" y="208" width="1024" height="220"/>
+                                        <rect key="frame" x="0.0" y="272" width="1024" height="220"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kgB-m8-6Gh" id="xlr-yb-05L">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="219.5"/>
@@ -1345,7 +1335,7 @@
                             <tableViewSection headerTitle="Camera &amp; Illumination" id="isD-xm-dSD">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="156" id="Qbm-Du-QeP">
-                                        <rect key="frame" x="0.0" y="450" width="1024" height="156"/>
+                                        <rect key="frame" x="0.0" y="514" width="1024" height="156"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qbm-Du-QeP" id="rJ2-Zb-wWH">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="155.5"/>
@@ -1494,7 +1484,7 @@
                             <tableViewSection headerTitle="Analysis" id="hbo-VN-Ujq">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="119" id="Sea-o3-tBs">
-                                        <rect key="frame" x="0.0" y="628" width="1024" height="119"/>
+                                        <rect key="frame" x="0.0" y="692" width="1024" height="119"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Sea-o3-tBs" id="BWc-8K-dWF">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="118.5"/>
@@ -1570,7 +1560,7 @@
                             <tableViewSection headerTitle="Google Drive Sync" id="cqF-HU-BLd">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="101" id="a6T-2O-r4x">
-                                        <rect key="frame" x="0.0" y="769" width="1024" height="101"/>
+                                        <rect key="frame" x="0.0" y="833" width="1024" height="101"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="a6T-2O-r4x" id="UkQ-c8-nma">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="100.5"/>
@@ -1640,7 +1630,7 @@
                             <tableViewSection headerTitle="Debugging" id="0li-4f-v4v">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="86" id="alh-R3-Sbq">
-                                        <rect key="frame" x="0.0" y="892" width="1024" height="86"/>
+                                        <rect key="frame" x="0.0" y="956" width="1024" height="86"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="alh-R3-Sbq" id="qYE-HU-mt9">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="85.5"/>
@@ -1695,7 +1685,7 @@
                             <tableViewSection headerTitle="Reset Options" id="zwD-ka-Y17">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="253" id="YDw-WK-HoZ">
-                                        <rect key="frame" x="0.0" y="1000" width="1024" height="253"/>
+                                        <rect key="frame" x="0.0" y="1064" width="1024" height="253"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="YDw-WK-HoZ" id="ena-Cd-eb5">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="252.5"/>
@@ -1970,15 +1960,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" editable="NO" selectable="NO" id="sF3-RE-Ra7">
-                                <rect key="frame" x="177" y="580" width="701" height="168"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <animations/>
-                                <string key="text">Wait for loading tray to come to a stop before inserting slide.  Insert slide sputum side up and gently push into machine.  Click next.  Slide will automatically load into position for image capture.</string>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Load the slide as shown below:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kYm-PM-tdx">
                                 <rect key="frame" x="256" y="101" width="512" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1988,11 +1969,20 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" id="arF-w1-Am7">
-                                <rect key="frame" x="172" y="180" width="681" height="407"/>
+                                <rect key="frame" x="111" y="140" width="803" height="478"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="u5O-nj-E1h">
+                                <rect key="frame" x="96" y="619" width="833" height="92"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <string key="text">Wait for loading tray to come to a stop before inserting slide.  Insert slide sputum side up and gently push into machine.  Click next.  Slide will automatically load into position for image capture.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -2010,7 +2000,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="directionsLabel" destination="sF3-RE-Ra7" id="Sf9-qM-rck"/>
+                        <outlet property="directionsLabel" destination="u5O-nj-E1h" id="ED2-uI-zYk"/>
                         <outlet property="promptLabel" destination="kYm-PM-tdx" id="YF0-0s-g9C"/>
                         <outlet property="videoView" destination="arF-w1-Am7" id="Vgl-uL-nxf"/>
                     </connections>

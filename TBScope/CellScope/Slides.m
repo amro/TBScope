@@ -26,6 +26,8 @@
 @dynamic roiSpriteGoogleDriveFileID;
 @dynamic slideAnalysisResults;
 @dynamic slideImages;
+@dynamic numSkippedBorderFields;
+@dynamic numSkippedEmptyFields;
 @dynamic exam;
 
 - (void)awakeFromInsert

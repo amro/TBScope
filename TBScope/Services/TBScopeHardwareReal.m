@@ -17,10 +17,10 @@ const int MIN_X_POSITION = 0; // limit switch
 const int MAX_X_POSITION = 6300; //just before it ejects (x axis is the axis that extents out of the scope)
 const int MIN_Y_POSITION = 0; //limit switch
 const int MAX_Y_POSITION = 2000; //just before it hits stage on the right side
-const int MIN_Z_POSITION = 0;
-const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
-                                   // 107,500 is starting to make weird noises against the base
-                                   // 109,200 is absolute bottom
+const int MIN_Z_POSITION = -30000; //the limit switch is at -40000, but I don't want it going back up that far
+const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plane, so we should never need to go this low
+
+//The range of -30000 to 50000 is meant to be wide enough to account for variations in objective positions from scope to scope. Realistically this is much narrower. "0" in this case is defined as 40000 steps below the limit switch.
 
 
 @synthesize batteryVoltage,
@@ -173,9 +173,14 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
 
 -(void) environmentalLoggingTimer:(NSTimer *)timer
 {
-    [TBScopeData CSLog:[NSString stringWithFormat:@"Battery: %3.2fV, Temperature: %3.1fC, Humidity: %3.1f%%",self.batteryVoltage,self.temperature,self.humidity] inCategory:@"SYSTEM"];
+    static float lastBatteryVoltage = 99.0;
+
+    float warningVoltage = [[NSUserDefaults standardUserDefaults] floatForKey:@"BatteryWarningVoltage"];
     
-    if (self.batteryVoltage<[[NSUserDefaults standardUserDefaults] floatForKey:@"BatteryWarningVoltage"] && self.batteryVoltage>0) {
+    //if scope is connected (battery>0) and the battery is too low,
+    if (lastBatteryVoltage<warningVoltage &&
+        self.batteryVoltage<warningVoltage &&
+        self.batteryVoltage>0) {
         [TBScopeData CSLog:@"Low Battery Warning" inCategory:@"SYSTEM"];
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Battery Warning", nil)
                                                          message:NSLocalizedString(@"CellScope's battery is low and it will shut off soon. Please plug it in.",nil)
@@ -186,6 +191,12 @@ const int MAX_Z_POSITION = 50000;  //  50,000 is safely clear of the tray
         alert.tag = 1;
         [alert show];
     }
+
+    if (self.batteryVoltage>0)
+        lastBatteryVoltage = self.batteryVoltage;
+
+    [TBScopeData CSLog:[NSString stringWithFormat:@"Battery: %3.2fV, Temperature: %3.1fC, Humidity: %3.1f%%",self.batteryVoltage,self.temperature,self.humidity] inCategory:@"SYSTEM"];
+    
 }
 
 //This function is called by an NSTimer at 1s interval

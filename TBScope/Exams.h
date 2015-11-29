@@ -33,6 +33,7 @@
 @property (nonatomic, retain) NSString * patientID;
 @property (nonatomic, retain) NSString * patientName;
 @property (nonatomic) BOOL synced;
+@property (nonatomic) BOOL isCalibration;
 @property (nonatomic, retain) NSString * userName;
 @property (nonatomic, retain) NSOrderedSet *examSlides;
 @property (nonatomic, retain) FollowUpData *examFollowUpData;

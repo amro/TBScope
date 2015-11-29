@@ -26,6 +26,12 @@
 @property (nonatomic, retain) NSString * googleDriveFileID;
 @property (nonatomic, retain) ImageAnalysisResults *imageAnalysisResults;
 @property (nonatomic, retain) Slides *slide;
+@property (nonatomic) int32_t xCoordinate;
+@property (nonatomic) int32_t yCoordinate;
+@property (nonatomic) int32_t zCoordinate;
+@property (nonatomic) int32_t focusAttempts;
+@property (nonatomic, retain) NSString * focusResult;
+
 
 - (PMKPromise *)uploadToGoogleDrive;
 - (PMKPromise *)downloadFromGoogleDrive;

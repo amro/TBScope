@@ -20,5 +20,6 @@
 @dynamic cultureResult;
 @dynamic qcStatus;
 @dynamic exam;
+@dynamic humanReadResult;
 
 @end

@@ -28,6 +28,11 @@
 @dynamic googleDriveFileID;
 @dynamic imageAnalysisResults;
 @dynamic slide;
+@dynamic xCoordinate;
+@dynamic yCoordinate;
+@dynamic zCoordinate;
+@dynamic focusAttempts;
+@dynamic focusResult;
 
 - (void)awakeFromInsert
 {

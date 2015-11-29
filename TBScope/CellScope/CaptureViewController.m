@@ -207,6 +207,7 @@ AVAudioPlayer* _avPlayer;
     
     [TBScopeData CSLog:@"Snapped an image" inCategory:@"CAPTURE"];
     
+    //TODO: I'm a little concerned now that we're speeding up acquisition, this approach of storing the image as lastCapturedImage might cause us to save the same image twice, or to skip an image
     UIImage* image = [[TBScopeCamera sharedCamera] lastCapturedImage]; //[self convertImageToGrayScale:previewView.lastCapturedImage];
     
     __weak typeof(self) weakSelf = self;
@@ -215,7 +216,11 @@ AVAudioPlayer* _avPlayer;
         Images* newImage = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:[[TBScopeData sharedData] managedObjectContext]];
         newImage.path = assetURL.absoluteString;
         newImage.fieldNumber = weakSelf.currentField+1;
-        newImage.metadata = [[TBScopeCamera sharedCamera] lastImageMetadata];
+        newImage.metadata = @""; //[[TBScopeCamera sharedCamera] lastImageMetadata]; //this data is no longer useful
+        newImage.xCoordinate = [[TBScopeHardware sharedHardware] xPosition]; //TODO: this probably isn't accurate because by the time this block is run, the stage has moved on
+        newImage.yCoordinate = [[TBScopeHardware sharedHardware] yPosition];
+        newImage.zCoordinate = [[TBScopeHardware sharedHardware] zPosition];
+        
         [weakSelf.currentSlide addSlideImagesObject:newImage];
 
         [TBScopeData touchExam:weakSelf.currentSlide.exam];
@@ -728,6 +733,7 @@ AVAudioPlayer* _avPlayer;
     });
 }
 
+//TODO: these input parameters don't really need to be here (we can pull it all out of core data)
 - (void) autoscanWithCols:(int)numCols
                      Rows:(int)numRows
        stepsBetweenFields:(long)stepsBetween
@@ -956,7 +962,7 @@ AVAudioPlayer* _avPlayer;
                     }
 
                     
-                    if (focusResult == TBScopeFocusManagerResultFailure) {
+                    if (focusResult != TBScopeFocusManagerResultSuccess) {
                         autoFocusFailCount++;
                     } else {
                         autoFocusFailCount = 0;
@@ -981,6 +987,7 @@ AVAudioPlayer* _avPlayer;
             
              if ([[TBScopeCamera sharedCamera] currentImageQuality].isEmpty) {
                  emptyFieldCount++;
+                 self.currentSlide.numSkippedEmptyFields++;
                  [TBScopeData CSLog:@"Skipping image capture; image is empty." inCategory:@"CAPTURE"];
              }
              //else if (iq.isBoundary) {
@@ -989,6 +996,7 @@ AVAudioPlayer* _avPlayer;
              // }
              else {
                 [self didPressCapture:nil];
+                 [NSThread sleepForTimeInterval:0.1]; //I'm not sure if this is required. Used to be 0.5.
                  acquiredImageCount++;
              }
             
@@ -1048,6 +1056,12 @@ AVAudioPlayer* _avPlayer;
     });
     
 }
+
+-(void) takeCalibrationImages
+{
+    
+}
+
 
 -(void) playSound:(NSString*)sound_file
 {
