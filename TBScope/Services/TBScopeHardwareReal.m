@@ -465,56 +465,56 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
 {
         NSLog(@"moving to (%d, %d, %d)", x,y,z);
     
-        if (x >= 0) {
-            int xSteps = (int)x - self.xPosition;
-            if (xSteps > 0) {
-                [self moveStageWithDirection:CSStageDirectionRight
-                                       Steps:xSteps
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            } else if (xSteps < 0) {
-                [self moveStageWithDirection:CSStageDirectionLeft
-                                       Steps:ABS(xSteps)
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            }
+        //if (x >= 0) {
+        int xSteps = (int)x - self.xPosition;
+        if (xSteps > 0) {
+            [self moveStageWithDirection:CSStageDirectionRight
+                                   Steps:xSteps
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
+        } else if (xSteps < 0) {
+            [self moveStageWithDirection:CSStageDirectionLeft
+                                   Steps:ABS(xSteps)
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
         }
+        //}
 
-        if (y >= 0) {
-            int ySteps = (int)y - self.yPosition;
-            if (ySteps > 0) {
-                [self moveStageWithDirection:CSStageDirectionDown
-                                       Steps:ySteps
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            } else if (ySteps < 0) {
-                [self moveStageWithDirection:CSStageDirectionUp
-                                       Steps:ABS(ySteps)
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            }
+        //if (y >= 0) {
+        int ySteps = (int)y - self.yPosition;
+        if (ySteps > 0) {
+            [self moveStageWithDirection:CSStageDirectionDown
+                                   Steps:ySteps
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
+        } else if (ySteps < 0) {
+            [self moveStageWithDirection:CSStageDirectionUp
+                                   Steps:ABS(ySteps)
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
         }
+        //}
 
-        if (z >= 0) {
-            int zSteps = (int)z - self.zPosition;
-            if (zSteps > 0) {
-                [self moveStageWithDirection:CSStageDirectionFocusDown
-                                       Steps:zSteps
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            } else if (zSteps < 0) {
-                [self moveStageWithDirection:CSStageDirectionFocusUp
-                                       Steps:ABS(zSteps)
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            }
+        //if (z >= 0) {
+        int zSteps = (int)z - self.zPosition;
+        if (zSteps > 0) {
+            [self moveStageWithDirection:CSStageDirectionFocusDown
+                                   Steps:zSteps
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
+        } else if (zSteps < 0) {
+            [self moveStageWithDirection:CSStageDirectionFocusUp
+                                   Steps:ABS(zSteps)
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
         }
+        //}
 
         [[TBScopeHardware sharedHardware] disableMotors];
     
