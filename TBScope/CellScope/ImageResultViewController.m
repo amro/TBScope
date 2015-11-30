@@ -171,9 +171,6 @@
             fieldNumber = currentImage.fieldNumber;
             totalImages = self.currentSlide.slideImages.count;
         }];
-        if (!examID) {
-            NSLog(@"examID is nil.");
-        }
         navItem.title = [NSString stringWithFormat:NSLocalizedString(@"Exam %@, Slide %d, Image %d of %ld",nil),
                          examID,
                          slideNumber,

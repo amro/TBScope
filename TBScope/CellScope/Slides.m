@@ -65,6 +65,18 @@
     return YES;
 }
 
+- (BOOL)hasLocalImages
+{
+    // If we don't have any images return true
+    if ([self.slideImages count] <= 0) return NO;
+
+    // Otherwise check each for empty path
+    for (Images *image in self.slideImages) {
+        if (image.path) return YES;
+    }
+    return NO;
+}
+
 - (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive
 {
     __block NSString *remoteMd5;

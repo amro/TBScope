@@ -122,6 +122,39 @@
     }];
 }
 
+#pragma hasLocalImages tests
+
+- (void)testThatHasLocalImagesReturnsFalseIfSlideHasNoImages
+{
+    [self.moc performBlockAndWait:^{
+        XCTAssertFalse([self.slide hasLocalImages]);
+    }];
+}
+
+- (void)testThatHasLocalImagesReturnsFalseIfSlideHasOnlyRemoteImages
+{
+    // Add an image with only a remote path
+    [self.moc performBlockAndWait:^{
+        Images *image = [NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        image.googleDriveFileID = @"remote-id";
+        image.path = nil;
+        [self.slide addSlideImagesObject:image];
+        XCTAssertFalse([self.slide hasLocalImages]);
+    }];
+}
+
+- (void)testThatHasLocalImagesReturnsFalseIfSlideHasASingleLocalImage
+{
+    // Add an image with only a remote path
+    [self.moc performBlockAndWait:^{
+        Images *image = [NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        image.googleDriveFileID = @"remote-id";
+        image.path = @"asset-library://path/to/image.jpg";
+        [self.slide addSlideImagesObject:image];
+        XCTAssertTrue([self.slide hasLocalImages]);
+    }];
+}
+
 #pragma uploadToGoogleDrive tests
 
 - (void)testThatUploadRoiSpriteSheetToGoogleDriveDoesNotUploadIfPathIsNil

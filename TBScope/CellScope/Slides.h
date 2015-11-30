@@ -45,6 +45,7 @@
 - (void)removeSlideImages:(NSOrderedSet *)values;
 
 - (BOOL)allImagesAreLocal;
+- (BOOL)hasLocalImages;
 - (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive;
 - (PMKPromise *)downloadRoiSpriteSheetFromGoogleDrive;
 

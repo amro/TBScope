@@ -36,11 +36,14 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"TBScopeStoryboard" bundle: nil];
     
     if (self.currentExam.examSlides.count>0) {
-        ImageResultViewController *imageResultsVC1 = [storyboard instantiateViewControllerWithIdentifier:@"ImageResultViewController"];
-        imageResultsVC1.currentSlide = (Slides*)self.currentExam.examSlides[0];
-        imageResultsVC1.tabBarItem.title = [NSString stringWithFormat:NSLocalizedString(@"Slide %d", nil),1];
-        imageResultsVC1.tabBarItem.image = [UIImage imageNamed:@"slide1icon.png"];
-        [tabVCs addObject:imageResultsVC1];
+        Slides *slide = self.currentExam.examSlides[0];
+        if (slide.slideAnalysisResults || [slide hasLocalImages]) {
+            ImageResultViewController *imageResultsVC1 = [storyboard instantiateViewControllerWithIdentifier:@"ImageResultViewController"];
+            imageResultsVC1.currentSlide = (Slides*)self.currentExam.examSlides[0];
+            imageResultsVC1.tabBarItem.title = [NSString stringWithFormat:NSLocalizedString(@"Slide %d", nil),1];
+            imageResultsVC1.tabBarItem.image = [UIImage imageNamed:@"slide1icon.png"];
+            [tabVCs addObject:imageResultsVC1];
+        }
     }
     if (self.currentExam.examSlides.count>1) {
         ImageResultViewController *imageResultsVC2 = [storyboard instantiateViewControllerWithIdentifier:@"ImageResultViewController"];
