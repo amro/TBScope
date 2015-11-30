@@ -114,6 +114,102 @@
     }];
 }
 
+- (void)testThatUploadToGoogleDriveSetsParentDirectory
+{
+    // Set up expectation
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+
+    NSManagedObjectContext *moc = [self getManagedObjectContext];
+    Exams *exam = [self getExam:moc];
+    GoogleDriveService *gds = OCMPartialMock([self getGoogleDriveService]);
+
+    [moc performBlockAndWait:^{
+        // Set local exam to NOT have a remote file
+        exam.googleDriveFileID = nil;
+    }];
+
+    // Set parent directory identifier in NSUserDefaults
+    NSString *remoteDirIdentifier = @"remote-directory-identifier";
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock valueForKey:@"RemoteDirectoryIdentifier"])
+        .andReturn(remoteDirIdentifier);
+    OCMStub([userDefaultsMock standardUserDefaults])
+        .andReturn(userDefaultsMock);
+
+    // Stub out [googleDriveService uploadFile:withData:]
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        GTLDriveFile *file = [[GTLDriveFile alloc] init];
+        file.identifier = @"google-drive-file-id";
+        resolve(file);
+    }];
+    GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
+        GTLDriveFile *actualRemoteDir = [file.parents objectAtIndex:0];
+        return [actualRemoteDir.identifier isEqualToString:remoteDirIdentifier];
+    }];
+    OCMStub([gds uploadFile:fileArg withData:[OCMArg any]])
+        .andReturn(promise);
+
+    // Call uploadToGoogleDrive
+    [exam uploadToGoogleDrive:gds]
+        .then(^{
+            OCMVerify([gds uploadFile:[OCMArg any] withData:[OCMArg any]]);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
+
+    // Wait for expectation
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatUploadToGoogleDriveSetsParentDirectoryToNilWhenRemoteDirectoryIdentifierIsNil
+{
+    // Set up expectation
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+
+    NSManagedObjectContext *moc = [self getManagedObjectContext];
+    Exams *exam = [self getExam:moc];
+    GoogleDriveService *gds = OCMPartialMock([self getGoogleDriveService]);
+
+    [moc performBlockAndWait:^{
+        // Set local exam to NOT have a remote file
+        exam.googleDriveFileID = nil;
+    }];
+
+    // Set parent directory identifier in NSUserDefaults
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock valueForKey:@"RemoteDirectoryIdentifier"])
+        .andReturn(nil);
+    OCMStub([userDefaultsMock standardUserDefaults])
+        .andReturn(userDefaultsMock);
+
+    // Stub out [googleDriveService uploadFile:withData:]
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        GTLDriveFile *file = [[GTLDriveFile alloc] init];
+        file.identifier = @"google-drive-file-id";
+        resolve(file);
+    }];
+    GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
+        return (file.parents == nil);
+    }];
+    OCMStub([gds uploadFile:fileArg withData:[OCMArg any]])
+        .andReturn(promise);
+
+    // Call uploadToGoogleDrive
+    [exam uploadToGoogleDrive:gds]
+        .then(^{
+            OCMVerify([gds uploadFile:[OCMArg any] withData:[OCMArg any]]);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
+
+    // Wait for expectation
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
 - (void)testThatUploadToGoogleDriveDoesNotUploadIfRemoteFileIsNewerThanLocalModificationDate
 {
     // Set up expectation

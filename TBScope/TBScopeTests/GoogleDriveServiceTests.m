@@ -75,6 +75,88 @@
     }];
 }
 
+#pragma listDirectories tests
+
+- (void)testThatListDirectoriesCallsExecuteQueryWithTimeout
+{
+    // Stub out [GoogleDriveService executeQueryWithTimeout]
+    OCMStub([self.service executeQueryWithTimeout:[OCMArg any]])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Call the method
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.service listDirectories]
+        .then(^{
+            [expectation fulfill];
+            OCMVerify([self.service executeQueryWithTimeout:[OCMArg any]]);
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve");
+        });
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+#pragma createDirectoryWithTitle tests
+
+- (void)testThatCreateDirectoryWithTitleCallsExecuteQueryWithTimeout
+{
+    // Stub out [GoogleDriveService executeQueryWithTimeout]
+    OCMStub([self.service executeQueryWithTimeout:[OCMArg any]])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Call the method
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.service createDirectoryWithTitle:@"test-directory"]
+        .then(^{
+            [expectation fulfill];
+            OCMVerify([self.service executeQueryWithTimeout:[OCMArg any]]);
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve");
+        });
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatCreateDirectoryWithTitleRejectsPromiseWithNilTitle
+{
+    // Stub out [GoogleDriveService executeQueryWithTimeout]
+    OCMStub([self.service executeQueryWithTimeout:[OCMArg any]])
+        .andDo(^(NSInvocation *invocation) {
+            XCTFail(@"Expected executeQueryWithTimeout NOT to be called");
+        });
+
+    // Call the method
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.service createDirectoryWithTitle:nil]
+        .then(^{ XCTFail(@"Expected promise to reject."); })
+        .catch(^(NSError *error) { [expectation fulfill]; });
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatCreateDirectoryWithTitleRejectsPromiseWithEmptyTitle
+{
+    // Stub out [GoogleDriveService executeQueryWithTimeout]
+    OCMStub([self.service executeQueryWithTimeout:[OCMArg any]])
+        .andDo(^(NSInvocation *invocation) {
+            XCTFail(@"Expected executeQueryWithTimeout NOT to be called");
+        });
+
+    // Call the method
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.service createDirectoryWithTitle:@""]
+        .then(^{ XCTFail(@"Expected promise to reject."); })
+        .catch(^(NSError *error) { [expectation fulfill]; });
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
 #pragma uploadFile:withData: tests
 
 - (void)testThatUploadFileUploadsIfRemoteFileDoesNotExist

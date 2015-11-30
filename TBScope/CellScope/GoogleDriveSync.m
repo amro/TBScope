@@ -211,7 +211,9 @@ BOOL _hasAttemptedLogUpload;
         //if (ONLY_CHECK_RECORDS_SINCE_LAST_FULL_SYNC)
         //    query.q = [NSString stringWithFormat:@"modifiedDate > '%@' and mimeType='application/json'",[GTLDateTime dateTimeWithDate:lastFullSync timeZone:[NSTimeZone systemTimeZone]].RFC3339String];
         //else
-        query.q = @"mimeType='application/json' AND trashed=false";
+        NSString *parentDirIdentifier = [[NSUserDefaults standardUserDefaults] valueForKey:@"RemoteDirectoryIdentifier"];
+        if (!parentDirIdentifier) parentDirIdentifier = @"root";
+        query.q = [NSString stringWithFormat:@"'%@' in parents AND mimeType='application/json' AND trashed=false", parentDirIdentifier];
         query.includeDeleted = false;
         query.includeSubscribed = true;
         GoogleDriveService *service = [[GoogleDriveService alloc] init];

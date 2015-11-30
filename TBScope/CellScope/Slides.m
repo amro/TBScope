@@ -141,6 +141,15 @@
                 file.descriptionProperty = @"Uploaded from CellScope";
                 file.mimeType = @"image/jpeg";
                 file.modifiedDate = [GTLDateTime dateTimeWithRFC3339String:self.exam.dateModified];
+
+                // Set parent folder if necessary
+                NSString *remoteDirIdentifier = [[NSUserDefaults standardUserDefaults] valueForKey:@"RemoteDirectoryIdentifier"];
+                if (remoteDirIdentifier) {
+                    GTLDriveParentReference *parentRef = [GTLDriveParentReference object];
+                    parentRef.identifier = remoteDirIdentifier;
+                    file.parents = @[ parentRef ];
+                }
+
                 [self.googleDriveService uploadFile:file withData:data]
                     .then(^(GTLDriveFile *file) { resolve(file); })
                     .catch(^(NSError *error) { resolve(error); });

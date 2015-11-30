@@ -62,7 +62,14 @@
     
     self.syncInterval.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"SyncInterval"]];
     self.wifiOnlyButton.on = [prefs boolForKey:@"WifiSyncOnly"];
-    
+
+    NSString *syncDirectoryName = [prefs stringForKey:@"RemoteDirectoryTitle"];
+    if (syncDirectoryName) {
+        self.syncDirectoryName.text = [[NSString alloc] initWithFormat:@"%@", syncDirectoryName];
+    } else {
+        self.syncDirectoryName.text = @"(root directory)";
+    }
+
     self.autoLoadSwitch.on = [prefs boolForKey:@"DoAutoLoadSlide"];
     self.autoScanSwitch.on = [prefs boolForKey:@"DoAutoScan"];
     self.runWithoutCellScopeSwitch.on = [prefs boolForKey:@"AllowScanWithoutCellScope"];

@@ -186,6 +186,102 @@
     }];
 }
 
+- (void)testThatUploadRoiSpriteSheetToGoogleDriveSetsParentDirectory
+{
+    [self setSlideRoiSpritePath];
+
+    // Set parent directory identifier in NSUserDefaults
+    NSString *remoteDirIdentifier = @"remote-directory-identifier";
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock valueForKey:@"RemoteDirectoryIdentifier"])
+        .andReturn(remoteDirIdentifier);
+    OCMStub([userDefaultsMock standardUserDefaults])
+        .andReturn(userDefaultsMock);
+
+    // Stub out getMetadataForFileId to return nil
+    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Stub out remote file time to be newer
+    NSString *md5 = @"abc123";
+    [self stubOutRemoteFileTime:@"2014-11-10T12:00:00.00Z" md5:md5];
+    [self.moc performBlockAndWait:^{
+        self.slide.exam.dateModified = @"2015-11-10T12:00:00.00Z";
+    }];
+
+    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
+    [self stubOutGetImageAtPath];
+
+    // Stub out [GoogleDriveService uploadFile:withData:] to succeed
+    GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
+        GTLDriveFile *actualRemoteDir = [file.parents objectAtIndex:0];
+        return [actualRemoteDir.identifier isEqualToString:remoteDirIdentifier];
+    }];
+    OCMStub([self.slide.googleDriveService uploadFile:fileArg
+                                             withData:[OCMArg any]])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Set up expectation
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+
+    // Call uploadToGoogleDrive
+    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+        .then(^(GTLDriveFile *file) { [expectation fulfill]; })
+        .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
+
+    // Wait for expectation
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatUploadRoiSpriteSheetToGoogleDriveDoesNotSetParentsWhenRemoteDirectoryIdentifierIsNil
+{
+    [self setSlideRoiSpritePath];
+
+    // Set parent directory identifier in NSUserDefaults
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock valueForKey:@"RemoteDirectoryIdentifier"])
+        .andReturn(nil);
+    OCMStub([userDefaultsMock standardUserDefaults])
+        .andReturn(userDefaultsMock);
+
+    // Stub out getMetadataForFileId to return nil
+    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Stub out remote file time to be newer
+    NSString *md5 = @"abc123";
+    [self stubOutRemoteFileTime:@"2014-11-10T12:00:00.00Z" md5:md5];
+    [self.moc performBlockAndWait:^{
+        self.slide.exam.dateModified = @"2015-11-10T12:00:00.00Z";
+    }];
+
+    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
+    [self stubOutGetImageAtPath];
+
+    // Stub out [GoogleDriveService uploadFile:withData:] to succeed
+    GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
+        return (file.parents == nil);
+    }];
+    OCMStub([self.slide.googleDriveService uploadFile:fileArg
+                                             withData:[OCMArg any]])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Set up expectation
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+
+    // Call uploadToGoogleDrive
+    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+        .then(^(GTLDriveFile *file) { [expectation fulfill]; })
+        .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
+
+    // Wait for expectation
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
 - (void)testThatUploadRoiSpriteSheetToGoogleDriveDoesNotUploadIfRemoteFileIsNewerThanLocalFile
 {
     [self setSlideRoiSpritePath];

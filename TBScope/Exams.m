@@ -129,6 +129,14 @@
                 newRemoteFile.modifiedDate = [GTLDateTime dateTimeWithRFC3339String:[self dateModified]];
                 newRemoteFile.identifier = [self googleDriveFileID];
 
+                // Set parent folder if necessary
+                NSString *remoteDirIdentifier = [[NSUserDefaults standardUserDefaults] valueForKey:@"RemoteDirectoryIdentifier"];
+                if (remoteDirIdentifier) {
+                    GTLDriveParentReference *parentRef = [GTLDriveParentReference object];
+                    parentRef.identifier = remoteDirIdentifier;
+                    newRemoteFile.parents = @[ parentRef ];
+                }
+
                 // Upload file
                 [gds uploadFile:newRemoteFile withData:data]
                     .then(^(GTLDriveFile *file) { resolve(file); })

@@ -31,7 +31,7 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
                                                                                              clientID:kClientID
                                                                                          clientSecret:kClientSecret];
         self.driveService.shouldFetchNextPages = YES;
-        self.googleDriveTimeout = 5.0;
+        self.googleDriveTimeout = 15.0;
     }
     return self;
 }
@@ -85,6 +85,33 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
             }
         }];
     }];
+}
+
+- (PMKPromise *)listDirectories
+{
+    GTLQueryDrive *query = [GTLQueryDrive queryForFilesList];
+    query.q = @"mimeType='application/vnd.google-apps.folder' and trashed=false";
+    query.maxResults = 100;
+    return [self executeQueryWithTimeout:query];
+}
+
+- (PMKPromise *)createDirectoryWithTitle:(NSString *)title
+{
+    if (!title || [title length] < 1) {
+        return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+            NSError *error = [NSError errorWithDomain:@"GoogleDriveService"
+                                                 code:-1
+                                             userInfo:nil];
+            resolve(error);
+        }];
+    }
+
+    GTLDriveFile *folder = [GTLDriveFile object];
+    folder.title = title;
+    folder.mimeType = @"application/vnd.google-apps.folder";
+    GTLQueryDrive *query = [GTLQueryDrive queryForFilesInsertWithObject:folder
+                                                       uploadParameters:nil];
+    return [self executeQueryWithTimeout:query];
 }
 
 - (PMKPromise *)uploadFile:(GTLDriveFile *)file withData:(NSData *)data

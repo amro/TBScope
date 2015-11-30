@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UITextField* diagnosticThreshold;
 @property (weak, nonatomic) IBOutlet UITextField* numPatchesToAverage;
 @property (weak, nonatomic) IBOutlet UITextField *syncInterval;
+@property (weak, nonatomic) IBOutlet UILabel *syncDirectoryName;
 @property (weak, nonatomic) IBOutlet UISwitch *wifiOnlyButton;
 @property (weak, nonatomic) IBOutlet UISwitch *debuggingSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *downloadSwitch;

@@ -23,6 +23,8 @@
 - (PMKPromise *)getMetadataForFileId:(NSString *)fileId;
 - (PMKPromise *)fileExists:(GTLDriveFile *)file;
 - (PMKPromise *)getFile:(GTLDriveFile *)file;
+- (PMKPromise *)listDirectories;
+- (PMKPromise *)createDirectoryWithTitle:(NSString *)title;
 - (PMKPromise *)uploadFile:(GTLDriveFile *)file withData:(NSData *)data;
 - (PMKPromise *)downloadFileWithId:(NSString *)fileId;
 - (PMKPromise *)deleteFileWithId:(NSString *)fileId;

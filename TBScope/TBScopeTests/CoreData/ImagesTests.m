@@ -174,6 +174,90 @@
     }];
 }
 
+- (void)testThatUploadToGoogleDriveSetsParentDirectory
+{
+    [self.moc performBlockAndWait:^{
+        self.image.googleDriveFileID = nil;
+    }];
+
+    // Set parent directory identifier in NSUserDefaults
+    NSString *remoteDirIdentifier = @"remote-directory-identifier";
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock valueForKey:@"RemoteDirectoryIdentifier"])
+        .andReturn(remoteDirIdentifier);
+    OCMStub([userDefaultsMock standardUserDefaults])
+        .andReturn(userDefaultsMock);
+
+    // Stub out getImageAtPath
+    [self stubGetImageAtPathToResolve];
+
+    // Stub out [googleDriveService uploadFile:withData] to fulfill expectation
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        NSString *googleDriveFileID = @"test-file-id";
+        GTLDriveFile *file = [GTLDriveFile object];
+        file.identifier = googleDriveFileID;
+        file.md5Checksum = @"abc123";
+        resolve(file);
+    }];
+    GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
+        GTLDriveFile *actualRemoteDir = [file.parents objectAtIndex:0];
+        return [actualRemoteDir.identifier isEqualToString:remoteDirIdentifier];
+    }];
+    OCMStub([self.image.googleDriveService uploadFile:fileArg
+                                             withData:[OCMArg any]])
+        .andReturn(promise);
+
+    // Call upload
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.image uploadToGoogleDrive]
+        .then(^{ [expectation fulfill]; })
+        .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatUploadToGoogleDriveDoesNotSetParentsWhenRemoteDirectoryIdentifierIsNil
+{
+    [self.moc performBlockAndWait:^{
+        self.image.googleDriveFileID = nil;
+    }];
+
+    // Set parent directory identifier in NSUserDefaults
+    id userDefaultsMock = OCMClassMock([NSUserDefaults class]);
+    OCMStub([userDefaultsMock valueForKey:@"RemoteDirectoryIdentifier"])
+        .andReturn(nil);
+    OCMStub([userDefaultsMock standardUserDefaults])
+        .andReturn(userDefaultsMock);
+
+    // Stub out getImageAtPath
+    [self stubGetImageAtPathToResolve];
+
+    // Stub out [googleDriveService uploadFile:withData] to fulfill expectation
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        NSString *googleDriveFileID = @"test-file-id";
+        GTLDriveFile *file = [GTLDriveFile object];
+        file.identifier = googleDriveFileID;
+        file.md5Checksum = @"abc123";
+        resolve(file);
+    }];
+    GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
+        return (file.parents == nil);
+    }];
+    OCMStub([self.image.googleDriveService uploadFile:fileArg
+                                             withData:[OCMArg any]])
+        .andReturn(promise);
+
+    // Call upload
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.image uploadToGoogleDrive]
+        .then(^{ [expectation fulfill]; })
+        .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
 - (void)testThatUploadToGoogleDriveUpdatesGoogleDriveFileId
 {
     [self.moc performBlockAndWait:^{
