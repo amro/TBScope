@@ -148,7 +148,7 @@
     // If best metric is more than N stdev from mean, go there and return success
     float mean = [self _mean:samples];
     float stdev = [self _stdev:samples];
-    if (bestMetricSoFar > mean+2*stdev) {
+    if (bestMetricSoFar > mean+1*stdev) { //try 1 stddev instead
         [self _recordNewCurrentIterationPosition:bestPositionSoFar Metric:bestMetricSoFar];
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:bestPositionSoFar];
         [[TBScopeHardware sharedHardware] waitForStage];
