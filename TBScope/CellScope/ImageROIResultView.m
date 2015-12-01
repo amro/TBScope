@@ -57,11 +57,11 @@ float threshold_score = 1;
         _spriteSheetPromise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             [slide.managedObjectContext performBlock:^{
                 [TBScopeImageAsset getImageAtPath:slide.roiSpritePath].then(^(UIImage *sheet){
-                    DSSSpriteSheet *spriteSheet = [[DSSSpriteSheet alloc] loadFromSheet:sheet
-                                                                                  width:PATCH_WIDTH
-                                                                                 height:PATCH_HEIGHT
-                                                                            itemsPerRow:SPRITESHEET_PATCHES_PER_ROW
-                                                                            borderWidth:SPRITESHEET_BORDER_WIDTH];
+                    DSSSpriteSheet *spriteSheet = [[DSSSpriteSheet alloc] initWithItemWidth:PATCH_WIDTH
+                                                                                     height:PATCH_HEIGHT
+                                                                                itemsPerRow:SPRITESHEET_PATCHES_PER_ROW
+                                                                                borderWidth:SPRITESHEET_BORDER_WIDTH
+                                                                                      image:sheet];
                     resolve(spriteSheet);
                 });
             }];

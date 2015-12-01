@@ -13,8 +13,9 @@
 #import "TBScopeImageAsset.h"
 #import "UIImage+Crop.h"
 
-@implementation AnalysisViewController
-
+@implementation AnalysisViewController {
+    NSMutableDictionary *_imagesByROIObjectURI;
+}
 
 @synthesize currentSlide,progress,spinner;
 
@@ -24,6 +25,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    // Init imagesByROIObjectURI
+    _imagesByROIObjectURI = [[NSMutableDictionary alloc] init];
 
     //localization
     self.navigationItem.title = NSLocalizedString(@"Analyzing...", nil);
@@ -142,6 +146,14 @@
                 currentImage.imageAnalysisResults = [diagnoser runWithUIImage:image
                                                                 coreDataImage:currentImage];
 
+                // Add ROIs to our dictionary of ROI images by objectURI
+                for (ROIs *roi in currentImage.imageAnalysisResults.imageROIs) {
+                    NSString *objectURI = [[[roi objectID] URIRepresentation] absoluteString];
+                    UIImage *roiImage = [TBScopeData getPatchFromImage:image X:roi.x Y:roi.y];
+                    NSData *data = UIImagePNGRepresentation(roiImage);
+                    [_imagesByROIObjectURI setObject:data forKey:objectURI];
+                }
+
                 [TBScopeData touchExam:self.currentSlide.exam];
                 [[TBScopeData sharedData] saveCoreData];
             }
@@ -231,56 +243,32 @@
                 // Add all patches to the sprite sheet
                 float redThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:@"RedThreshold"];
                 float yellowThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:@"YellowThreshold"];
-                PMKPromise *addPatchesPromise = [PMKPromise promiseWithResolver:^(PMKResolver resolver) {
-                    __block PMKResolver finishedAddingPatches = resolver;
-                    __block void (^addROIAtIndex)(int) = ^(int index){
-                        if (index >= [sortedROIs count]) {
-                            finishedAddingPatches(nil);
-                            return;
-                        }
+                for (ROIs *roi in sortedROIs) {
+                    NSString *objectURI = [[[roi objectID] URIRepresentation] absoluteString];
+                    NSData *data = [_imagesByROIObjectURI objectForKey:objectURI];
+                    UIImage *roiImage = [UIImage imageWithData:data];
+                    [_imagesByROIObjectURI removeObjectForKey:objectURI];
 
-                        // Get the image belonging to the ROI
-                        ROIs *roi = [sortedROIs objectAtIndex:(NSInteger)index];
-                        __block NSString *imagePath;
-                        [roi.managedObjectContext performBlockAndWait:^{
-                            Images *image = (Images *)roi.imageAnalysisResult.image;
-                            imagePath = image.path;
-                        }];
-                        [TBScopeImageAsset getImageAtPath:imagePath].then(^(UIImage *uiImage){
-                            [roi.managedObjectContext performBlock:^{
-                                // Get an roiImage representing just the ROI area
-                                UIImage *roiImage = [TBScopeData getPatchFromImage:uiImage X:roi.x Y:roi.y];
+                    // Add border based on score
+                    UIColor *borderColor;
+                    if (roi.score > redThreshold) {
+                        borderColor = [UIColor redColor];
+                    } else if (roi.score > yellowThreshold) {
+                        borderColor = [UIColor yellowColor];
+                    } else {
+                        borderColor = [UIColor greenColor];
+                    }
 
-                                // Add border based on score
-                                UIColor *borderColor;
-                                if (roi.score > redThreshold) {
-                                    borderColor = [UIColor redColor];
-                                } else if (roi.score > yellowThreshold) {
-                                    borderColor = [UIColor yellowColor];
-                                } else {
-                                    borderColor = [UIColor greenColor];
-                                }
-                                [spriteSheet addImage:roiImage withBorderColor:borderColor];
-
-                                // Recurse (async to avoid stack too deep)
-                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                    addROIAtIndex(index+1);
-                                });
-                            }];
-                        });
-                    };
-                    addROIAtIndex(0);
-                }];
+                    [spriteSheet addImage:roiImage withBorderColor:borderColor];
+                }
 
                 // Save sprite sheet image
-                addPatchesPromise.then(^{
-                    UIImage *sprite = [spriteSheet toSpriteSheet];
-                    PMKPromise *savePromise = [TBScopeImageAsset saveImage:sprite];
-                    savePromise.then(^(NSURL *assetURL){
-                        // Assign path to currentSlide.roiSpritePath
-                        currentSlide.roiSpritePath = [assetURL absoluteString];
-                        finishedSavingSprite(nil);
-                    });
+                UIImage *sprite = [spriteSheet toSpriteSheet];
+                PMKPromise *savePromise = [TBScopeImageAsset saveImage:sprite];
+                savePromise.then(^(NSURL *assetURL){
+                    // Assign path to currentSlide.roiSpritePath
+                    currentSlide.roiSpritePath = [assetURL absoluteString];
+                    finishedSavingSprite(nil);
                 });
             } else {
                 finishedSavingSprite(nil);
