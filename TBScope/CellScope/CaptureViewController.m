@@ -1014,7 +1014,9 @@ AVAudioPlayer* _avPlayer;
             
              if ([[TBScopeCamera sharedCamera] currentImageQuality].isEmpty) {
                  emptyFieldCount++;
-                 self.currentSlide.numSkippedEmptyFields++;
+                 [self.currentSlide.managedObjectContext performBlockAndWait:^{
+                     self.currentSlide.numSkippedEmptyFields++;
+                 }];
                  [TBScopeData CSLog:@"Skipping image capture; image is empty." inCategory:@"CAPTURE"];
              }
              //else if (iq.isBoundary) {
@@ -1022,7 +1024,7 @@ AVAudioPlayer* _avPlayer;
              // [TBScopeData CSLog:@"Skipping image capture; image contains boundary." inCategory:@"CAPTURE"];
              // }
              else {
-                [self didPressCapture:nil];
+                 [self didPressCapture:nil];
                  [NSThread sleepForTimeInterval:0.1]; //I'm not sure if this is required. Used to be 0.5.
                  acquiredImageCount++;
              }
