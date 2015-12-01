@@ -23,8 +23,6 @@ typedef NS_ENUM(NSInteger, TBScopeCameraServiceAutofocus) {
 @property (nonatomic) float currentFocusMetric;
 @property (nonatomic) BOOL isPreviewRunning;
 @property (nonatomic) int focusMode;
-@property (strong,atomic) UIImage* lastCapturedImage;
-@property (strong,atomic) NSString* lastImageMetadata;
 
 -(void)setUpCamera;
 -(void)setFocusLock:(BOOL)locked;
@@ -36,7 +34,6 @@ typedef NS_ENUM(NSInteger, TBScopeCameraServiceAutofocus) {
                     Green:(int)greenGain
                      Blue:(int)blueGain;
 -(void)captureImage;
--(void)clearLastCapturedImage;
 -(AVCaptureVideoPreviewLayer *)captureVideoPreviewLayer;
 -(void)startPreview;
 -(void)stopPreview;

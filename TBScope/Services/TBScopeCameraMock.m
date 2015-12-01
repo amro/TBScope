@@ -25,8 +25,6 @@
 @synthesize currentFocusMetric,
             currentImageQuality,
             focusMode,
-            lastImageMetadata,
-            lastCapturedImage,
             isPreviewRunning;
 
 - (instancetype)init
@@ -116,7 +114,7 @@
 {
     [self _log:@"captureImage"];
 
-    // Update lastCapturedImage with mock images
+    // Fetch fake image data
     NSString *fileName;
     if (self.focusMode == TBScopeCameraFocusModeSharpness) {  // BF
         fileName = @"bf_mock";
@@ -124,17 +122,20 @@
         fileName = @"fl_mock";
     }
     NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:fileName ofType:@"jpg"];
-    self.lastCapturedImage = [UIImage imageWithContentsOfFile:filePath];
+    UIImage *image = [UIImage imageWithContentsOfFile:filePath];
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
 
     // Post notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ImageCaptured" object:nil];
-}
-
-- (void)clearLastCapturedImage
-{
-    [self _log:@"clearLastCapturedImage"];
-
-    self.lastCapturedImage = nil;
+    id<TBScopeHardwareDriver> hardware = [TBScopeHardware sharedHardware];
+    NSDictionary *dict = @{
+        @"data":      imageData,
+        @"xPosition": [NSNumber numberWithInt:[hardware xPosition]],
+        @"yPosition": [NSNumber numberWithInt:[hardware yPosition]],
+        @"zPosition": [NSNumber numberWithInt:[hardware zPosition]],
+    };
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ImageCaptured"
+                                                        object:self
+                                                      userInfo:dict];
 }
 
 - (AVCaptureVideoPreviewLayer *)captureVideoPreviewLayer

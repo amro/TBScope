@@ -70,7 +70,10 @@ AVAudioPlayer* _avPlayer;
     self.analyzeButton.enabled = NO;
     
     //TODO: i'd rather do this as a delegate
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImageCallback) name:@"ImageCaptured" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(saveImageCallback:)
+                                                 name:@"ImageCaptured"
+                                               object:nil];
 
     //if this slide is being rescanned, delete old images/results
     for (Images* im in self.currentSlide.slideImages) {
@@ -196,13 +199,16 @@ AVAudioPlayer* _avPlayer;
 
 
 
-- (void)saveImageCallback
+- (void)saveImageCallback:(NSNotification *)notification
 {
-    
     [TBScopeData CSLog:@"Snapped an image" inCategory:@"CAPTURE"];
-    
-    //TODO: I'm a little concerned now that we're speeding up acquisition, this approach of storing the image as lastCapturedImage might cause us to save the same image twice, or to skip an image
-    UIImage* image = [[TBScopeCamera sharedCamera] lastCapturedImage]; //[self convertImageToGrayScale:previewView.lastCapturedImage];
+
+    // Pull image/state info from the dictionary
+    NSDictionary *dict = notification.userInfo;
+    int xPosition = (int)dict[@"xPosition"];
+    int yPosition = (int)dict[@"yPosition"];
+    int zPosition = (int)dict[@"zPosition"];
+    UIImage *image = [UIImage imageWithData:dict[@"data"]];
     
     __weak typeof(self) weakSelf = self;
     void (^saveBlock)(NSURL *);
@@ -210,10 +216,10 @@ AVAudioPlayer* _avPlayer;
         Images* newImage = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:[[TBScopeData sharedData] managedObjectContext]];
         newImage.path = assetURL.absoluteString;
         newImage.fieldNumber = weakSelf.currentField+1;
-        newImage.metadata = @""; //[[TBScopeCamera sharedCamera] lastImageMetadata]; //this data is no longer useful
-        newImage.xCoordinate = [[TBScopeHardware sharedHardware] xPosition]; //TODO: this probably isn't accurate because by the time this block is run, the stage has moved on
-        newImage.yCoordinate = [[TBScopeHardware sharedHardware] yPosition];
-        newImage.zCoordinate = [[TBScopeHardware sharedHardware] zPosition];
+        newImage.metadata = @"";  //this data is no longer useful
+        newImage.xCoordinate = xPosition;
+        newImage.yCoordinate = yPosition;
+        newImage.zCoordinate = zPosition;
         
         [weakSelf.currentSlide addSlideImagesObject:newImage];
 
@@ -646,8 +652,6 @@ AVAudioPlayer* _avPlayer;
 
 - (void) didReceiveMemoryWarning
 {
-    [[TBScopeCamera sharedCamera] clearLastCapturedImage];
-
     [TBScopeData CSLog:@"CaptureViewController received memory warning" inCategory:@"ERROR"];
 }
 

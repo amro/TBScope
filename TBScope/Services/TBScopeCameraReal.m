@@ -7,6 +7,7 @@
 //
 
 #import "TBScopeCameraReal.h"
+#import "TBScopeHardware.h"
 
 @interface TBScopeCameraReal ()
 @property (nonatomic, strong) AVCaptureSession *session;
@@ -24,8 +25,6 @@
 @synthesize currentFocusMetric,
             currentImageQuality,
             focusMode,
-            lastImageMetadata,
-            lastCapturedImage,
             isPreviewRunning;
 
 - (instancetype)init
@@ -196,9 +195,6 @@
         if (videoConnection) { break; }
     }
     
-    self.lastCapturedImage = nil;
-    self.lastImageMetadata = nil;
-    
     [self.stillOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
      {
          CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
@@ -206,7 +202,6 @@
              // Do something with the attachments.
              // TODO: save this data to CD
              NSLog(@"attachements: %@", exifAttachments);
-             self.lastImageMetadata = [[NSString alloc] initWithFormat:@"%@",exifAttachments];
          } else {
              NSLog(@"no attachments");
          }
@@ -215,15 +210,18 @@
              NSLog(@"error with capture: %@",[error description]);
          } else {
              NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-             self.lastCapturedImage = [[UIImage alloc] initWithData:imageData];
-             [[NSNotificationCenter defaultCenter] postNotificationName:@"ImageCaptured" object:nil];
+             id<TBScopeHardwareDriver> hardware = [TBScopeHardware sharedHardware];
+             NSDictionary *dict = @{
+                 @"data":      imageData,
+                 @"xPosition": [NSNumber numberWithInt:[hardware xPosition]],
+                 @"yPosition": [NSNumber numberWithInt:[hardware yPosition]],
+                 @"zPosition": [NSNumber numberWithInt:[hardware zPosition]],
+             };
+             [[NSNotificationCenter defaultCenter] postNotificationName:@"ImageCaptured"
+                                                                 object:self
+                                                               userInfo:dict];
          }
      }];
-}
-
-- (void)clearLastCapturedImage
-{
-    self.lastCapturedImage = nil;
 }
 
 -(AVCaptureVideoPreviewLayer *)captureVideoPreviewLayer

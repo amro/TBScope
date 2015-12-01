@@ -20,7 +20,7 @@
     static id<TBScopeHardwareDriver> sharedHardware;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        BOOL simulateScope = [[[NSProcessInfo processInfo] arguments] containsObject:@"-AllowScanWithoutCellScope"]; //could we call this a debug flag or mockscope? 
+        BOOL simulateScope = [[[NSProcessInfo processInfo] arguments] containsObject:@"-AllowScanWithoutCellScope"]; //could we call this a debug flag or mockscope?
         if (simulateScope) {
             sharedHardware = [[TBScopeHardwareMock alloc] init];
         } else {

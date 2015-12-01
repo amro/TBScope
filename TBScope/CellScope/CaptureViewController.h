@@ -72,7 +72,7 @@
 
 - (IBAction)didPressCapture:(id)sender;
 
-- (void)saveImageCallback;
+- (void)saveImageCallback:(NSNotification *)notification;
 
 - (IBAction)didTouchDownStageButton:(id)sender;
 - (IBAction)didTouchUpStageButton:(id)sender;
