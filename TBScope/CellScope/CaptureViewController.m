@@ -201,75 +201,84 @@ AVAudioPlayer* _avPlayer;
 
 - (void)saveImageCallback:(NSNotification *)notification
 {
-    [TBScopeData CSLog:@"Snapped an image" inCategory:@"CAPTURE"];
-
     // Pull image/state info from the dictionary
     NSDictionary *dict = notification.userInfo;
     int xPosition = (int)dict[@"xPosition"];
     int yPosition = (int)dict[@"yPosition"];
     int zPosition = (int)dict[@"zPosition"];
     UIImage *image = [UIImage imageWithData:dict[@"data"]];
-    
-    __weak typeof(self) weakSelf = self;
-    void (^saveBlock)(NSURL *);
-    saveBlock = ^(NSURL *assetURL){
-        Images* newImage = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:[[TBScopeData sharedData] managedObjectContext]];
-        newImage.path = assetURL.absoluteString;
-        newImage.fieldNumber = weakSelf.currentField+1;
-        newImage.metadata = @"";  //this data is no longer useful
-        newImage.xCoordinate = xPosition;
-        newImage.yCoordinate = yPosition;
-        newImage.zCoordinate = zPosition;
-        
-        [weakSelf.currentSlide addSlideImagesObject:newImage];
 
-        [TBScopeData touchExam:weakSelf.currentSlide.exam];
-        [[TBScopeData sharedData] saveCoreData];
+    // Log the capture
+    NSString *message = [NSString stringWithFormat:@"Snapped an image at %d:%d:%d", xPosition, yPosition, zPosition];
+    [TBScopeData CSLog:message inCategory:@"CAPTURE"];
 
-        weakSelf.currentField++;
+    [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        ALAssetOrientation orientation = [image imageOrientation];
+        [library writeImageToSavedPhotosAlbum:image.CGImage
+                                  orientation:orientation
+                              completionBlock:^(NSURL* assetUrl, NSError* error) {
+                                  if (error) {
+                                      resolve(error);
+                                  } else {
+                                      resolve(assetUrl);
+                                  }
+                              }];
+    }].then(^(NSURL *assetURL) {
+        return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+            // Create a temporary managed object context
+            NSManagedObjectContext *mainMOC = [[TBScopeData sharedData] managedObjectContext];
+            NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+            moc.parentContext = mainMOC;
 
-        weakSelf.analyzeButton.enabled = YES;
-        weakSelf.analyzeButton.tintColor = [UIColor whiteColor];
-        
-        [TBScopeData CSLog:[NSString stringWithFormat:@"Saved image for %@ - %d-%d, to filename: %@",
-                            weakSelf.currentSlide.exam.examID,
-                            weakSelf.currentSlide.slideNumber,
-                            newImage.fieldNumber,
-                            newImage.path]
-                inCategory:@"CAPTURE"];
-    };
+            // Create our new image and set attributes
+            NSString *path = assetURL.absoluteString;
+            int fieldNumber = self.currentField+1;
+            [moc performBlockAndWait:^{
+                Images* newImage = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images"
+                                                                          inManagedObjectContext:moc];
+                newImage.path = path;
+                newImage.fieldNumber = fieldNumber;
+                newImage.metadata = @"";  //this data is no longer useful
+                newImage.xCoordinate = xPosition;
+                newImage.yCoordinate = yPosition;
+                newImage.zCoordinate = zPosition;
+                newImage.slide = [moc objectWithID:self.currentSlide.objectID];
 
-    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-    __block UIImage *blockImage = image;
-    __block void (^interiorBlock)(NSURL *, NSError *);
-    void (^block)(NSURL *, NSError *);
-    interiorBlock = block = ^(NSURL *assetURL, NSError *error){
-        if (error) {
-            // NSLog(@"Image save failure %@", blockImage);
-            if ([error code] == ALAssetsLibraryWriteBusyError) {
-                [TBScopeData CSLog:@"Error saving image to asset library, will retry." inCategory:@"CAPTURE"];
-                // TODO: figure out how to do this without leaking a ton of memory.
-                // dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.01*NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
-                //     [library writeImageToSavedPhotosAlbum:blockImage.CGImage orientation:(ALAssetOrientation)[blockImage imageOrientation] completionBlock:^(NSURL *assetURL, NSError *error){
-                //         NSLog(@"Image save retry %@", blockImage);
-                //         interiorBlock(assetURL, error);
-                //     }];
-                // });
-            }
-        } else {
-            NSLog(@"Image save success %@", blockImage);
-            
-            // Commit to core data
-            if (![[NSThread currentThread] isMainThread]) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    saveBlock(assetURL);
-                });
-            } else {
-                saveBlock(assetURL);
-            }
-        }
-    };
-    [library writeImageToSavedPhotosAlbum:image.CGImage orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:block];
+                // Save temporary managed object context
+                NSError *error;
+                if (![moc save:&error]) {
+                    resolve(error);
+                    return;
+                }
+            }];
+
+            // Save core data
+            [mainMOC performBlock:^{
+                [TBScopeData touchExam:self.currentSlide.exam];
+                [[TBScopeData sharedData] saveCoreData];
+                [TBScopeData CSLog:[NSString stringWithFormat:@"Saved image for %@ - %d-%d, to filename: %@",
+                                    self.currentSlide.exam.examID,
+                                    self.currentSlide.slideNumber,
+                                    fieldNumber,
+                                    path]
+                        inCategory:@"CAPTURE"];
+                resolve(nil);
+            }];
+        }];
+    }).then(^{
+        return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.currentField++;
+                self.analyzeButton.enabled = YES;
+                self.analyzeButton.tintColor = [UIColor whiteColor];
+                resolve(nil);
+            });
+        }];
+    }).catch(^(NSError *error) {
+        NSString *message = [NSString stringWithFormat:@"Error saving photo: %@", error.description];
+        [TBScopeData CSLog:message inCategory:@"CAPTURE"];
+    });
 }
 
 
