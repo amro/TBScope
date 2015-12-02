@@ -297,6 +297,8 @@
     if([segue.identifier isEqualToString:@"ResultsSegue"]) {
         ResultsTabBarController *rtbc = (ResultsTabBarController*)[segue destinationViewController];
         rtbc.currentExam = self.currentSlide.exam;
+        rtbc.slideToShow = self.currentSlide.slideNumber;
+        
         [rtbc.navigationItem setRightBarButtonItems:[NSArray arrayWithObject:rtbc.doneButton]];
         [rtbc.navigationItem setHidesBackButton:YES];
         

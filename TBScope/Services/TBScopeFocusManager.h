@@ -20,6 +20,9 @@ typedef NS_ENUM(int, TBScopeFocusManagerResult)
 // since switching to a larger motor.
 #define FOCUS_BACKLASH_CORRECTION 0 //TODO: make this a config setting
 
+#define FOCUS_SUCCESS_STDDEV_MULTIPLIER 1.5 //tweaking this parameter is important
+
+
 @interface TBScopeFocusManager : NSObject
 +(instancetype)sharedFocusManager;
 -(TBScopeFocusManagerResult)autoFocus;

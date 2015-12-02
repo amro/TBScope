@@ -81,7 +81,7 @@
     int startingZPosition = [[TBScopeHardware sharedHardware] zPosition];
 
     // If we have a lastGoodPosition
-    if (self.lastGoodPosition >= 0) {
+    if (self.lastGoodPosition != -1) {
         // TODO: we should probably make this a wider hill climb because it's
         // possible we're off by a good margin here
         if ([self _fineFocus] == TBScopeFocusManagerResultSuccess) {
@@ -100,10 +100,10 @@
         [[TBScopeHardware sharedHardware] waitForStage];
         [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful, best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultSuccess;
-    } else if (self.lastGoodPosition >= 0) {
+    } else if (self.lastGoodPosition!=-1) {
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.lastGoodPosition];
         [[TBScopeHardware sharedHardware] waitForStage];
-        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus failed, returning to last good position.",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
+        [TBScopeData CSLog:@"Auto focus failed, returning to last good position." inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultReturn;
     }
 
@@ -116,6 +116,8 @@
 
 - (TBScopeFocusManagerResult)_coarseFocus
 {
+    [TBScopeData CSLog:@"Starting coarse focus" inCategory:@"CAPTURE"];
+    
     // Start at zPositionBroadSweepMin
     [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:[self zPositionBroadSweepMin]];
     [[TBScopeHardware sharedHardware] waitForStage];
@@ -127,8 +129,8 @@
     // For each slice to zPositionBroadSweepMax...
     int stepsPerSlice = [self zPositionBroadSweepStepsPerSlice];
     NSMutableArray *samples = [[NSMutableArray alloc] init];
-    int bestPositionSoFar = -1;
-    int bestMetricSoFar = -1;
+    NSInteger bestPositionSoFar = nil;
+    float bestMetricSoFar = -1.0;
     for (int position=[self zPositionBroadSweepMin]; position <= [self zPositionBroadSweepMax]; position+=stepsPerSlice)
     {
         // Move into position
@@ -148,7 +150,8 @@
     // If best metric is more than N stdev from mean, go there and return success
     float mean = [self _mean:samples];
     float stdev = [self _stdev:samples];
-    if (bestMetricSoFar > mean+1*stdev) { //switch to 1 stddev
+    
+    if (bestMetricSoFar > mean+FOCUS_SUCCESS_STDDEV_MULTIPLIER*stdev) {
         [self _recordNewCurrentIterationPosition:bestPositionSoFar Metric:bestMetricSoFar];
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:bestPositionSoFar];
         [[TBScopeHardware sharedHardware] waitForStage];
@@ -161,6 +164,8 @@
 // Focus within a 2000 step range using hill climbing (resolution 20 steps)
 - (TBScopeFocusManagerResult)_fineFocus
 {
+    [TBScopeData CSLog:@"Starting fine focus" inCategory:@"CAPTURE"];
+    
     // Calculate min and max positions
     int currentPosition = [[TBScopeHardware sharedHardware] zPosition];
     int minPosition = currentPosition - 1000;
@@ -180,6 +185,8 @@
                                   withMinPosition:(int)minPosition
                                       maxPosition:(int)maxPosition
 {
+    [TBScopeData CSLog:[NSString stringWithFormat:@"Hill Climbing from z: %d to %d and direction: %d",minPosition,maxPosition,direction] inCategory:@"CAPTURE"];
+    
     // If we're outside min/max position, return failure
     int startZPosition = [[TBScopeHardware sharedHardware] zPosition];
     if (startZPosition < minPosition || startZPosition+stepsPerSlice*slicesPerIteration > maxPosition) {
@@ -187,8 +194,8 @@
     }
     
     // Gather slicesPerIteration successive points starting at start point
-    int bestPositionSoFar = -1;
-    int bestMetricSoFar = -1;
+    NSInteger bestPositionSoFar = nil;
+    float bestMetricSoFar = -1.0;
     NSMutableArray *samples = [NSMutableArray arrayWithArray:@[]];
     for (int i=0; i<slicesPerIteration; ++i) {
         // Move to position
@@ -224,6 +231,7 @@
     float slope = (([samples count] * sumXY) - (sumX * sumY)) / (([samples count] * sumX2) - (sumX * sumX));
 
     // If slope is 0, move to best position and return success
+    // It would be great if we could go over the slope calculatiion
     if (slope == 0.0) {
         return TBScopeFocusManagerResultSuccess;
     }
@@ -272,6 +280,7 @@
     if (metric > self.currentIterationBestMetric) {
         self.currentIterationBestMetric = metric;
         self.currentIterationBestPosition = position;
+        [TBScopeData CSLog:[NSString stringWithFormat:@"Best focus position for current iteration is %d with metric %f",position,metric] inCategory:@"CAPTURE"];
     }
 }
 

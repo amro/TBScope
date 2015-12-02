@@ -23,6 +23,7 @@
 @property (strong,nonatomic) Exams* currentExam;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
+@property (nonatomic) int slideToShow;
 
 
 - (IBAction)done:(id)sender;

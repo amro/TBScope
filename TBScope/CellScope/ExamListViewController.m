@@ -70,7 +70,7 @@
     self.clinicHeaderLabel.text = NSLocalizedString(@"Clinic/User", nil);
     self.resultsHeaderLabel.text = NSLocalizedString(@"Analysis Results", nil);
     self.firstCollectionHeaderLabel.text = NSLocalizedString(@"Date", nil);
-    self.firstCollectionHeaderLabel.text = NSLocalizedString(@"Sync", nil);
+    self.syncHeader.text = NSLocalizedString(@"Sync", nil);
     
     //setup date/time formatters
     self.dateFormatter = [[NSDateFormatter alloc] init];
@@ -209,25 +209,37 @@
         cell.scoreLabel3.text = @"";
     }
     
+    //first, determine if this ipad is configured for upload and/or download
+    BOOL uploadEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"UploadEnabled"];
+    BOOL downloadEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"DownloadEnabled"];
+    
+    
     //figure out sync indicator color
     if (currentExam.googleDriveFileID!=nil) {
-        cell.syncIcon.image = [UIImage imageNamed:@"check.png"]; //cell.syncIcon.backgroundColor = [UIColor greenColor]; //default, fully synced
+        cell.syncIcon.image = [UIImage imageNamed:@"check.png"]; //default, fully synced
         
-        for (Slides* sl in currentExam.examSlides)
-            for (Images* im in sl.slideImages)
-                  if (im.path==nil)
-                      cell.syncIcon.image = [UIImage imageNamed:@"download.png"];  //cell.syncIcon.backgroundColor = [UIColor purpleColor]; //some images pending download
+        if (downloadEnabled) {
+            for (Slides* sl in currentExam.examSlides)
+                for (Images* im in sl.slideImages)
+                      if (im.path==nil)
+                          cell.syncIcon.image = [UIImage imageNamed:@"download.png"];  //some images pending download
+        }
         
-        if (currentExam.synced==NO)
-            cell.syncIcon.image = [UIImage imageNamed:@"upload.png"]; //cell.syncIcon.backgroundColor = [UIColor yellowColor]; //has been modified locally
+        if (uploadEnabled) {
+            if (currentExam.synced==NO)
+                cell.syncIcon.image = [UIImage imageNamed:@"upload.png"]; //has been modified locally
+        }
+
     }
     else {
-        cell.syncIcon.image = nil; //cell.syncIcon.backgroundColor = [UIColor clearColor]; //default, hasn't synced at all
+        cell.syncIcon.image = nil; //default, hasn't synced at all
         
-        for (Slides* sl in currentExam.examSlides)
-            for (Images* im in sl.slideImages)
-                if (im.googleDriveFileID!=nil)
-                    cell.syncIcon.image = [UIImage imageNamed:@"upload.png"]; //cell.syncIcon.backgroundColor = [UIColor redColor]; //some images pending upload
+        if (uploadEnabled) {
+            for (Slides* sl in currentExam.examSlides)
+                for (Images* im in sl.slideImages)
+                    if (im.googleDriveFileID!=nil)
+                        cell.syncIcon.image = [UIImage imageNamed:@"upload.png"]; //some images pending upload
+        }
     }
     
     

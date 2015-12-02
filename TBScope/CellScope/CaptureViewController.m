@@ -944,9 +944,8 @@ AVAudioPlayer* _avPlayer;
                 }
                 
                 if (focusResult == TBScopeFocusManagerResultFailure) {
-                    [self manualFocus];
+                    [self manualFocus]; //allow them to refocus in BF at the beginning
                     [[TBScopeFocusManager sharedFocusManager] setLastGoodPosition:[[TBScopeHardware sharedHardware] zPosition]];
-                    fieldsSinceLastFocus = 0;
                 }
                 //switch to fluorescence
                 [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensity];
@@ -954,7 +953,7 @@ AVAudioPlayer* _avPlayer;
                 [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
                 [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
                 
-                [NSThread sleepForTimeInterval:0.1];
+                [NSThread sleepForTimeInterval:0.5];
                 
                 autoFocusFailCount = 0;
             }
@@ -986,6 +985,7 @@ AVAudioPlayer* _avPlayer;
                         }
                         else
                             break;
+                        
                     }
 
                     

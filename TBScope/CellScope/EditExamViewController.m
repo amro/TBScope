@@ -84,8 +84,9 @@
         self.genderSegmentedControl.selectedSegmentIndex = 0;
     else if ([self.currentExam.patientGender isEqualToString:@"F"])
         self.genderSegmentedControl.selectedSegmentIndex = 1;
-    else
-        self.genderSegmentedControl.selectedSegmentIndex = nil;
+    else {
+        [self.genderSegmentedControl setSelectedSegmentIndex:UISegmentedControlNoSegment];
+    }
     
     if (self.currentExam.gpsLocation==nil) {
         self.gpsLabel.text = NSLocalizedString(@"NO GPS", nil);
@@ -118,7 +119,7 @@
     self.dobTextField.text = self.currentExam.patientDOB; //since we're using age, just store the string directly
     
     //bring up keyboard and set focus on patient name field
-    [self.examIDTextField becomeFirstResponder];
+    [self.nameTextField becomeFirstResponder];
     
     [TBScopeData CSLog:@"Edit exam screen presented" inCategory:@"USER"];
     
@@ -217,7 +218,7 @@
             alertMessage = NSLocalizedString(@"Patient age cannot be blank.",nil);
             [self.dobTextField becomeFirstResponder];
         }
-        else if (self.genderSegmentedControl.selectedSegmentIndex==nil)
+        else if ([self.genderSegmentedControl selectedSegmentIndex]==UISegmentedControlNoSegment)
         {
             alertMessage = NSLocalizedString(@"Patient gender cannot be blank.",nil);
             [self.dobTextField becomeFirstResponder];

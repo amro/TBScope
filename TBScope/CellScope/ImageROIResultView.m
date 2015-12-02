@@ -86,7 +86,9 @@ float threshold_score = 1;
 
 -(void)didReceiveLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    if (gestureRecognizer.state == UIGestureRecognizerStateBegan || gestureRecognizer.state == UIGestureRecognizerStateChanged)
+    NSLog(@"%ld",(long)gestureRecognizer.state);
+    
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan)
     {
         CGPoint p = [gestureRecognizer locationInView:self];
         float neighborhoodX = 300;
@@ -199,18 +201,22 @@ float threshold_score = 1;
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ImageROIResultCell *cell = (ImageROIResultCell*)[collectionView cellForItemAtIndexPath:indexPath];
-    
-    
-    cell.currentROI.userCall = cell.currentROI.userCall?NO:YES;
-    if (cell.currentROI.userCall)
-        cell.currentROI.imageAnalysisResult.image.slide.slideAnalysisResults.numAFBManual++;
-    else
-        cell.currentROI.imageAnalysisResult.image.slide.slideAnalysisResults.numAFBManual--;
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AllowManualObjectClassification"])
+    {
+        ImageROIResultCell *cell = (ImageROIResultCell*)[collectionView cellForItemAtIndexPath:indexPath];
         
-    cell.tintView.hidden = !cell.currentROI.userCall;
- 
-    self.hasChanges = YES;
+        
+        cell.currentROI.userCall = cell.currentROI.userCall?NO:YES;
+        if (cell.currentROI.userCall)
+            cell.currentROI.imageAnalysisResult.image.slide.slideAnalysisResults.numAFBManual++;
+        else
+            cell.currentROI.imageAnalysisResult.image.slide.slideAnalysisResults.numAFBManual--;
+            
+        cell.tintView.hidden = !cell.currentROI.userCall;
+     
+        self.hasChanges = YES;
+    }
+    
 }
 
 #pragma mark – UICollectionViewDelegateFlowLayout
