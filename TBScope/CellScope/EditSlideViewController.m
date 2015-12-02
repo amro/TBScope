@@ -117,7 +117,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"BypassDataEntry"] && [self isMovingToParentViewController]) {
+    if (([[NSUserDefaults standardUserDefaults] boolForKey:@"BypassDataEntry"] || [[NSUserDefaults standardUserDefaults] boolForKey:@"BypassSlideEntry"]) && [self isMovingToParentViewController]) {
         
         [self performSegueWithIdentifier:@"LoadSampleSegue" sender:self];
     }

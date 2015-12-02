@@ -23,13 +23,15 @@
     self.examIDLabel.text = NSLocalizedString(@"Exam ID", nil);
     self.patientIDLabel.text = NSLocalizedString(@"Patient ID", nil);
     self.nameLabel.text = NSLocalizedString(@"Name", nil);
-    self.genderLabel.text = NSLocalizedString(@"Gender", nil);
     self.dobLabel.text = NSLocalizedString(@"DOB", nil);
     self.clinicLabel.text = NSLocalizedString(@"Clinic", nil);
     self.addressLabel.text = NSLocalizedString(@"Address", nil);
     self.hivStatusLabel.text = NSLocalizedString(@"HIV Status", nil);
     self.intakeNotesLabel.text = NSLocalizedString(@"Intake Notes", nil);
     [self.mapButton setTitle:NSLocalizedString(@"Map", nil) forState:UIControlStateNormal];
+    
+    [self.genderSegmentedControl setTitle:NSLocalizedString(@"Male", nil) forSegmentAtIndex:0];
+    [self.genderSegmentedControl setTitle:NSLocalizedString(@"Female", nil) forSegmentAtIndex:1];
     
     //match the textview to one of the textfields
     [[self.intakeNotesTextView layer] setBorderColor:[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1.0].CGColor];
@@ -43,13 +45,17 @@
         [[GoogleDriveSync sharedGDS] setSyncEnabled:NO];
         
         Exams* newExam = (Exams*)[NSEntityDescription insertNewObjectForEntityForName:@"Exams" inManagedObjectContext:[[TBScopeData sharedData] managedObjectContext]];
-        
+    
         newExam.userName = [[[TBScopeData sharedData] currentUser] username];
         newExam.cellscopeID = [[NSUserDefaults standardUserDefaults] stringForKey:@"CellScopeID"];
         newExam.bluetoothUUID = [[NSUserDefaults standardUserDefaults] stringForKey:@"CellScopeBTUUID"];
         newExam.ipadMACAddress = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
         newExam.ipadName = [[UIDevice currentDevice] name];
         newExam.location = [[NSUserDefaults standardUserDefaults] stringForKey:@"DefaultLocation"];
+        
+        //TODO: in the future, make autogenerating this optional
+        NSString* newExamID = [NSString stringWithFormat:@"%04ld",[[NSUserDefaults standardUserDefaults] integerForKey:@"LastExamID"]+1];
+        newExam.examID = newExamID;
         
         //[[[TBScopeData sharedData] locationManager] startUpdatingLocation];
         CLLocationCoordinate2D location = [[[[TBScopeData sharedData] locationManager] location] coordinate];
@@ -69,11 +75,17 @@
     self.examIDTextField.text = self.currentExam.examID;
     self.patientIDTextField.text = self.currentExam.patientID;
     self.nameTextField.text = self.currentExam.patientName;
-    self.genderTextField.text = self.currentExam.patientGender;
     self.clinicTextField.text = self.currentExam.location;
     self.addressTextField.text = self.currentExam.patientAddress;
     self.hivStatusTextField.text = self.currentExam.patientHIVStatus;
     self.intakeNotesTextView.text = self.currentExam.intakeNotes;
+    
+    if ([self.currentExam.patientGender isEqualToString:@"M"])
+        self.genderSegmentedControl.selectedSegmentIndex = 0;
+    else if ([self.currentExam.patientGender isEqualToString:@"F"])
+        self.genderSegmentedControl.selectedSegmentIndex = 1;
+    else
+        self.genderSegmentedControl.selectedSegmentIndex = nil;
     
     if (self.currentExam.gpsLocation==nil) {
         self.gpsLabel.text = NSLocalizedString(@"NO GPS", nil);
@@ -86,6 +98,7 @@
     self.userLabel.text = [NSString stringWithFormat:NSLocalizedString(@"User: %@", nil),self.currentExam.userName];
     self.cellscopeIDLabel.text = [NSString stringWithFormat:NSLocalizedString(@"CellScope ID: %@", nil),[[NSUserDefaults standardUserDefaults] stringForKey:@"CellScopeID"]];
     
+    /*
     NSDateFormatter* df = [[NSDateFormatter alloc] init];
     [df setDateStyle:NSDateFormatterShortStyle];
     [df setTimeStyle:NSDateFormatterNoStyle];
@@ -100,6 +113,9 @@
     [datePicker addTarget:self action:@selector(updateDOBField:) forControlEvents:UIControlEventValueChanged];
     [datePicker setDatePickerMode:UIDatePickerModeDate];
     [self.dobTextField setInputView:datePicker];
+    */
+    
+    self.dobTextField.text = self.currentExam.patientDOB; //since we're using age, just store the string directly
     
     //bring up keyboard and set focus on patient name field
     [self.examIDTextField becomeFirstResponder];
@@ -134,17 +150,31 @@
         self.currentExam.examID = self.examIDTextField.text;
         self.currentExam.patientName = self.nameTextField.text;
         self.currentExam.patientID = self.patientIDTextField.text;
-        self.currentExam.patientGender = self.genderTextField.text;
         self.currentExam.patientHIVStatus = self.hivStatusTextField.text;
         self.currentExam.patientAddress = self.addressTextField.text;
         self.currentExam.location = self.clinicTextField.text;
         self.currentExam.intakeNotes = self.intakeNotesTextView.text;
         self.currentExam.diagnosisNotes = @"";
         
+        if (self.genderSegmentedControl.selectedSegmentIndex==0)
+            self.currentExam.patientGender = @"M";
+        else if (self.genderSegmentedControl.selectedSegmentIndex==1)
+            self.currentExam.patientGender = @"F";
+        else
+            self.currentExam.patientGender = nil;
+        
+        /*
         NSDateFormatter* df = [[NSDateFormatter alloc] init];
         [df setDateStyle:NSDateFormatterShortStyle];
         [df setTimeStyle:NSDateFormatterNoStyle];
         self.currentExam.patientDOB = [TBScopeData stringFromDate:[df dateFromString:self.dobTextField.text]];
+        */
+        
+        self.currentExam.patientDOB = self.dobTextField.text;
+        
+        [NSString stringWithFormat:@"%04ld",[[NSUserDefaults standardUserDefaults] integerForKey:@"LastExamID"]+1];
+        
+        [[NSUserDefaults standardUserDefaults] setInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"LastExamID"]+1 forKey:@"LastExamID"];
         
         [TBScopeData touchExam:self.currentExam];
         [[TBScopeData sharedData] saveCoreData];
@@ -165,7 +195,7 @@
             alertMessage = NSLocalizedString(@"Exam ID cannot be blank.",nil);
             [self.examIDTextField becomeFirstResponder];
         }
-        else if (![TBScopeData validateString:self.examIDTextField.text
+        /*else if (![TBScopeData validateString:self.examIDTextField.text
                                   withPattern:[[NSUserDefaults standardUserDefaults] stringForKey:@"ExamIDFormat"]])
         {
             alertMessage = NSLocalizedString(@"Exam ID is invalid.",nil);
@@ -176,13 +206,22 @@
         {
             alertMessage = NSLocalizedString(@"Patient ID is invalid.",nil);
             [self.patientIDTextField becomeFirstResponder];
-        }
+        }*/
         else if (self.nameTextField.text.length==0)
         {
             alertMessage = NSLocalizedString(@"Patient name cannot be blank.",nil);
             [self.nameTextField becomeFirstResponder];
         }
-        
+        else if (self.dobTextField.text.length==0)
+        {
+            alertMessage = NSLocalizedString(@"Patient age cannot be blank.",nil);
+            [self.dobTextField becomeFirstResponder];
+        }
+        else if (self.genderSegmentedControl.selectedSegmentIndex==nil)
+        {
+            alertMessage = NSLocalizedString(@"Patient gender cannot be blank.",nil);
+            [self.dobTextField becomeFirstResponder];
+        }
         if ([alertMessage isEqualToString:@""])
             return YES;
         else
@@ -243,17 +282,6 @@
     {
         return ([newString length] > [[NSUserDefaults standardUserDefaults] integerForKey:@"MaxNameLocationAddressLength"]) ? NO : YES;
     }
-    else if (textField==self.genderTextField)
-    {
-        return ([newString length] < 2);
-        /*
-        return ([newString isEqualToString:@""]
-            || [newString isEqualToString:NSLocalizedString(@"M", nil)]
-            || [newString isEqualToString:NSLocalizedString(@"F", nil)]
-            || [newString isEqualToString:NSLocalizedString(@"U", nil)]);
-         */
-        
-    }
     else if (textField==self.hivStatusTextField)
     {
         return ([newString isEqualToString:@""]
@@ -263,7 +291,7 @@
     }
     if (textField==self.dobTextField)
     {
-        NSCharacterSet* numberCharSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789.\\/-"];
+        NSCharacterSet* numberCharSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
         for (int i = 0; i < [string length]; ++i)
         {
             unichar c = [string characterAtIndex:i];

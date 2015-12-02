@@ -253,7 +253,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 {
     // This is a dirty hack to get iOS to keep the ISO and
     // Exposure Duration constant. :-/
-    if (rand() % 30 == 0) [self _setExposureAndISOFromUserDefaults];
+    if (rand() % 30 == 0) [self _setExposureAndISOFromUserDefaults]; //Do we still need this?
     [self _sendExposureReport];
 
     static double sharpnessAveragingArray[] = {0,0,0};

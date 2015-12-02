@@ -246,7 +246,7 @@ double tenengrad(const cv::Mat& src, int ksize)
     
     cv::Mat FM = Gx.mul(Gx) + Gy.mul(Gy);
     
-    double focusMeasure = cv::mean(FM).val[0];
+    double focusMeasure = cv::mean(FM).val[0]; //should this be a sum?
     
     Gx.release();
     Gy.release();

@@ -45,7 +45,7 @@
 "Back" = "Mặt dưới";
 "New Exam" = "Xét nghiệm mới";
 "Edit Exam" = "Thay đổi xét nghiệm";
-"Exam ID" = "ID xét nghiệm"; //make field longer
+"Exam ID:" = "ID xét nghiệm:"; //make field longer
 "Gender" = "Giới tính"; //field longer
 "DOB" = "Ngày sinh";
 "Clinic" = "Phòng khám"; //field longer
@@ -55,8 +55,8 @@
 "GPS OK" = "GPS OK";
 "Exam ID cannot be blank." = "ID xét nghiệm không thể để trống."; //make sure in popup
 "Exam ID is invalid" = "ID xét nghiệm không đúng";
-"M" = "Nam";
-"F" = "Nữ";
+"Male" = "Nam";
+"Female" = "Nữ";
 "Map" = "Bản đồ"; //make button sưitch hêre
 
 //Edit Slide

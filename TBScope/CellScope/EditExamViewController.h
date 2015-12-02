@@ -26,12 +26,12 @@
 @property (weak, nonatomic) IBOutlet UITextField* examIDTextField;
 @property (weak, nonatomic) IBOutlet UITextField* patientIDTextField;
 @property (weak, nonatomic) IBOutlet UITextField* nameTextField;
-@property (weak, nonatomic) IBOutlet UITextField* genderTextField;
 @property (weak, nonatomic) IBOutlet UITextField* dobTextField;
 @property (weak, nonatomic) IBOutlet UITextField* clinicTextField;
 @property (weak, nonatomic) IBOutlet UITextField* addressTextField;
 @property (weak, nonatomic) IBOutlet UITextField* hivStatusTextField;
 @property (weak, nonatomic) IBOutlet UITextView* intakeNotesTextView;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *genderSegmentedControl;
 
 @property (weak, nonatomic) IBOutlet UILabel* userLabel;
 @property (weak, nonatomic) IBOutlet UILabel *cellscopeIDLabel;
@@ -41,7 +41,6 @@
 @property (weak, nonatomic) IBOutlet UILabel* examIDLabel;
 @property (weak, nonatomic) IBOutlet UILabel* patientIDLabel;
 @property (weak, nonatomic) IBOutlet UILabel* nameLabel;
-@property (weak, nonatomic) IBOutlet UILabel* genderLabel;
 @property (weak, nonatomic) IBOutlet UILabel* dobLabel;
 @property (weak, nonatomic) IBOutlet UILabel* clinicLabel;
 @property (weak, nonatomic) IBOutlet UILabel* addressLabel;

@@ -65,11 +65,103 @@
     
 }
 
+Slides* _lastSlide;
+NSString* _humanRead;
+int _slideNumber;
+
+//TODO: may want to rethink/streamline this workflow in the future
+-(BOOL) promptUserToConfirmDiagnosis
+{
+    // ensure that they confirm a positive diagnosis of the most recently scanned slide
+    
+    if (self.currentExam.examSlides.count==3) {
+        _lastSlide = self.currentExam.examSlides[2];
+        _humanRead = self.currentExam.examFollowUpData.slide1HumanReadResult;
+        _slideNumber = 1;
+    }
+    else if (self.currentExam.examSlides.count==2) {
+        _lastSlide = self.currentExam.examSlides[1];
+        _humanRead = self.currentExam.examFollowUpData.slide2HumanReadResult;
+        _slideNumber = 2;
+    }
+    else if (self.currentExam.examSlides.count==1) {
+        _lastSlide = self.currentExam.examSlides[0];
+        _humanRead = self.currentExam.examFollowUpData.slide3HumanReadResult;
+        _slideNumber = 3;
+    }
+    else
+        return YES;
+    
+    if (_lastSlide.slideAnalysisResults==nil)
+        return YES;
+    
+    if ([_lastSlide.slideAnalysisResults.diagnosis isEqualToString:@"POSITIVE"]) {
+        if ([_humanRead isEqualToString:@"+"]) {
+            return YES;
+        }
+        if ([_humanRead isEqualToString:@"-"]) { //user disagreed with positive result
+            return YES;
+        }
+        else
+        {
+            //popup message box
+            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Confirm Diagnosis", nil)
+                                                             message:NSLocalizedString(@"CellScope has diagnosed slide %d as positive for tuberculosis. Based on your review of the images, do you agree with this diagnosis?",nil)
+                                                            delegate:self
+                                                   cancelButtonTitle:NSLocalizedString(@"Let me review again.",nil)
+                                                   otherButtonTitles:NSLocalizedString(@"No, this slide is negative.",nil),
+                                                                     NSLocalizedString(@"Yes, this slide is positive.",nil),
+                                   nil];
+            alert.alertViewStyle = UIAlertViewStyleDefault;
+            alert.tag = 1;
+            [alert show];
+            
+            return NO;
+        }
+
+            
+    }
+    
+}
+
+//respond to message box
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag==1) //prompt for user to confirm positive diagnosis
+    {
+        if (buttonIndex==0) {
+            return;
+        }
+        else if (buttonIndex==1) {
+            if (_slideNumber==1)
+                self.currentExam.examFollowUpData.slide1HumanReadResult = @"-";
+            else if (_slideNumber==2)
+                self.currentExam.examFollowUpData.slide2HumanReadResult = @"-";
+            else if (_slideNumber==3)
+                self.currentExam.examFollowUpData.slide3HumanReadResult = @"-";
+            [[self navigationController] popToRootViewControllerAnimated:YES];
+        }
+        else if (buttonIndex==2) {
+            if (_slideNumber==1)
+                self.currentExam.examFollowUpData.slide1HumanReadResult = @"+";
+            else if (_slideNumber==2)
+                self.currentExam.examFollowUpData.slide2HumanReadResult = @"+";
+            else if (_slideNumber==3)
+                self.currentExam.examFollowUpData.slide3HumanReadResult = @"+";
+            [[self navigationController] popToRootViewControllerAnimated:YES];
+        }
+        
+    }
+}
 
 
 - (IBAction)done:(id)sender
 {
-    [[self navigationController] popToRootViewControllerAnimated:YES];
+    BOOL okToPop = [self promptUserToConfirmDiagnosis];
+    
+
+    if (okToPop)
+        [[self navigationController] popToRootViewControllerAnimated:YES];
 }
 
 @end
