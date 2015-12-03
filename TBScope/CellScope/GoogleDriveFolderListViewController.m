@@ -109,7 +109,6 @@ UITextField *_newDirectoryTextField;
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier];
         }
-        GTLDriveFile *file = [[self directories] objectAtIndex:indexPath.row];
         _newDirectoryTextField = [[UITextField alloc] initWithFrame:CGRectMake(20, 10, 1004, 25)];
         _newDirectoryTextField.placeholder = @"New Directory Name";
         _newDirectoryTextField.delegate = self;
