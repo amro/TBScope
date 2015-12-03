@@ -316,16 +316,6 @@ BOOL _hasAttemptedLogUpload;
             [TBScopeData CSLog:[NSString stringWithFormat:@"Error while processing queue: %@",error.description] inCategory:@"SYNC"];
         }
         
-        //remove previous item from queue
-        if (self.imageUploadQueue.count>0)
-            [self.imageUploadQueue removeObjectAtIndex:0];
-        else if (self.examUploadQueue.count>0)
-            [self.examUploadQueue removeObjectAtIndex:0];
-        else if (self.examDownloadQueue.count>0)
-            [self.examDownloadQueue removeObjectAtIndex:0];
-        else if (self.imageDownloadQueue.count>0)
-            [self.imageDownloadQueue removeObjectAtIndex:0];
-
         [[NSNotificationCenter defaultCenter] postNotificationName:@"GoogleSyncUpdate" object:nil];
 
         //call process queue again to execute the next item in queue
@@ -356,17 +346,21 @@ BOOL _hasAttemptedLogUpload;
     
     [TBScopeData CSLog:@"Processing next item in sync queue..." inCategory:@"SYNC"];
     if (self.imageUploadQueue.count>0 && self.syncEnabled && [self uploadIsEnabled]) {
-        [self uploadImage:(Images*)self.imageUploadQueue[0]
-        completionHandler:completionBlock];
+        Images *image = self.imageUploadQueue[0];
+        [self.imageUploadQueue removeObjectAtIndex:0];
+        [self uploadImage:image completionHandler:completionBlock];
     } else if (self.examUploadQueue.count>0 && self.syncEnabled && [self uploadIsEnabled]) {
-        [self uploadExam:(Exams*)self.examUploadQueue[0]
-       completionHandler:completionBlock];
+        Exams *exam = self.examUploadQueue[0];
+        [self.examUploadQueue removeObjectAtIndex:0];
+        [self uploadExam:exam completionHandler:completionBlock];
     } else if (self.examDownloadQueue.count>0 && self.syncEnabled && [self downloadIsEnabled]) {
-        [self downloadExam:(GTLDriveFile*)self.examDownloadQueue[0]
-         completionHandler:completionBlock];
+        GTLDriveFile *file = self.examDownloadQueue[0];
+        [self.examDownloadQueue removeObjectAtIndex:0];
+        [self downloadExam:file completionHandler:completionBlock];
     } else if (self.imageDownloadQueue.count>0 && self.syncEnabled && [self downloadIsEnabled]) {
-        [self downloadImage:(Images*)self.imageDownloadQueue[0]
-          completionHandler:completionBlock];
+        Images *image = self.imageDownloadQueue[0];
+        [self.imageDownloadQueue removeObjectAtIndex:0];
+        [self downloadImage:image completionHandler:completionBlock];
     } else if (_hasAttemptedLogUpload==NO && self.syncEnabled) {
         _hasAttemptedLogUpload = YES;
         [self uploadLogWithCompletionHandler:completionBlock];
@@ -414,7 +408,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(nil);
+                    resolve(error);
                 }];
             }];
         }).then(^{
@@ -453,7 +447,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(nil);
+                    resolve(error);
                 }];
             }];
         }).then(^{
@@ -489,7 +483,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(nil);
+                    resolve(error);
                 }];
             }];
         }).then(^{
@@ -530,7 +524,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(nil);
+                    resolve(error);
                 }];
             }];
         }).then(^{
