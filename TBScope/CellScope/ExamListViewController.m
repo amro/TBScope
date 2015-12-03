@@ -61,6 +61,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    
     //localize
     self.navigationItem.title = NSLocalizedString(@"Exam Registry", nil);
     [self.printButton setTitle:NSLocalizedString(@"Print", nil) forState:UIControlStateNormal];
@@ -71,6 +72,7 @@
     self.resultsHeaderLabel.text = NSLocalizedString(@"Analysis Results", nil);
     self.firstCollectionHeaderLabel.text = NSLocalizedString(@"Date", nil);
     self.syncHeader.text = NSLocalizedString(@"Sync", nil);
+    self.syncLabel.text = NSLocalizedString(@"Syncing...", nil);
     
     //setup date/time formatters
     self.dateFormatter = [[NSDateFormatter alloc] init];

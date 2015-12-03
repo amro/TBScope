@@ -733,7 +733,7 @@ AVAudioPlayer* _avPlayer;
     
     [self playSound:@"please_refocus"];
     
-    self.currentSpeed = CSStageSpeedSlow;
+    self.currentSpeed = CSStageSpeedFast; //CSStageSpeedSlow;
     
     _isWaitingForFocusConfirmation = YES;
     while (_isWaitingForFocusConfirmation && !_isAborting)
