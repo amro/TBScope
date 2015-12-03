@@ -76,10 +76,17 @@ BOOL _hasAttemptedLogUpload;
 - (void) handleNetworkChange:(NSNotification *)notice
 {
     NetworkStatus remoteHostStatus = [self.reachability currentReachabilityStatus];
-    if(remoteHostStatus == NotReachable) {[TBScopeData CSLog:@"No Connection" inCategory:@"SYNC"];}
-    else if (remoteHostStatus == ReachableViaWiFi) {[TBScopeData CSLog:@"WiFi Connected" inCategory:@"SYNC"];}
-    else if (remoteHostStatus == ReachableViaWWAN) {[TBScopeData CSLog:@"Cell WWAN Connected" inCategory:@"SYNC"];}
-    
+    if (remoteHostStatus == NotReachable) {
+        [TBScopeData CSLog:@"No Connection" inCategory:@"SYNC"];
+    } else if (remoteHostStatus == ReachableViaWiFi) {
+        [TBScopeData CSLog:@"WiFi Connected" inCategory:@"SYNC"];
+        [self doSync];
+    } else if (remoteHostStatus == ReachableViaWWAN) {
+        [TBScopeData CSLog:@"Cell WWAN Connected" inCategory:@"SYNC"];
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:@"WifiSyncOnly"]) {
+            [self doSync];
+        }
+    }
 }
 
 - (BOOL) isOkToSync
