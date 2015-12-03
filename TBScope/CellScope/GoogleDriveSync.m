@@ -118,15 +118,33 @@ BOOL _hasAttemptedLogUpload;
         /////////////////////////
         //push images
         [TBScopeData CSLog:@"Fetching new images from core data." inCategory:@"SYNC"];
-        pred = [NSPredicate predicateWithFormat:@"(googleDriveFileID = nil) && (path != nil)"];
-        results = [CoreDataHelper searchObjectsForEntity:@"Images" withPredicate:pred andSortKey:nil andSortAscending:YES andContext:tmpMOC];
+        // Find all slides, with the most recent first
+        results = [CoreDataHelper searchObjectsForEntity:@"Slides"
+                                           withPredicate:nil
+                                              andSortKey:@"dateScanned"
+                                        andSortAscending:NO
+                                              andContext:tmpMOC];
         int imageUploadsEnqueued = 0;
-        for (Images* im in results) {
-            if ([self.imageUploadQueue indexOfObject:im]==NSNotFound) {  //if it's not already in the queue
-                NSLog(@"Adding image #%d from slide #%d from exam %@ to upload queue", im.fieldNumber, im.slide.slideNumber, im.slide.exam.examID);
-                [self.imageUploadQueue addObject:im];
-                imageUploadsEnqueued++;
-                //previousSyncHadNoChanges = NO;
+        for (Slides *slide in results) {
+            // Find the top 10 ROIs belonging to the slide
+            NSFetchRequest *request = [[NSFetchRequest alloc] init];
+            NSEntityDescription *entity = [NSEntityDescription entityForName:@"ROIs"
+                                                      inManagedObjectContext:tmpMOC];
+            [request setEntity:entity];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"imageAnalysisResult.image.slide = %@", slide];
+            [request setPredicate:predicate];
+            NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"score" ascending:NO];
+            [request setSortDescriptors:@[sort]];
+            [request setFetchLimit:10];
+            NSError *error = nil;
+            NSMutableArray *rois = [[tmpMOC executeFetchRequest:request error:&error] mutableCopy];
+            for (ROIs *roi in rois) {
+                // Upload the associated image for each
+                Images *image = [[roi imageAnalysisResult] image];
+                if ([self.imageUploadQueue indexOfObject:image] == NSNotFound) {  // if it's not already in the queue
+                    [self.imageUploadQueue addObject:image];
+                    imageUploadsEnqueued++;
+                }
             }
         }
         [TBScopeData CSLog:[NSString stringWithFormat:@"Added %d images to upload queue.", imageUploadsEnqueued] inCategory:@"SYNC"];
