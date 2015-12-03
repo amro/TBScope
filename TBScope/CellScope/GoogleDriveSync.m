@@ -423,7 +423,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(error);
+                    resolve(nil);
                 }];
             }];
         }).then(^{
@@ -462,7 +462,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(error);
+                    resolve(nil);
                 }];
             }];
         }).then(^{
@@ -498,7 +498,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(error);
+                    resolve(nil);
                 }];
             }];
         }).then(^{
@@ -539,7 +539,7 @@ BOOL _hasAttemptedLogUpload;
                     if (![moc save:&error]) {
                         NSLog(@"Error saving temporary managed object context");
                     }
-                    resolve(error);
+                    resolve(nil);
                 }];
             }];
         }).then(^{
