@@ -17,7 +17,6 @@
 
 @implementation Slides
 
-@synthesize googleDriveService;
 @dynamic slideNumber;
 @dynamic sputumQuality;
 @dynamic dateCollected;
@@ -29,23 +28,6 @@
 @dynamic numSkippedBorderFields;
 @dynamic numSkippedEmptyFields;
 @dynamic exam;
-
-- (void)awakeFromInsert
-{
-    [super awakeFromInsert];
-    [self initGoogleDriveService];
-}
-
-- (void)awakeFromFetch
-{
-    [super awakeFromFetch];
-    [self initGoogleDriveService];
-}
-
-- (void)initGoogleDriveService
-{
-    self.googleDriveService = [[GoogleDriveService alloc] init];
-}
 
 - (void)addSlideImagesObject:(Images *)value {
     NSMutableOrderedSet* tempSet = [NSMutableOrderedSet orderedSetWithOrderedSet:self.slideImages];
@@ -77,7 +59,7 @@
     return NO;
 }
 
-- (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive
+- (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive:(GoogleDriveService *)googleDriveService
 {
     __block NSString *remoteMd5;
     return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
@@ -90,7 +72,7 @@
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             [self.managedObjectContext performBlock:^{
                 // Fetch metadata
-                [self.googleDriveService getMetadataForFileId:self.roiSpriteGoogleDriveFileID]
+                [googleDriveService getMetadataForFileId:self.roiSpriteGoogleDriveFileID]
                     .then(^(GTLDriveFile *file) { resolve(file); })
                     .catch(^(NSError *error) { resolve(error); });
             }];
@@ -162,7 +144,7 @@
                     file.parents = @[ parentRef ];
                 }
 
-                [self.googleDriveService uploadFile:file withData:data]
+                [googleDriveService uploadFile:file withData:data]
                     .then(^(GTLDriveFile *file) { resolve(file); })
                     .catch(^(NSError *error) { resolve(error); });
             }];
@@ -181,7 +163,7 @@
     });
 }
 
-- (PMKPromise *)downloadRoiSpriteSheetFromGoogleDrive
+- (PMKPromise *)downloadRoiSpriteSheetFromGoogleDrive:(GoogleDriveService *)googleDriveService
 {
     return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
         [self.managedObjectContext performBlock:^{
@@ -196,7 +178,7 @@
 
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             // Get metadata for existing roiSpriteSheet
-            [self.googleDriveService getMetadataForFileId:roiSpriteGoogleDriveFileID]
+            [googleDriveService getMetadataForFileId:roiSpriteGoogleDriveFileID]
                 .then(^(GTLDriveFile *file) { resolve(file); })
                 .catch(^(NSError *error) { resolve(error); });
         }];
@@ -218,7 +200,7 @@
 
         // Download the file
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            [self.googleDriveService getFile:existingRemoteFile]
+            [googleDriveService getFile:existingRemoteFile]
                 .then(^(NSData *data) { resolve(data); })
                 .catch(^(NSError *error) { resolve(error); });
         }];

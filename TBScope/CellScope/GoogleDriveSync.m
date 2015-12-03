@@ -415,7 +415,8 @@ BOOL _hasAttemptedLogUpload;
     }];
 
     // Upload the image
-    [localImage uploadToGoogleDrive]
+    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
+    [localImage uploadToGoogleDrive:gds]
         .then(^{
             return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
                 [moc performBlock:^{
@@ -527,11 +528,10 @@ BOOL _hasAttemptedLogUpload;
         moc.parentContext = [[TBScopeData sharedData] managedObjectContext];
         [moc performBlockAndWait:^{
             localImage = [moc objectWithID:[image objectID]];
-            localImage.googleDriveService = gds;
         }];
     });
 
-    [localImage downloadFromGoogleDrive]
+    [localImage downloadFromGoogleDrive:gds]
         .then(^{
             return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
                 [moc performBlock:^{

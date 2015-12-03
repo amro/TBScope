@@ -390,7 +390,7 @@
         for (Slides *slide in exam.examSlides) {
             id mock = OCMPartialMock(slide);
             PMKPromise *promise = [PMKPromise noopPromise];
-            [[[mock stub] andReturn:promise] uploadRoiSpriteSheetToGoogleDrive];
+            [[[mock stub] andReturn:promise] uploadRoiSpriteSheetToGoogleDrive:gds];
             [mocks addObject:mock];
             [promises addObject:promise];
         }
@@ -410,7 +410,7 @@
         .then(^{
             // Expect [slide uploadToGoogleDrive] to be called for each slide
             for (id mock in mocks) {
-                OCMVerify([mock uploadRoiSpriteSheetToGoogleDrive]);
+                OCMVerify([mock uploadRoiSpriteSheetToGoogleDrive:gds]);
             }
 
             [expectation fulfill];
@@ -435,7 +435,6 @@
     [moc performBlockAndWait:^{
         Slides *slide = (Slides *)[NSEntityDescription insertNewObjectForEntityForName:@"Slides"
                                                                 inManagedObjectContext:moc];
-        slide.googleDriveService = gds;
         slide.roiSpritePath = @"asset-library://path/to/image.jpg";
         [exam addExamSlidesObject:slide];
     }];

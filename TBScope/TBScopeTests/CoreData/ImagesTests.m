@@ -18,6 +18,7 @@
 @interface ImagesTests : XCTestCase
 @property (strong, nonatomic) Images *image;
 @property (strong, nonatomic) NSManagedObjectContext *moc;
+@property (strong, nonatomic) GoogleDriveService *googleDriveService;
 @end
 
 @implementation ImagesTests
@@ -30,13 +31,13 @@
     self.moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     self.moc.parentContext = [[TBScopeData sharedData] managedObjectContext];
 
+    // Inject GoogleDriveService into image
+    GoogleDriveService *mockGds = OCMPartialMock([[GoogleDriveService alloc] init]);
+    self.googleDriveService = mockGds;
+
     [self.moc performBlockAndWait:^{
         // Set up our image
         self.image = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
-        
-        // Inject GoogleDriveService into image
-        GoogleDriveService *mockGds = OCMPartialMock([[GoogleDriveService alloc] init]);
-        self.image.googleDriveService = mockGds;
     }];
 }
 
@@ -87,7 +88,7 @@
         GTLDriveFile *file = [[GTLDriveFile alloc] init];
         resolve(file);
     }];
-    OCMStub([self.image.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn(promise);
 }
 
@@ -98,7 +99,7 @@
         NSData *data = [@"Test Data" dataUsingEncoding:NSUTF8StringEncoding];
         resolve(data);
     }];
-    OCMStub([self.image.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(promise);
 }
 
@@ -123,7 +124,7 @@
 
     // Set up an expectation, fulfill on then
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
-    [self.image uploadToGoogleDrive]
+    [self.image uploadToGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
@@ -137,7 +138,7 @@
 
     // Set up an expectation, fulfill on catch
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
-    [self.image uploadToGoogleDrive]
+    [self.image uploadToGoogleDrive:self.googleDriveService]
         .then(^{ XCTFail(@"Expected uploadToGoogleDrive to return a rejected promise"); })
         .catch(^{ [expectation fulfill]; });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
@@ -162,11 +163,11 @@
         file.md5Checksum = @"abc123";
         resolve(file);
     }];
-    OCMStub([self.image.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andReturn(promise);
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
-    [self.image uploadToGoogleDrive]
+    [self.image uploadToGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
@@ -203,13 +204,13 @@
         GTLDriveFile *actualRemoteDir = [file.parents objectAtIndex:0];
         return [actualRemoteDir.identifier isEqualToString:remoteDirIdentifier];
     }];
-    OCMStub([self.image.googleDriveService uploadFile:fileArg
+    OCMStub([self.googleDriveService uploadFile:fileArg
                                              withData:[OCMArg any]])
         .andReturn(promise);
 
     // Call upload
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
-    [self.image uploadToGoogleDrive]
+    [self.image uploadToGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
@@ -244,13 +245,13 @@
     GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
         return (file.parents == nil);
     }];
-    OCMStub([self.image.googleDriveService uploadFile:fileArg
+    OCMStub([self.googleDriveService uploadFile:fileArg
                                              withData:[OCMArg any]])
         .andReturn(promise);
 
     // Call upload
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
-    [self.image uploadToGoogleDrive]
+    [self.image uploadToGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
@@ -274,11 +275,11 @@
         file.md5Checksum = @"abc123";
         resolve(file);
     }];
-    OCMStub([self.image.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andReturn(promise);
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
-    [self.image uploadToGoogleDrive]
+    [self.image uploadToGoogleDrive:self.googleDriveService]
         .then(^{
             [self.moc performBlock:^{
                 XCTAssert([self.image.googleDriveFileID isEqualToString:googleDriveFileID]);
@@ -307,7 +308,7 @@
 
     // Set up an expectation and wait for it
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
-    [self.image downloadFromGoogleDrive]
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^{ XCTFail(@"Expected promise to resolve"); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
@@ -333,13 +334,13 @@
         NSData *data = [@"hello world" dataUsingEncoding:NSUTF8StringEncoding];
         resolve(data);
     }];
-    OCMStub([self.image.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(promise);
 
-    // Call [image downloadFromGoogleDrive]
-    [self.image downloadFromGoogleDrive]
+    // Call downloadFromGoogleDrive
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{
-            OCMVerify([self.image.googleDriveService getFile:[OCMArg any]]);
+            OCMVerify([self.googleDriveService getFile:[OCMArg any]]);
             [expectation fulfill];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
@@ -365,10 +366,10 @@
     [self stubGetMetadataForFileIdToSucceed];
     [self stubGetFileToSucceed];
 
-    // Call [image downloadFromGoogleDrive]
-    [self.image downloadFromGoogleDrive]
+    // Call downloadFromGoogleDrive
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{
-            OCMVerify([self.image.googleDriveService getFile:[OCMArg any]]);
+            OCMVerify([self.googleDriveService getFile:[OCMArg any]]);
             [expectation fulfill];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
@@ -391,13 +392,13 @@
     [self stubGetMetadataForFileIdToSucceed];
 
     // Stub out [googleDriveService getFile:file] to fail if called
-    OCMStub([self.image.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andDo(^(NSInvocation *invocation) {
             XCTFail(@"Expected [googleDriveService getFile:file] not to be called");
         });
 
-    // Call [image downloadFromGoogleDrive] and fulfill expectation on then
-    [self.image downloadFromGoogleDrive]
+    // Call downloadFromGoogleDrive
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^{ XCTFail(@"Expected promise to resolve"); });
 
@@ -415,11 +416,11 @@
     [self setImageGoogleDriveFileID];
 
     // Stub out getMetadataForFileId to fail
-    OCMStub([self.image.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn([PMKPromise rejectedPromise]);
 
-    // Call [image downloadFromGoogleDrive] and fulfill expectation on then
-    [self.image downloadFromGoogleDrive]
+    // Call downloadFromGoogleDrive
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{ XCTFail(@"Expected promise to reject"); })
         .catch(^{ [expectation fulfill]; });
     
@@ -440,11 +441,11 @@
     [self stubGetMetadataForFileIdToSucceed];
 
     // Stub out getFile to return a rejected promise
-    OCMStub([self.image.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn([PMKPromise rejectedPromise]);
 
-    // Call [image downloadFromGoogleDrive] and fulfill expectation on then
-    [self.image downloadFromGoogleDrive]
+    // Call downloadFromGoogleDrive
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{ XCTFail(@"Expected promise to reject"); })
         .catch(^{ [expectation fulfill]; });
     
@@ -468,8 +469,8 @@
     // Stub out [TBScopeImageAsset saveImage:image] to reject
     [self stubSaveImageToReject];
     
-    // Call [image downloadFromGoogleDrive] and fulfill expectation on then
-    [self.image downloadFromGoogleDrive]
+    // Call downloadFromGoogleDrive
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{ XCTFail(@"Expected promise to reject"); })
         .catch(^{ [expectation fulfill]; });
     
@@ -498,8 +499,8 @@
     id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
     [[[mock stub] andReturn:promise] saveImage:[OCMArg any]];
 
-    // Call [image downloadFromGoogleDrive]
-    [self.image downloadFromGoogleDrive]
+    // Call downloadFromGoogleDrive
+    [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{
             [self.moc performBlock:^{
                 XCTAssert([self.image.path isEqualToString:path]);

@@ -19,7 +19,6 @@
 
 @implementation Images
 
-@synthesize googleDriveService;
 @dynamic fieldNumber;
 @dynamic metadata;
 @dynamic imageContentMetrics;
@@ -34,24 +33,7 @@
 @dynamic focusAttempts;
 @dynamic focusResult;
 
-- (void)awakeFromInsert
-{
-    [super awakeFromInsert];
-    [self initGoogleDriveService];
-}
-
-- (void)awakeFromFetch
-{
-    [super awakeFromFetch];
-    [self initGoogleDriveService];
-}
-
-- (void)initGoogleDriveService
-{
-    self.googleDriveService = [[GoogleDriveService alloc] init];
-}
-
-- (PMKPromise *)uploadToGoogleDrive
+- (PMKPromise *)uploadToGoogleDrive:(GoogleDriveService *)googleDriveService
 {
     __block NSManagedObjectContext *moc = [self managedObjectContext];
     return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
@@ -95,7 +77,7 @@
 
                 NSData *data = UIImageJPEGRepresentation((UIImage *)image, 1.0);
 
-                [self.googleDriveService uploadFile:file withData:data]
+                [googleDriveService uploadFile:file withData:data]
                     .then(^(GTLDriveFile *file) { resolve(file); })
                     .catch(^(NSError *error) { resolve(error); });
             }];
@@ -117,7 +99,7 @@
     });
 }
 
-- (PMKPromise *)downloadFromGoogleDrive
+- (PMKPromise *)downloadFromGoogleDrive:(GoogleDriveService *)googleDriveService
 {
     __block NSManagedObjectContext *moc = [self managedObjectContext];
     if (!moc) {
@@ -127,7 +109,6 @@
         });
     }
 
-    GoogleDriveService *gds = self.googleDriveService;
     __block NSString *path;
     __block NSString *googleDriveFileID;
     return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
@@ -140,7 +121,7 @@
     }].then(^{
         if (!googleDriveFileID) return [PMKPromise noopPromise];
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            [gds getMetadataForFileId:googleDriveFileID]
+            [googleDriveService getMetadataForFileId:googleDriveFileID]
                 .then(^(GTLDriveFile *remoteFile) { resolve(remoteFile); })
                 .catch(^(NSError *error) { resolve(error); });
         }];
@@ -167,7 +148,7 @@
         if (!file) return [PMKPromise noopPromise];
 
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            [gds getFile:file]
+            [googleDriveService getFile:file]
                 .then(^(NSData *data) { resolve(data); })
                 .catch(^(NSError *error) { resolve(error); });
         }];

@@ -15,9 +15,6 @@
 
 @interface Slides : NSManagedObject
 
-// Only public so we can mock it out in tests
-@property (nonatomic, retain) GoogleDriveService *googleDriveService;
-
 @property (nonatomic) int32_t slideNumber;
 @property (nonatomic, retain) NSString * sputumQuality;
 @property (nonatomic, retain) NSString * dateCollected;
@@ -46,7 +43,7 @@
 
 - (BOOL)allImagesAreLocal;
 - (BOOL)hasLocalImages;
-- (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive;
-- (PMKPromise *)downloadRoiSpriteSheetFromGoogleDrive;
+- (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive:(GoogleDriveService *)googleDriveService;
+- (PMKPromise *)downloadRoiSpriteSheetFromGoogleDrive:(GoogleDriveService *)googleDriveService;
 
 @end

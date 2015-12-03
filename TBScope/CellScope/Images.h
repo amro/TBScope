@@ -15,9 +15,6 @@
 
 @interface Images : NSManagedObject
 
-// Only public so we can mock it out in tests
-@property (nonatomic, retain) GoogleDriveService *googleDriveService;
-
 @property (nonatomic) int32_t fieldNumber;
 @property (nonatomic, retain) NSString * metadata;
 @property (nonatomic, retain) NSString * imageContentMetrics;
@@ -33,7 +30,7 @@
 @property (nonatomic, retain) NSString * focusResult;
 
 
-- (PMKPromise *)uploadToGoogleDrive;
-- (PMKPromise *)downloadFromGoogleDrive;
+- (PMKPromise *)uploadToGoogleDrive:(GoogleDriveService *)googleDriveService;
+- (PMKPromise *)downloadFromGoogleDrive:(GoogleDriveService *)googleDriveService;
 
 @end

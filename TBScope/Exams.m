@@ -64,7 +64,7 @@
         NSMutableArray *promises = [[NSMutableArray alloc] init];
         [self.managedObjectContext performBlockAndWait:^{
             for (Slides *slide in self.examSlides) {
-                PMKPromise *promise = [slide uploadRoiSpriteSheetToGoogleDrive];
+                PMKPromise *promise = [slide uploadRoiSpriteSheetToGoogleDrive:gds];
                 [promises addObject:promise];
             }
         }];
@@ -234,7 +234,7 @@
                 if ([exam.examSlides count] > 0) {
                     NSMutableArray *promises = [[NSMutableArray alloc] init];
                     for (Slides *slide in exam.examSlides) {
-                        PMKPromise *promise = [slide downloadRoiSpriteSheetFromGoogleDrive];
+                        PMKPromise *promise = [slide downloadRoiSpriteSheetFromGoogleDrive:gds];
                         [promises addObject:promise];
                     }
                     [PMKPromise join:promises]

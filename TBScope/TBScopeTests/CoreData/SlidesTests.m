@@ -20,6 +20,7 @@
 @interface SlidesTests : XCTestCase
 @property (strong, nonatomic) Slides *slide;
 @property (strong, nonatomic) NSManagedObjectContext *moc;
+@property (strong, nonatomic) GoogleDriveService *googleDriveService;
 @end
 
 @implementation SlidesTests
@@ -31,15 +32,15 @@
     // Set up the managedObjectContext
     self.moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     self.moc.parentContext = [[TBScopeData sharedData] managedObjectContext];
-    
+
+    // Inject GoogleDriveService
+    GoogleDriveService *mockGds = OCMPartialMock([[GoogleDriveService alloc] init]);
+    self.googleDriveService = mockGds;
+
     [self.moc performBlockAndWait:^{
         // Create a slide
         self.slide = (Slides*)[NSEntityDescription insertNewObjectForEntityForName:@"Slides" inManagedObjectContext:self.moc];
         self.slide.exam = (Exams*)[NSEntityDescription insertNewObjectForEntityForName:@"Exams" inManagedObjectContext:self.moc];
-
-        // Inject GoogleDriveService
-        GoogleDriveService *mockGds = OCMPartialMock([[GoogleDriveService alloc] init]);
-        self.slide.googleDriveService = mockGds;
     }];
 }
 
@@ -75,7 +76,7 @@
         
         resolve(remoteFile);
     }];
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn(promise);
 }
 
@@ -164,7 +165,7 @@
     }];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to fail
-    OCMStub([self.slide.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andDo(^(NSInvocation *invocation) {
             XCTFail(@"Did not expect uploadFile:withData: to be called");
         });
@@ -173,7 +174,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) { [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
@@ -188,7 +189,7 @@
     [self setSlideRoiSpritePath];
 
     // Stub out getMetadataForFileId to return nil
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
     // Stub out remote file time to be newer
@@ -202,14 +203,14 @@
     [self stubOutGetImageAtPath];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to succeed
-    OCMStub([self.slide.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) { [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
@@ -232,7 +233,7 @@
         .andReturn(userDefaultsMock);
 
     // Stub out getMetadataForFileId to return nil
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
     // Stub out remote file time to be newer
@@ -250,7 +251,7 @@
         GTLDriveFile *actualRemoteDir = [file.parents objectAtIndex:0];
         return [actualRemoteDir.identifier isEqualToString:remoteDirIdentifier];
     }];
-    OCMStub([self.slide.googleDriveService uploadFile:fileArg
+    OCMStub([self.googleDriveService uploadFile:fileArg
                                              withData:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
@@ -258,7 +259,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) { [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
@@ -280,7 +281,7 @@
         .andReturn(userDefaultsMock);
 
     // Stub out getMetadataForFileId to return nil
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
     // Stub out remote file time to be newer
@@ -297,7 +298,7 @@
     GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
         return (file.parents == nil);
     }];
-    OCMStub([self.slide.googleDriveService uploadFile:fileArg
+    OCMStub([self.googleDriveService uploadFile:fileArg
                                              withData:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
@@ -305,7 +306,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) { [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
@@ -330,7 +331,7 @@
     [self stubOutGetImageAtPath];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to fail
-    OCMStub([self.slide.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andDo(^(NSInvocation *invocation) {
             XCTFail(@"Did not expect uploadFile:withData: to be called");
         });
@@ -339,7 +340,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) { [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
@@ -362,7 +363,7 @@
     [self stubOutGetImageAtPath];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to fail
-    OCMStub([self.slide.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andDo(^(NSInvocation *invocation) {
             XCTFail(@"Did not expect uploadFile:withData: to be called");
         });
@@ -381,7 +382,7 @@
             [self stubOutRemoteFileTime:@"2014-11-10T12:00:00.00Z" md5:localMd5];
 
             // Call uploadToGoogleDrive
-            [self.slide uploadRoiSpriteSheetToGoogleDrive]
+            [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
                 .then(^(GTLDriveFile *file) { [expectation fulfill]; })
                 .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
         });
@@ -410,11 +411,11 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to succeed
-    OCMStub([self.slide.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) { [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
@@ -442,11 +443,11 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to fail
-    OCMStub([self.slide.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andReturn([PMKPromise rejectedPromise]);
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^(NSError *error) { XCTFail(@"Expected promise to reject"); })
         .catch(^(GTLDriveFile *file) { [expectation fulfill]; });
 
@@ -480,11 +481,11 @@
         file.identifier = remoteFileId;
         resolve(file);
     }];
-    OCMStub([self.slide.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
         .andReturn(promise);
 
     // Call uploadToGoogleDrive
-    [self.slide uploadRoiSpriteSheetToGoogleDrive]
+    [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
         .then(^{
             [self.moc performBlock:^{
                 NSString *localFileId = self.slide.roiSpriteGoogleDriveFileID;
@@ -509,7 +510,7 @@
     }];
     
     // Stub out [GoogleDriveService getFile:] to fail
-    OCMStub([self.slide.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andDo(^(NSInvocation *invocation) {
             XCTFail(@"Did not expect downloadFileWithId to be called");
         });
@@ -518,7 +519,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Call download
-    [self.slide downloadRoiSpriteSheetFromGoogleDrive]
+    [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
@@ -531,11 +532,11 @@
 - (void)testThatDownloadFromGoogleDriveDoesNotDownloadIfGetMetadataForFileIdReturnsNil
 {
     // Stub out [googleDriveService getMetadataForFileId] to return nil
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn([PMKPromise noopPromise]);
 
     // Fail if getFile is called
-    OCMStub([self.slide.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andDo(^(NSInvocation *invocation) {
             XCTFail(@"Did not expect [googleDriveService getFile] to be called.");
         });
@@ -543,7 +544,7 @@
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
-    [self.slide downloadRoiSpriteSheetFromGoogleDrive]
+    [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
 
@@ -563,7 +564,7 @@
     }];
 
     // Fail if getFile is called
-    OCMStub([self.slide.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andDo(^(NSInvocation *invocation) {
             XCTFail(@"Did not expect [googleDriveService getFile] to be called.");
         });
@@ -571,7 +572,7 @@
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
-    [self.slide downloadRoiSpriteSheetFromGoogleDrive]
+    [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^{ [expectation fulfill]; })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
 
@@ -590,7 +591,7 @@
         GTLDriveFile *file = [[GTLDriveFile alloc] init];
         resolve(file);
     }];
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn(promise);
 
     // Stub out getFile to return NSData
@@ -598,16 +599,16 @@
         NSData *data = [@"hello world" dataUsingEncoding:NSUTF8StringEncoding];
         resolve(data);
     }];
-    OCMStub([self.slide.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(getFilePromise);
 
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
     
     // Call download
-    [self.slide downloadRoiSpriteSheetFromGoogleDrive]
+    [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) {
-            OCMVerify([self.slide.googleDriveService getFile:[OCMArg any]]);
+            OCMVerify([self.googleDriveService getFile:[OCMArg any]]);
             [expectation fulfill];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
@@ -627,7 +628,7 @@
         GTLDriveFile *file = [[GTLDriveFile alloc] init];
         resolve(file);
     }];
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn(getMetadataPromise);
 
     // Stub out getFile to return NSData
@@ -635,7 +636,7 @@
         NSData *data = [@"hello world" dataUsingEncoding:NSUTF8StringEncoding];
         resolve(data);
     }];
-    OCMStub([self.slide.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(getFilePromise);
 
     // Set up expectation
@@ -645,7 +646,7 @@
     id saveImageMock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
 
     // Call download
-    [self.slide downloadRoiSpriteSheetFromGoogleDrive]
+    [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^{
             OCMVerify([saveImageMock saveImage:[OCMArg any]]);
             [expectation fulfill];
@@ -667,7 +668,7 @@
         GTLDriveFile *file = [[GTLDriveFile alloc] init];
         resolve(file);
     }];
-    OCMStub([self.slide.googleDriveService getMetadataForFileId:[OCMArg any]])
+    OCMStub([self.googleDriveService getMetadataForFileId:[OCMArg any]])
         .andReturn(getMetadataPromise);
 
     // Stub out getFile to return NSData
@@ -678,7 +679,7 @@
         NSData *data = UIImageJPEGRepresentation(image, 1.0);
         resolve(data);
     }];
-    OCMStub([self.slide.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(getFilePromise);
 
     // Stub out [TBScopeImageAsset saveImage:] to return a given path
@@ -693,7 +694,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
     
     // Call download
-    [self.slide downloadRoiSpriteSheetFromGoogleDrive]
+    [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) {
             [self.moc performBlock:^{
                 // Verify that slide.roiSpritePath was set
@@ -726,7 +727,7 @@
         NSData *data = UIImageJPEGRepresentation(image, 1.0);
         resolve(data);
     }];
-    OCMStub([self.slide.googleDriveService getFile:[OCMArg any]])
+    OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(getFilePromise);
 
     // Stub out [TBScopeImageAsset saveImage:] to return a given path
@@ -741,7 +742,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
     
     // Call download
-    [self.slide downloadRoiSpriteSheetFromGoogleDrive]
+    [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^(GTLDriveFile *file) {
             [self.moc performBlock:^{
                 // Verify that slide.roiSpritePath was set
