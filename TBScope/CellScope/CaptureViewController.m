@@ -1105,10 +1105,10 @@ AVAudioPlayer* _avPlayer;
         self.scanStatusLabel.hidden = NO;
         self.abortButton.hidden = NO;
         self.refocusButton.hidden = YES;
-
+        self.fineCoarseSelector.hidden = NO;
         self.autoScanProgressBar.hidden = NO;
         self.autoScanProgressBar.progress = 0;
-        
+        self.calibrationTypeSelector.hidden = NO;
         self.scanStatusLabel.text = NSLocalizedString(@"Beginning auto test procedure...", nil);
         
         [[self navigationController] setNavigationBarHidden:YES animated:YES];
@@ -1179,65 +1179,120 @@ AVAudioPlayer* _avPlayer;
             self.autoScanProgressBar.progress = (float)fieldNum/5.0;
         });
         
-        //start in fluorescence
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensityCalibration];
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
-        [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
-        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
-
+        if (self.calibrationTypeSelector.selectedSegmentIndex==0) {
+            //low intensity fluorescence fluorescence
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensityCalibration];
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+            [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+        }
+        else if (self.calibrationTypeSelector.selectedSegmentIndex==1) {
+            //brightfield
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+            [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
+        }
+        else {
+            //high intensity fluorescence fluorescence
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensitySmears];
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+            [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+        }
+        
         [NSThread sleepForTimeInterval:0.5];
         
         //have the user manually focus the scope
-        [self manualFocus:NSLocalizedString(@"Move the scope to a uniform field of beads and focus.", nil)];
+        if (self.calibrationTypeSelector.selectedSegmentIndex==0) {
+            [self manualFocus:NSLocalizedString(@"Move the scope to a uniform field of beads and focus.", nil)];
+        }
+        else {
+            [self manualFocus:NSLocalizedString(@"Move the scope to a new area of the smear and focus.", nil)];
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^(void){
             self.scanStatusLabel.text = NSLocalizedString(@"Please wait...", nil);
 
         });
         
-        //snap a fluorescent picture at low brightness
-        [self didPressCapture:nil];
-        [NSThread sleepForTimeInterval:0.5];
-        
-        //snap a fluorescent picture at full (smear) brightness
-        //this is useful for gauging background
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensitySmears];
-        [NSThread sleepForTimeInterval:0.5];
-        
-        [self didPressCapture:nil];
-        [NSThread sleepForTimeInterval:0.5];
-        
-        //switch to brightfield
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
-        [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
-        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
-        
-        [NSThread sleepForTimeInterval:0.5];
-        
-        //check if abort button pressed
-        if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
-    
-        //snap a BF picture
-        [self didPressCapture:nil];
-        [NSThread sleepForTimeInterval:0.5];
+        if (self.calibrationTypeSelector.selectedSegmentIndex==0) {
+            //snap a fluorescent picture at low brightness
+            [self didPressCapture:nil];
+            [NSThread sleepForTimeInterval:0.5];
+            
+            //snap a fluorescent picture at full (smear) brightness
+            //this is useful for gauging background
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensitySmears];
+            [NSThread sleepForTimeInterval:0.5];
+            
+            [self didPressCapture:nil];
+            [NSThread sleepForTimeInterval:0.5];
+            
+            //switch to brightfield
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+            [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
+            
+            [NSThread sleepForTimeInterval:0.5];
+            
+            //check if abort button pressed
+            if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
+            
+            //snap a BF picture
+            [self didPressCapture:nil];
+            [NSThread sleepForTimeInterval:0.5];
+            
+        }
 
-        
-        //switch back to low brightness fluorescence
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensityCalibration];
-        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
-        [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
-        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+        if (self.calibrationTypeSelector.selectedSegmentIndex==0) {
+            //switch back to low brightness fluorescence
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensityCalibration];
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+            [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+        }
+        else if (self.calibrationTypeSelector.selectedSegmentIndex==1) {
+            //switch back to low brightness fluorescence
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+            [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
+        }
+        else {
+            //switch back to low brightness fluorescence
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensitySmears];
+            [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+            [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+            [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+        }
         
         [NSThread sleepForTimeInterval:0.5];
         
         //check if abort button pressed
         if (_isAborting) { dispatch_async(dispatch_get_main_queue(), ^(void){[self abortCapture];}); return; }
     
+        //get z stack size and step size
+        int minSlice;
+        int maxSlice;
+        int zStep;
+        if (self.fineCoarseSelector.selectedSegmentIndex==0) { //fine (default)
+            minSlice = -1000;
+            maxSlice = 1000;
+            zStep = 200;
+        }
+        else
+        {
+            minSlice = - [[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2 ;
+            maxSlice = [[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2;
+            zStep = [[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepStepSize"];
+        }
+        
         //sweep through an 11-slice z stack at reduced LED intensity and take pictures at each slice
         int manualFocusPosition = [[TBScopeHardware sharedHardware] zPosition];
         [[TBScopeHardware sharedHardware] setStepperInterval:focusStepInterval];
-        for (int i=-1000; i<=1000; i+=200) {
+        for (int i=minSlice; i<=maxSlice; i+=zStep) {
             [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:(manualFocusPosition+i)];
             [[TBScopeHardware sharedHardware] waitForStage];
             [NSThread sleepForTimeInterval:stageSettlingTime];
@@ -1278,12 +1333,48 @@ AVAudioPlayer* _avPlayer;
         self.scanStatusLabel.hidden = YES;
         self.abortButton.hidden = YES;
         self.autoScanProgressBar.hidden = YES;
-        
+        self.fineCoarseSelector.hidden = YES;
+        self.calibrationTypeSelector.hidden = YES;
         [[self navigationController] setNavigationBarHidden:NO animated:YES];
     });
     
 }
 
+-(IBAction)didChangeCalibrationType:(id)sender
+{
+    
+    int bfIntensity = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanBFIntensity"];
+    int flIntensitySmears = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"AutoScanFluorescentIntensity"];
+    int flIntensityCalibration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CalibrationFluorescentIntensity"];
+
+    //get exposure and ISO settings
+    int bfExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationBF"];
+    int bfISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedBF"];
+    int flExposureDuration = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraExposureDurationFL"];
+    int flISOSpeed = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"CameraISOSpeedFL"];
+    
+    if (self.calibrationTypeSelector.selectedSegmentIndex==0) {
+        //low brightness fluorescence
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensityCalibration];
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+        [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+    }
+    else if (self.calibrationTypeSelector.selectedSegmentIndex==1) {
+        //BF
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:0];
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:bfIntensity];
+        [[TBScopeCamera sharedCamera] setExposureDuration:bfExposureDuration ISOSpeed:bfISOSpeed];
+        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeSharpness];
+    }
+    else {
+        //Regular FL for smears
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDFluorescent Level:flIntensitySmears];
+        [[TBScopeHardware sharedHardware] setMicroscopeLED:CSLEDBrightfield Level:0];
+        [[TBScopeCamera sharedCamera] setExposureDuration:flExposureDuration ISOSpeed:flISOSpeed];
+        [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+    }
+}
 
 -(void) playSound:(NSString*)sound_file
 {

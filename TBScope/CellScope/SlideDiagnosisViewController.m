@@ -29,7 +29,7 @@
     self.patientNamePromptLabel.text = NSLocalizedString(@"Name", nil);
     self.patientAddressPromptLabel.text = NSLocalizedString(@"Address", nil);
     self.patientGenderPromptLabel.text = NSLocalizedString(@"Gender", nil);
-    self.patientDOBPromptLabel.text = NSLocalizedString(@"DOB", nil);
+    self.patientDOBPromptLabel.text = NSLocalizedString(@"Age", nil);
     self.patientHIVStatusPromptLabel.text = NSLocalizedString(@"HIV Status", nil);
     self.intakeNotesPromptLabel.text = NSLocalizedString(@"Intake Notes", nil);
     self.diagnosisNotesPromptLabel.text = NSLocalizedString(@"Diagnosis Notes", nil);
@@ -91,6 +91,14 @@
     self.patientNameLabel.text = self.currentExam.patientName;
     self.patientAddressLabel.text = self.currentExam.patientAddress;
     self.patientHIVStatusLabel.text = self.currentExam.patientHIVStatus;
+    
+    if ([self.currentExam.patientGender isEqualToString:@"M"])
+        self.patientGenderLabel.text = NSLocalizedString(@"Male", nil);
+    else if ([self.currentExam.patientGender isEqualToString:@"F"])
+        self.patientGenderLabel.text = NSLocalizedString(@"Female", nil);
+    else
+        self.patientGenderLabel.text = @"";
+        
     self.patientGenderLabel.text = self.currentExam.patientGender;
     
     [df setTimeStyle:NSDateFormatterNoStyle];

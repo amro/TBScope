@@ -23,7 +23,7 @@
     self.examIDLabel.text = NSLocalizedString(@"Exam ID", nil);
     self.patientIDLabel.text = NSLocalizedString(@"Patient ID", nil);
     self.nameLabel.text = NSLocalizedString(@"Name", nil);
-    self.dobLabel.text = NSLocalizedString(@"DOB", nil);
+    self.dobLabel.text = NSLocalizedString(@"Age", nil);
     self.clinicLabel.text = NSLocalizedString(@"Clinic", nil);
     self.addressLabel.text = NSLocalizedString(@"Address", nil);
     self.hivStatusLabel.text = NSLocalizedString(@"HIV Status", nil);

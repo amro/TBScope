@@ -1326,6 +1326,11 @@
 					};
 					9B6BF0B315E19ACD002834C5 = {
 						DevelopmentTeam = 76ANGZ5BJZ;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};

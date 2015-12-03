@@ -672,7 +672,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="C5q-H7-o6I">
-                                <rect key="frame" x="0.0" y="22" width="1024" height="44"/>
+                                <rect key="frame" x="0.0" y="86" width="1024" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="C5q-H7-o6I" id="VgB-qq-SgM">
                                     <rect key="frame" x="0.0" y="0.0" width="1024" height="43.5"/>
@@ -763,7 +763,7 @@
                     <navigationItem key="navigationItem" id="Eod-JJ-j13">
                         <nil key="title"/>
                         <view key="titleView" contentMode="scaleToFill" id="OQl-yf-pis">
-                            <rect key="frame" x="212" y="6" width="600" height="33"/>
+                            <rect key="frame" x="212" y="5.5" width="600" height="33"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4CB-w4-ZRN">
@@ -1128,7 +1128,7 @@
                             <tableViewSection headerTitle="Identity" id="2gI-L3-KWq">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="74" id="VjD-vC-puG">
-                                        <rect key="frame" x="0.0" y="22" width="1024" height="74"/>
+                                        <rect key="frame" x="0.0" y="86" width="1024" height="74"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VjD-vC-puG" id="nYd-Ur-oFf">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="73.5"/>
@@ -1162,7 +1162,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patient ID Format" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ucw-Ki-jQW">
+                                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patient ID Format" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ucw-Ki-jQW">
                                                     <rect key="frame" x="624" y="23" width="135" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
@@ -1170,7 +1170,7 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="QDb-vR-6Ud">
+                                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="QDb-vR-6Ud">
                                                     <rect key="frame" x="773" y="19" width="133" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
@@ -1187,7 +1187,7 @@
                             <tableViewSection headerTitle="Operation" id="2Hu-x8-InV">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="68" id="oYw-Ij-6UB">
-                                        <rect key="frame" x="0.0" y="118" width="1024" height="68"/>
+                                        <rect key="frame" x="0.0" y="182" width="1024" height="68"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oYw-Ij-6UB" id="1Zo-Fs-C1l">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="67.5"/>
@@ -1242,7 +1242,7 @@
                             <tableViewSection headerTitle="Scan Settings" id="ZUp-qV-Ngu">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="220" id="kgB-m8-6Gh">
-                                        <rect key="frame" x="0.0" y="208" width="1024" height="220"/>
+                                        <rect key="frame" x="0.0" y="272" width="1024" height="220"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kgB-m8-6Gh" id="xlr-yb-05L">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="219.5"/>
@@ -1438,7 +1438,7 @@
                             <tableViewSection headerTitle="Camera &amp; Illumination" id="isD-xm-dSD">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="156" id="Qbm-Du-QeP">
-                                        <rect key="frame" x="0.0" y="450" width="1024" height="156"/>
+                                        <rect key="frame" x="0.0" y="514" width="1024" height="156"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qbm-Du-QeP" id="rJ2-Zb-wWH">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="155.5"/>
@@ -1587,7 +1587,7 @@
                             <tableViewSection headerTitle="Analysis" id="hbo-VN-Ujq">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="119" id="Sea-o3-tBs">
-                                        <rect key="frame" x="0.0" y="628" width="1024" height="119"/>
+                                        <rect key="frame" x="0.0" y="692" width="1024" height="119"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Sea-o3-tBs" id="BWc-8K-dWF">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="118.5"/>
@@ -1663,7 +1663,7 @@
                             <tableViewSection headerTitle="Google Drive Sync" id="cqF-HU-BLd">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="151" id="a6T-2O-r4x">
-                                        <rect key="frame" x="0.0" y="769" width="1024" height="151"/>
+                                        <rect key="frame" x="0.0" y="833" width="1024" height="151"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="a6T-2O-r4x" id="UkQ-c8-nma">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="150.5"/>
@@ -1758,7 +1758,7 @@
                             <tableViewSection headerTitle="Debugging" id="0li-4f-v4v">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="86" id="alh-R3-Sbq">
-                                        <rect key="frame" x="0.0" y="942" width="1024" height="86"/>
+                                        <rect key="frame" x="0.0" y="1006" width="1024" height="86"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="alh-R3-Sbq" id="qYE-HU-mt9">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="85.5"/>
@@ -1826,7 +1826,7 @@
                             <tableViewSection headerTitle="Reset Options" id="zwD-ka-Y17">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="253" id="YDw-WK-HoZ">
-                                        <rect key="frame" x="0.0" y="1050" width="1024" height="253"/>
+                                        <rect key="frame" x="0.0" y="1114" width="1024" height="253"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="YDw-WK-HoZ" id="ena-Cd-eb5">
                                             <rect key="frame" x="0.0" y="0.0" width="1024" height="252.5"/>
@@ -4187,6 +4187,30 @@
                                     <action selector="didPressManualFocus:" destination="102-pc-xxo" eventType="touchUpInside" id="CWi-ER-DDa"/>
                                 </connections>
                             </button>
+                            <segmentedControl hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="Na0-7q-S1T">
+                                <rect key="frame" x="805" y="150" width="190" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <segments>
+                                    <segment title="Fine"/>
+                                    <segment title="Coarse"/>
+                                </segments>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </segmentedControl>
+                            <segmentedControl hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="fhS-QK-YhO">
+                                <rect key="frame" x="762" y="110" width="234" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <segments>
+                                    <segment title="Beads"/>
+                                    <segment title="BF Smear"/>
+                                    <segment title="FL Smear"/>
+                                </segments>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <action selector="didChangeCalibrationType:" destination="102-pc-xxo" eventType="valueChanged" id="Ap7-aT-7ez"/>
+                                </connections>
+                            </segmentedControl>
                             <slider hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" id="fTV-Kb-VKa">
                                 <rect key="frame" x="675" y="685" width="250" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -4236,10 +4260,12 @@
                         <outlet property="autoScanButton" destination="neP-mG-bSp" id="gQG-r1-LT1"/>
                         <outlet property="autoScanProgressBar" destination="LUv-tr-Zd4" id="51L-ga-1VV"/>
                         <outlet property="bfButton" destination="07F-TT-pWV" id="JfL-bu-9Zm"/>
+                        <outlet property="calibrationTypeSelector" destination="fhS-QK-YhO" id="IlP-41-oLK"/>
                         <outlet property="controlPanelView" destination="LmM-RG-80R" id="mb4-0P-CxY"/>
                         <outlet property="coordinateLabel" destination="0SN-4n-6Nj" id="WFt-oH-yaI"/>
                         <outlet property="downButton" destination="ZFT-CF-FFD" id="ROF-JG-olD"/>
                         <outlet property="fastSlowButton" destination="W2L-va-E6w" id="ncP-BP-XFS"/>
+                        <outlet property="fineCoarseSelector" destination="Na0-7q-S1T" id="l8h-j2-XNR"/>
                         <outlet property="flButton" destination="s2l-zF-M9a" id="A0z-YO-Akw"/>
                         <outlet property="intensityLabel" destination="7bi-J2-S3x" id="YLe-q3-RKW"/>
                         <outlet property="intensitySlider" destination="fTV-Kb-VKa" id="qqs-KU-nbV"/>

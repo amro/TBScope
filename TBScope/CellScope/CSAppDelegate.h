@@ -17,7 +17,10 @@
 @interface CSAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
+@property (strong, nonatomic) dispatch_block_t expirationHandler;
+@property (assign, nonatomic) UIBackgroundTaskIdentifier bgTask;
+@property (assign, nonatomic) BOOL background;
+@property (assign, nonatomic) BOOL jobExpired;
 
 //- (NSURL *)applicationDocumentsDirectory;
 

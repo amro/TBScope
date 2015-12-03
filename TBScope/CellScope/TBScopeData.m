@@ -126,6 +126,8 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest; // 10 m
 
     [self.locationManager startMonitoringSignificantLocationChanges];
+    //[self.locationManager startUpdatingLocation]; //may need this for backgrounding
+    
 }
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations

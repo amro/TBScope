@@ -63,6 +63,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *fastSlowButton;
 
 @property (weak, nonatomic) IBOutlet UIProgressView *autoScanProgressBar;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *fineCoarseSelector;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *calibrationTypeSelector;
 
 @property (nonatomic) int currentField;
 

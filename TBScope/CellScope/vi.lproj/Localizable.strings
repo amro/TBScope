@@ -95,7 +95,7 @@
 "Loading sample..." = "Đang tải mẫu...";
 "Focusing..." = "Đang lấy nét...";
 "Acquiring image %d of %d..." = "Đang chụp ảnh %d của %d...";
-"Acquired Images: %d, Fields Remaining: %d" = "Số ảnh đã chụp: %d, Số ảnh còn lại: %d"
+"Acquired Images: %d, Fields Remaining: %d" = "Số ảnh đã chụp: %d, Số ảnh còn lại: %d";
 "Next field..." = "Vi trường tiếp theo..";
 "Acquisition complete..." = "Kết thúc chụp ảnh...";
 "Focus" = "Lấy nét";
@@ -149,7 +149,7 @@
 "Diagnosis" = "Chẩn đoán";
 "Confirm Diagnosis" = "Xác nhận chẩn đoán";
 "CellScope has diagnosed slide %d as positive for tuberculosis. Based on your review of the images, do you agree with this diagnosis?" = "CellScope đã chẩn đoán tiêu bản %d là lao dương tính. Căn cứ vào việc đánh giá hình ảnh của bạn, bạn có đồng ý với chẩn đoán này không?";
-"Let me review again." = "Hãy để tôi đánh giá lại lần nữa."
+"Let me review again." = "Hãy để tôi đánh giá lại lần nữa.";
 "No, this slide is negative." = "Không, tiêu bản này là âm tính.";
 "Yes, this slide is positive." = "Đúng, tiêu bản này là dương tính.";
 
