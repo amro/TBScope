@@ -46,11 +46,22 @@ BOOL _hasAttemptedLogUpload;
         self.examDownloadQueue = [[NSMutableArray alloc] init];
         self.imageUploadQueue = [[NSMutableArray alloc] init];
         self.imageDownloadQueue = [[NSMutableArray alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadImage:) name:@"UploadImage" object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNetworkChange:) name:kReachabilityChangedNotification object:nil];
-        
+
+        // Attach event listeners
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(uploadImage:)
+                                                     name:@"UploadImage"
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(doSync)
+                                                     name:@"AnalysisResultsSaved"
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleNetworkChange:)
+                                                     name:kReachabilityChangedNotification
+                                                   object:nil];
+
+        // Set up reachability listener
         self.reachability = [Reachability reachabilityForInternetConnection];
         [self.reachability startNotifier];
         
@@ -85,6 +96,9 @@ BOOL _hasAttemptedLogUpload;
 }
 
 - (void)doSync {
+    // Don't begin another sync if we're already syncing
+    if (self.isSyncing) return;
+
     //[TBScopeData CSLog:@"Checking if we should sync..." inCategory:@"SYNC"];
 
     _hasAttemptedLogUpload = NO;
