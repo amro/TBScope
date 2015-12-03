@@ -126,24 +126,39 @@ BOOL _hasAttemptedLogUpload;
                                               andContext:tmpMOC];
         int imageUploadsEnqueued = 0;
         for (Slides *slide in results) {
-            // Find the top 10 ROIs belonging to the slide
-            NSFetchRequest *request = [[NSFetchRequest alloc] init];
-            NSEntityDescription *entity = [NSEntityDescription entityForName:@"ROIs"
-                                                      inManagedObjectContext:tmpMOC];
-            [request setEntity:entity];
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"imageAnalysisResult.image.slide = %@", slide];
-            [request setPredicate:predicate];
-            NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"score" ascending:NO];
-            [request setSortDescriptors:@[sort]];
-            [request setFetchLimit:10];
-            NSError *error = nil;
-            NSMutableArray *rois = [[tmpMOC executeFetchRequest:request error:&error] mutableCopy];
-            for (ROIs *roi in rois) {
-                // Upload the associated image for each
-                Images *image = [[roi imageAnalysisResult] image];
-                if ([self.imageUploadQueue indexOfObject:image] == NSNotFound) {  // if it's not already in the queue
-                    [self.imageUploadQueue addObject:image];
-                    imageUploadsEnqueued++;
+            if (slide.slideAnalysisResults) {  // If slide is analyzed
+                // Find the top 10 ROIs belonging to the slide
+                NSFetchRequest *request = [[NSFetchRequest alloc] init];
+                NSEntityDescription *entity = [NSEntityDescription entityForName:@"ROIs"
+                                                          inManagedObjectContext:tmpMOC];
+                [request setEntity:entity];
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"imageAnalysisResult.image.slide = %@", slide];
+                [request setPredicate:predicate];
+                NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"score" ascending:NO];
+                [request setSortDescriptors:@[sort]];
+                [request setFetchLimit:10];
+                NSError *error = nil;
+                NSMutableArray *rois = [[tmpMOC executeFetchRequest:request error:&error] mutableCopy];
+                for (ROIs *roi in rois) {
+                    // Upload the associated image for each
+                    Images *image = [[roi imageAnalysisResult] image];
+                    if ([self.imageUploadQueue indexOfObject:image] == NSNotFound) {  // if it's not already in the queue
+                        [self.imageUploadQueue addObject:image];
+                        imageUploadsEnqueued++;
+                    }
+                }
+            } else {  // Otherwise upload all non-remote images
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(slide = %@) && (googleDriveFileID = nil) && (path != nil)", slide];
+                NSArray *images = [CoreDataHelper searchObjectsForEntity:@"Images"
+                                                   withPredicate:predicate
+                                                      andSortKey:@"fieldNumber"
+                                                andSortAscending:YES
+                                                      andContext:tmpMOC];
+                for (Images *image in images) {
+                    if ([self.imageUploadQueue indexOfObject:image] == NSNotFound) {  // if it's not already in the queue
+                        [self.imageUploadQueue addObject:image];
+                        imageUploadsEnqueued++;
+                    }
                 }
             }
         }
