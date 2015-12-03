@@ -26,7 +26,7 @@
 //Edit Exam
 "Assay Parameters" = "Khảo nghiệm Tham số";
 "Name" = "Họ Tên";
-"Patient ID" = "Bệnh nhân ID"; //longer
+"Patient ID" = "Bệnh nhân ID";
 "Slide #" = "Tiêu bản số #";
 "Read #" = "Đọc lần #";
 "Patient Address" = "Địa chỉ bệnh nhân";
@@ -35,7 +35,7 @@
 "Date: %@" = "Ngày: %@";
 "Run Analysis" = "Phân tích kết quả";
 "Patient name cannot be blank." = "Không thể để trống tên bệnh nhân";
-"Patient ID cannot be blank." = "Không thể để trống ID bệnh nhân."; //check that this is getting validated
+"Patient ID cannot be blank." = "Không thể để trống ID bệnh nhân.";
 "Patient ID is invalid." = "Định dạng ID bệnh nhân không đúng.";
 "Slide number cannot be blank." = "Số tiêu bản không thể để trống.";
 "Read number cannot be blank." = "Tiêu bản đọc không được để trống.";
@@ -45,19 +45,22 @@
 "Back" = "Mặt dưới";
 "New Exam" = "Xét nghiệm mới";
 "Edit Exam" = "Thay đổi xét nghiệm";
-"Exam ID:" = "ID xét nghiệm:"; //make field longer
-"Gender" = "Giới tính"; //field longer
+"Exam ID:" = "ID xét nghiệm:";
+"Gender" = "Giới tính";
 "DOB" = "Ngày sinh";
-"Clinic" = "Phòng khám"; //field longer
+"Clinic" = "Phòng khám";
 "Address" = "Địa chỉ";
-"HIV Status" = "Tình trạng HIV"; //field longer
+"HIV Status" = "Tình trạng HIV";
 "NO GPS" = "Không có GPS";
 "GPS OK" = "GPS OK";
-"Exam ID cannot be blank." = "ID xét nghiệm không thể để trống."; //make sure in popup
+"Exam ID cannot be blank." = "ID xét nghiệm không thể để trống.";
 "Exam ID is invalid" = "ID xét nghiệm không đúng";
+"Patient age cannot be blank." = "Không được để trống tuổi của bệnh nhân";
+"Patient gender cannot be blank." = "Không được để trống giới tính của bệnh nhân";
 "Male" = "Nam";
 "Female" = "Nữ";
-"Map" = "Bản đồ"; //make button sưitch hêre
+"Map" = "Bản đồ";
+"Age" = "Tuổi";
 
 //Edit Slide
 "GOOD" = "Tốt";
@@ -66,7 +69,7 @@
 "BLOOD+SALIVA" = "Máu + Nước bọt";
 "MUCUS" = "Niêm dịch";
 "New Slide" = "Tiêu bản mới";
-"Date Collected" = "Ngày lấy mẫu"; //field longer
+"Date Collected" = "Ngày lấy mẫu";
 "Sputum Quality" = "Chất lượng mẫu";
 "Date Scanned: %@" = "Ngày chụp: %@"; 
 "Exam ID: %@" = "ID xét nghiệm: %@";
@@ -92,7 +95,7 @@
 "Loading sample..." = "Đang tải mẫu...";
 "Focusing..." = "Đang lấy nét...";
 "Acquiring image %d of %d..." = "Đang chụp ảnh %d của %d...";
-"Acquired Images: %d, Fields Remaining: %d" = "Đang chụp ảnh %d của %d..."; //this is not correct
+"Acquired Images: %d, Fields Remaining: %d" = "Số ảnh đã chụp: %d, Số ảnh còn lại: %d"
 "Next field..." = "Vi trường tiếp theo..";
 "Acquisition complete..." = "Kết thúc chụp ảnh...";
 "Focus" = "Lấy nét";
@@ -112,7 +115,7 @@
 //Analysis
 "Analyzing..." = "Phân tích kết quả ảnh đã chụp...";
 "Processing image %d of %d..." = "Xử lý ảnh %d của %d...";
-"Abort" = "Dừng"; //make sủe this is set
+"Abort" = "Dừng";
 "Please wait..." = "Làm ơn đợi...";
 
 
@@ -123,7 +126,7 @@
 "Slide Info" = "Thông tin mẫu phẩm";
 "Analysis Result" = "Phân tích kết quả";
 "Analysis Date" = "Phân tích ngày";
-"Slide Score" = "Điểm tiêu bản sau đánh giá phân tích ảnh chụp"; //shorten?
+"Slide Score" = "Điểm tiêu bản sau đánh giá phân tích ảnh chụp";
 "Image Quality" = "Chất lượng ảnh";
 "# Fields" = "# Vi trường";
 "Diagnosis Notes" = "Chẩn đoán cần chú ý";
@@ -144,6 +147,11 @@
 "Add Slide" = "Thêm tiêu bản";
 "Follow-Up" = "Thêm thông tin"; //"More Info"
 "Diagnosis" = "Chẩn đoán";
+"Confirm Diagnosis" = "Xác nhận chẩn đoán";
+"CellScope has diagnosed slide %d as positive for tuberculosis. Based on your review of the images, do you agree with this diagnosis?" = "CellScope đã chẩn đoán tiêu bản %d là lao dương tính. Căn cứ vào việc đánh giá hình ảnh của bạn, bạn có đồng ý với chẩn đoán này không?";
+"Let me review again." = "Hãy để tôi đánh giá lại lần nữa."
+"No, this slide is negative." = "Không, tiêu bản này là âm tính.";
+"Yes, this slide is positive." = "Đúng, tiêu bản này là dương tính.";
 
 "NONE" = "không";
 "ANALYSIS HAS NOT BEEN PERFORMED" = "PHÂN TÍCH ĐÃ KHÔNG ĐƯỢC THỰC HIỆN";
