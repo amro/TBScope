@@ -66,6 +66,7 @@
 		8AD462881BF2767A007BF460 /* PMKPromise+RejectedPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AD462871BF2767A007BF460 /* PMKPromise+RejectedPromise.m */; };
 		8AD462971BF27742007BF460 /* PMKPromise+RejectedPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AD462871BF2767A007BF460 /* PMKPromise+RejectedPromise.m */; };
 		8ADE758F1C0CA16300163968 /* GoogleDriveFolderListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ADE758E1C0CA16300163968 /* GoogleDriveFolderListViewController.m */; };
+		8ADE75C61C13671B00163968 /* BackgroundTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ADE75C51C13671B00163968 /* BackgroundTask.m */; };
 		8AE3C6B41BE56EEA00EABA78 /* drive.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AE3C6B01BE56EEA00EABA78 /* drive.png */; };
 		8AE3C6B51BE56EEA00EABA78 /* gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AE3C6B11BE56EEA00EABA78 /* gear.png */; };
 		8AE3C6B61BE56EEA00EABA78 /* notebook.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AE3C6B21BE56EEA00EABA78 /* notebook.png */; };
@@ -457,6 +458,8 @@
 		8AD462871BF2767A007BF460 /* PMKPromise+RejectedPromise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "PMKPromise+RejectedPromise.m"; path = "Extensions/PMKPromise+RejectedPromise.m"; sourceTree = "<group>"; };
 		8ADE758D1C0CA16300163968 /* GoogleDriveFolderListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleDriveFolderListViewController.h; sourceTree = "<group>"; };
 		8ADE758E1C0CA16300163968 /* GoogleDriveFolderListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleDriveFolderListViewController.m; sourceTree = "<group>"; };
+		8ADE75C41C13671B00163968 /* BackgroundTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundTask.h; sourceTree = "<group>"; };
+		8ADE75C51C13671B00163968 /* BackgroundTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundTask.m; sourceTree = "<group>"; };
 		8AE3C6B01BE56EEA00EABA78 /* drive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = drive.png; sourceTree = "<group>"; };
 		8AE3C6B11BE56EEA00EABA78 /* gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gear.png; sourceTree = "<group>"; };
 		8AE3C6B21BE56EEA00EABA78 /* notebook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notebook.png; sourceTree = "<group>"; };
@@ -940,6 +943,8 @@
 				84072C4D196BB403004F8826 /* CoreDataJSONHelper.m */,
 				84072C4F196BB410004F8826 /* Reachability.h */,
 				84072C50196BB410004F8826 /* Reachability.m */,
+				8ADE75C41C13671B00163968 /* BackgroundTask.h */,
+				8ADE75C51C13671B00163968 /* BackgroundTask.m */,
 				8A52542C1BBDA1C0009B29BF /* TBScopeTests */,
 				9B6BF0B715E19ACD002834C5 /* Frameworks */,
 				9B6BF0B515E19ACD002834C5 /* Products */,
@@ -1752,6 +1757,7 @@
 				A5FCCD3218B6F0730004B2F5 /* ROIs.m in Sources */,
 				A5FCCD3418B6F0730004B2F5 /* Slides.m in Sources */,
 				A5FCCD3518B6F0730004B2F5 /* Users.m in Sources */,
+				8ADE75C61C13671B00163968 /* BackgroundTask.m in Sources */,
 				8A4E2B221BEC167100F34274 /* UIImage+Crop.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
