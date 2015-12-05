@@ -137,7 +137,7 @@
     cell.patientIDLabel.text = currentExam.patientID;
     cell.patientNameLabel.text = currentExam.patientName;
     cell.locationLabel.text = currentExam.location;
-    cell.usernameLabel.text = currentExam.userName;
+    cell.usernameLabel.text = [NSString stringWithFormat:@"%@ (%@)",currentExam.cellscopeID,currentExam.userName];
     cell.dateLabel.text = dateString;
     cell.timeLabel.text = timeString;
     
