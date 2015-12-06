@@ -20,8 +20,11 @@
 
     [[self.tabBar.items objectAtIndex:0] setTitle:NSLocalizedString(@"Diagnosis", nil)];
     [[self.tabBar.items objectAtIndex:1] setTitle:NSLocalizedString(@"Follow-Up", nil)];
-    
-    self.slideToShow = 0;
+
+    // Reset slideToShow if it wasn't previously set by a prepareForSegue
+    if (!self.slideToShow) {
+        self.slideToShow = 0;
+    }
     
     NSMutableArray* tabVCs = [[NSMutableArray alloc] init];
     
@@ -65,28 +68,27 @@
             [tabVCs addObject:imageResultsVC3];
         }
     }
-    
 
-    //TODO: make this an option (in some situations, we might not want them to see images, in others we might not want them to see diagnosis, etc.
-    
+    // TODO: make this an option (in some situations, we might not want them
+    // to see images, in others we might not want them to see diagnosis, etc.
     self.viewControllers = tabVCs;
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    if (self.slideToShow==1)
+
+    UITabBarController *tbc = (UITabBarController*)self.navigationController.topViewController;
+    if (self.slideToShow == 1) {
         if (self.viewControllers.count>2)
-            [self.tabBarController setSelectedIndex:2];
-    else if (self.slideToShow==2)
+            [tbc setSelectedIndex:2];
+    } else if (self.slideToShow == 2) {
         if (self.viewControllers.count>3)
-            [self.tabBarController setSelectedIndex:3];
-    else if (self.slideToShow==3)
+            [tbc setSelectedIndex:3];
+    } else if (self.slideToShow == 3) {
         if (self.viewControllers.count>4)
-            [self.tabBarController setSelectedIndex:4];
-    
+            [tbc setSelectedIndex:4];
+    }
 }
 
 

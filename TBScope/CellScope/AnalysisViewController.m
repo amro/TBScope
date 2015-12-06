@@ -301,7 +301,6 @@
 
         [rtbc.navigationItem setRightBarButtonItems:[NSArray arrayWithObject:rtbc.doneButton]];
         [rtbc.navigationItem setHidesBackButton:YES];
-        
     }
 }
 

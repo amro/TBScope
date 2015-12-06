@@ -7,6 +7,7 @@
 //
 
 #import "SlideDiagnosisViewController.h"
+#import "ResultsTabBarController.h"
 
 @implementation SlideDiagnosisViewController
 
@@ -453,12 +454,17 @@
     {
         UIViewController <TBScopeViewControllerContext> *avc = [segue destinationViewController];
         //avc.currentExam = self.currentExam;
-        if (sender==self.reanalyzeButton1)
+        ResultsTabBarController *rtbc = (ResultsTabBarController *)self.navigationController.topViewController;
+        if (sender==self.reanalyzeButton1) {
+            rtbc.slideToShow = 1;
             avc.currentSlide = (Slides*)self.currentExam.examSlides[0];
-        else if (sender==self.reanalyzeButton2)
+        } else if (sender==self.reanalyzeButton2) {
+            rtbc.slideToShow = 2;
             avc.currentSlide = (Slides*)self.currentExam.examSlides[1];
-        else if (sender==self.reanalyzeButton3)
+        } else if (sender==self.reanalyzeButton3) {
+            rtbc.slideToShow = 3;
             avc.currentSlide = (Slides*)self.currentExam.examSlides[2];
+        }
        
     }
     else if ([segue.identifier isEqualToString:@"ReScanSegue"])
