@@ -186,15 +186,13 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     
     [self saveCoreData];
 
-    //[self insertSeedData]; //no longer needed
-    
+    [self insertSeedData];
 }
 
-//TODO: remove
 - (void)insertSeedData
 {
-    BOOL skipInsertingSeedData = [[[NSProcessInfo processInfo] arguments] containsObject:@"-SkipInsertingSeedData"];
-    if (skipInsertingSeedData) return;
+    BOOL insertSeedData = [[[NSProcessInfo processInfo] arguments] containsObject:@"-InsertSeedData"];
+    if (insertSeedData) return;
     
     Exams* exam;
     Slides* slide;
