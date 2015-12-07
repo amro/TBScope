@@ -1,4 +1,5 @@
 PODS:
+  - BackgroundTask (0.1.0)
   - DynamicSpriteSheet (0.0.8)
   - Google-API-Client/Common (1.0.422):
     - gtm-http-fetcher (~> 1.0.141)
@@ -24,6 +25,7 @@ PODS:
     - PromiseKit/Promise
 
 DEPENDENCIES:
+  - BackgroundTask (from `https://github.com/ardell/BackgroundTask.git`)
   - DynamicSpriteSheet (from `https://github.com/ardell/DynamicSpriteSheet.git`)
   - Google-API-Client/Drive (~> 1.0)
   - OCMock
@@ -32,15 +34,21 @@ DEPENDENCIES:
   - PromiseKit/Promise (~> 1.6)
 
 EXTERNAL SOURCES:
+  BackgroundTask:
+    :git: https://github.com/ardell/BackgroundTask.git
   DynamicSpriteSheet:
     :git: https://github.com/ardell/DynamicSpriteSheet.git
 
 CHECKOUT OPTIONS:
+  BackgroundTask:
+    :commit: 2ef0eaec8883a936ade482d295f80bd9a8078274
+    :git: https://github.com/ardell/BackgroundTask.git
   DynamicSpriteSheet:
     :commit: f0dea18321cb72cafec7f1f65708369050c2d0d4
     :git: https://github.com/ardell/DynamicSpriteSheet.git
 
 SPEC CHECKSUMS:
+  BackgroundTask: ae283adf91380b9fa325216d4beaaccc998b463b
   DynamicSpriteSheet: dfc9989eb7c3c2844ba1f605c59ca31cb6be0e58
   Google-API-Client: cb712cf122f1d7fda966de4c2bc551324573366c
   gtm-http-fetcher: 6d4617e7d343b6e4c082b777541c334eb6f5d81e

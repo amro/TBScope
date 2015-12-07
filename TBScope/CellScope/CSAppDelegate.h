@@ -21,7 +21,7 @@
 @property (assign, nonatomic) BOOL background;
 @property (assign, nonatomic) BOOL jobExpired;
 
-- (void)doWorkInBackground;
+- (void)keepAlive;
 //- (NSURL *)applicationDocumentsDirectory;
 
 @end

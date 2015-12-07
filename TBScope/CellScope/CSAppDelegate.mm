@@ -7,7 +7,7 @@
 //
 
 #import "CSAppDelegate.h"
-#import "BackgroundTask.h"
+#import <BackgroundTask/BGTBackgroundTask.h>
 
 @implementation CSAppDelegate
 
@@ -69,7 +69,7 @@ void onUncaughtException(NSException* exception)
     //});
 
     // Set up background task to sync periodically
-    BackgroundTask *bgTask = [[BackgroundTask alloc] init];
+    BGTBackgroundTask *bgTask = [[BGTBackgroundTask alloc] init];
     [bgTask startBackgroundTasks:600
                           target:self
                         selector:@selector(keepAlive)];
