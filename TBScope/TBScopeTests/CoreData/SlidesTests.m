@@ -12,7 +12,8 @@
 #import "TBScopeData.h"
 #import "GoogleDriveService.h"
 #import "CoreDataJSONHelper.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
+#import <ImageManager/IMGDocumentsDirectory.h>
 #import "NSData+MD5.h"
 #import "PMKPromise+NoopPromise.h"
 #import "PMKPromise+RejectedPromise.h"
@@ -80,16 +81,17 @@
         .andReturn(promise);
 }
 
-- (void)stubOutGetImageAtPath
+- (void)stubOutFetchingImageToSucceed
 {
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
     PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
         NSString *imageName = @"fl_01_01";
         NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
         UIImage *image = [UIImage imageWithContentsOfFile:filePath];
-        resolve(image);
+        NSData *data = UIImageJPEGRepresentation(image, 1.0);
+        resolve(data);
     }];
-    [[[mock stub] andReturn:promise] getImageAtPath:[OCMArg any]];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
 }
 
 #pragma allImagesAreLocal tests
@@ -106,7 +108,7 @@
     // Add an image with a local path
     [self.moc performBlockAndWait:^{
         Images *image = [NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
-        image.path = @"asset-library://path/to/image.jpg";
+        image.path = @"assets-library://path/to/image.jpg";
         [self.slide addSlideImagesObject:image];
         XCTAssertTrue([self.slide allImagesAreLocal]);
     }];
@@ -150,7 +152,7 @@
     [self.moc performBlockAndWait:^{
         Images *image = [NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
         image.googleDriveFileID = @"remote-id";
-        image.path = @"asset-library://path/to/image.jpg";
+        image.path = @"assets-library://path/to/image.jpg";
         [self.slide addSlideImagesObject:image];
         XCTAssertTrue([self.slide hasLocalImages]);
     }];
@@ -199,8 +201,8 @@
         self.slide.exam.dateModified = @"2015-11-10T12:00:00.00Z";
     }];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to succeed
     OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
@@ -243,8 +245,8 @@
         self.slide.exam.dateModified = @"2015-11-10T12:00:00.00Z";
     }];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to succeed
     GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
@@ -291,8 +293,8 @@
         self.slide.exam.dateModified = @"2015-11-10T12:00:00.00Z";
     }];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to succeed
     GTLDriveFile *fileArg = [OCMArg checkWithBlock:^BOOL(GTLDriveFile *file) {
@@ -327,8 +329,8 @@
     NSString *md5 = @"abc123";
     [self stubOutRemoteFileTime:@"2015-11-10T12:00:00.00Z" md5:md5];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to fail
     OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
@@ -359,8 +361,8 @@
         self.slide.exam.dateModified = @"2015-11-10T12:00:00.00Z";
     }];
     
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Stub out [GoogleDriveService uploadFile:withData:] to fail
     OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
@@ -372,11 +374,10 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
 
     // Get local image at path
-    [TBScopeImageAsset getImageAtPath:@"some-path"]
-        .then(^(UIImage *image) {
+    [IMGImage loadDataForURI:@"some-path"]
+        .then(^(NSData *data) {
             // Calculate md5 of local file
-            NSData *localData = UIImageJPEGRepresentation((UIImage *)image, 1.0);
-            NSString *localMd5 = [localData MD5];
+            NSString *localMd5 = [data MD5];
 
             // Stub remote metadata
             [self stubOutRemoteFileTime:@"2014-11-10T12:00:00.00Z" md5:localMd5];
@@ -404,8 +405,8 @@
     NSString *md5 = @"abc123";
     [self stubOutRemoteFileTime:@"2014-11-10T12:00:00.00Z" md5:md5];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
@@ -436,8 +437,8 @@
     NSString *md5 = @"abc123";
     [self stubOutRemoteFileTime:@"2014-11-10T12:00:00.00Z" md5:md5];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
@@ -468,8 +469,8 @@
     NSString *md5 = @"abc123";
     [self stubOutRemoteFileTime:@"2014-11-10T12:00:00.00Z" md5:md5];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:] to succeed
-    [self stubOutGetImageAtPath];
+    // Stub out fetching image to succeed
+    [self stubOutFetchingImageToSucceed];
 
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
@@ -643,12 +644,12 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
     
     // Stub out saveImage
-    id saveImageMock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
+    id saveImageMock = [OCMockObject mockForClass:[IMGImage class]];
 
     // Call download
     [self.slide downloadRoiSpriteSheetFromGoogleDrive:self.googleDriveService]
         .then(^{
-            OCMVerify([saveImageMock saveImage:[OCMArg any]]);
+            OCMVerify([saveImageMock saveData:[OCMArg any] toURI:[OCMArg any]]);
             [expectation fulfill];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
@@ -682,13 +683,14 @@
     OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(getFilePromise);
 
-    // Stub out [TBScopeImageAsset saveImage:] to return a given path
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
-    NSString *path = @"asset-library://path/to/image.jpg";
+    // Stub out saving image to return a given uri
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    NSString *uri = @"assets-library://path/to/image.jpg";
     PMKPromise *saveImagePromise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-        resolve([NSURL URLWithString:path]);
+        resolve(uri);
     }];
-    [[[mock stub] andReturn:saveImagePromise] saveImage:[OCMArg any]];
+    [[[mock stub] andReturn:saveImagePromise] saveData:[OCMArg any]
+                                                 toURI:[OCMArg any]];
 
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
@@ -698,7 +700,7 @@
         .then(^(GTLDriveFile *file) {
             [self.moc performBlock:^{
                 // Verify that slide.roiSpritePath was set
-                XCTAssert([self.slide.roiSpritePath isEqualToString:path]);
+                XCTAssert([self.slide.roiSpritePath isEqualToString:uri]);
                 [expectation fulfill];
             }];
         })
@@ -730,13 +732,14 @@
     OCMStub([self.googleDriveService getFile:[OCMArg any]])
         .andReturn(getFilePromise);
 
-    // Stub out [TBScopeImageAsset saveImage:] to return a given path
-    NSString *path = @"asset-library://path/to/image.jpg";
+    // Stub out saving image to return a given path
+    NSString *uri = @"assets-library://path/to/image.jpg";
     PMKPromise *saveImagePromise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-        resolve([NSURL URLWithString:path]);
+        resolve(uri);
     }];
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
-    [[[mock stub] andReturn:saveImagePromise] saveImage:[OCMArg any]];
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    [[[mock stub] andReturn:saveImagePromise] saveData:[OCMArg any]
+                                                 toURI:[OCMArg any]];
 
     // Set up expectation
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
@@ -746,13 +749,144 @@
         .then(^(GTLDriveFile *file) {
             [self.moc performBlock:^{
                 // Verify that slide.roiSpritePath was set
-                XCTAssert([self.slide.roiSpritePath isEqualToString:path]);
+                XCTAssert([self.slide.roiSpritePath isEqualToString:uri]);
                 [expectation fulfill];
             }];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
     // Wait for expectation
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+#pragma loadUIImageForRoiSpritePath tests
+
+- (void)testThatLoadUIImageForRoiSpritePathResolvesIfImageExistsAtPath
+{
+    // Set fake image path
+    NSString *uri = [IMGDocumentsDirectory uriFromPath:@"path/to/image.jpg"];
+    [self.slide.managedObjectContext performBlockAndWait:^{
+        self.slide.roiSpritePath = uri;
+    }];
+
+    // Stub out [IMGDocumentsDirectory loadDataForURI] to resolve with data
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        NSString *imageName = @"fl_01_01";
+        NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
+        UIImage *image = [UIImage imageWithContentsOfFile:filePath];
+        NSData *data = UIImageJPEGRepresentation(image, 1.0);
+        resolve(data);
+    }];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.slide loadUIImageForRoiSpritePath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertNotNil(uiImage);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
+
+    // Wait for expectation to be fulfilled
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatLoadUIImageForRoiSpritePathResolvesToNilIfPathIsNil
+{
+    // Set fake image path
+    [self.slide.managedObjectContext performBlockAndWait:^{
+        self.slide.roiSpritePath = nil;
+    }];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.slide loadUIImageForRoiSpritePath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertNil(uiImage);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
+
+    // Wait for expectation to be fulfilled
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatLoadUIImageForRoiSpritePathResolvesToNilIfImageDoesNotExistAtPath
+{
+    // Set fake image path
+    NSString *uri = [IMGDocumentsDirectory uriFromPath:@"path/to/image.jpg"];
+    [self.slide.managedObjectContext performBlockAndWait:^{
+        self.slide.roiSpritePath = uri;
+    }];
+
+    // Stub out [IMGDocumentsDirectory loadDataForURI] to resolve with data
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    PMKPromise *promise = [PMKPromise noopPromise];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.slide loadUIImageForRoiSpritePath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertNil(uiImage);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
+
+    // Wait for expectation to be fulfilled
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatLoadUIImageForRoiSpritePathSetsOrientationToUp
+{
+    // Set fake image path
+    NSString *uri = [IMGDocumentsDirectory uriFromPath:@"path/to/image.jpg"];
+    [self.slide.managedObjectContext performBlockAndWait:^{
+        self.slide.roiSpritePath = uri;
+    }];
+
+    // Stub out [IMGDocumentsDirectory loadDataForURI] to resolve with data
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        NSString *imageName = @"fl_01_01";
+        NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
+        UIImage *image = [UIImage imageWithContentsOfFile:filePath];
+        UIImage *orientedImage = [UIImage imageWithCGImage:image.CGImage
+                                                     scale:1.0
+                                               orientation:UIImageOrientationLeft];
+        NSData *data = UIImageJPEGRepresentation(orientedImage, 1.0);
+        resolve(data);
+    }];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.slide loadUIImageForRoiSpritePath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertEqual(uiImage.imageOrientation, UIImageOrientationUp);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
+
+    // Wait for expectation to be fulfilled
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
         if (error) XCTFail(@"Async test timed out");
     }];

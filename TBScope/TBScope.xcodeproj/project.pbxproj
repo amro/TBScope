@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E04F7A111A33CDEA4166CC8 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 843EF682977FA22DC2DE0F04 /* libPods.a */; };
+		32E50F56909BFA978A94F8C9 /* libPods-TBScopeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50B9E11A8F975E0BF4035F30 /* libPods-TBScopeTests.a */; };
 		84072C4B196BB3EA004F8826 /* ImageQualityAnalyzer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84072C4A196BB3EA004F8826 /* ImageQualityAnalyzer.mm */; };
 		84072C4E196BB403004F8826 /* CoreDataJSONHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 84072C4D196BB403004F8826 /* CoreDataJSONHelper.m */; };
 		84072C51196BB410004F8826 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84072C50196BB410004F8826 /* Reachability.m */; };
@@ -20,7 +21,6 @@
 		8A4F3D591C05E337000EA005 /* TBScopeCameraMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D4F1C05E337000EA005 /* TBScopeCameraMock.m */; };
 		8A4F3D5A1C05E337000EA005 /* TBScopeCameraReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D511C05E337000EA005 /* TBScopeCameraReal.m */; };
 		8A4F3D5B1C05E337000EA005 /* TBScopeFocusManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D531C05E337000EA005 /* TBScopeFocusManager.m */; };
-		8A4F3D5C1C05E337000EA005 /* TBScopeImageAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D551C05E337000EA005 /* TBScopeImageAsset.m */; };
 		8A4F3D641C05E3FC000EA005 /* TBScopeHardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D5F1C05E3FC000EA005 /* TBScopeHardware.m */; };
 		8A4F3D651C05E3FC000EA005 /* TBScopeHardwareMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D611C05E3FC000EA005 /* TBScopeHardwareMock.m */; };
 		8A4F3D661C05E3FC000EA005 /* TBScopeHardwareReal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F3D631C05E3FC000EA005 /* TBScopeHardwareReal.m */; };
@@ -379,7 +379,10 @@
 
 /* Begin PBXFileReference section */
 		17851EB9401B7F15F10F345C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "../Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		190E715555D66B3F65B4B32F /* Pods-TBScopeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TBScopeTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-TBScopeTests/Pods-TBScopeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		3FEAAAED5D3615621492E242 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "../Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		50B9E11A8F975E0BF4035F30 /* libPods-TBScopeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TBScopeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B98A65379A1D5092587125F /* Pods-TBScopeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TBScopeTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-TBScopeTests/Pods-TBScopeTests.release.xcconfig"; sourceTree = "<group>"; };
 		84072C49196BB3EA004F8826 /* ImageQualityAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageQualityAnalyzer.h; path = CellScope/ImageQualityAnalyzer.h; sourceTree = "<group>"; };
 		84072C4A196BB3EA004F8826 /* ImageQualityAnalyzer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ImageQualityAnalyzer.mm; path = CellScope/ImageQualityAnalyzer.mm; sourceTree = "<group>"; };
 		84072C4C196BB403004F8826 /* CoreDataJSONHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreDataJSONHelper.h; path = CellScope/CoreDataJSONHelper.h; sourceTree = "<group>"; };
@@ -404,8 +407,6 @@
 		8A4F3D511C05E337000EA005 /* TBScopeCameraReal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeCameraReal.m; path = Services/TBScopeCameraReal.m; sourceTree = "<group>"; };
 		8A4F3D521C05E337000EA005 /* TBScopeFocusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeFocusManager.h; path = Services/TBScopeFocusManager.h; sourceTree = "<group>"; };
 		8A4F3D531C05E337000EA005 /* TBScopeFocusManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeFocusManager.m; path = Services/TBScopeFocusManager.m; sourceTree = "<group>"; };
-		8A4F3D541C05E337000EA005 /* TBScopeImageAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeImageAsset.h; path = Services/TBScopeImageAsset.h; sourceTree = "<group>"; };
-		8A4F3D551C05E337000EA005 /* TBScopeImageAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeImageAsset.m; path = Services/TBScopeImageAsset.m; sourceTree = "<group>"; };
 		8A4F3D5E1C05E3FC000EA005 /* TBScopeHardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardware.h; path = Services/TBScopeHardware.h; sourceTree = "<group>"; };
 		8A4F3D5F1C05E3FC000EA005 /* TBScopeHardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TBScopeHardware.m; path = Services/TBScopeHardware.m; sourceTree = "<group>"; };
 		8A4F3D601C05E3FC000EA005 /* TBScopeHardwareMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TBScopeHardwareMock.h; path = Services/TBScopeHardwareMock.h; sourceTree = "<group>"; };
@@ -699,6 +700,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32E50F56909BFA978A94F8C9 /* libPods-TBScopeTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -818,8 +820,6 @@
 				8A4F3D511C05E337000EA005 /* TBScopeCameraReal.m */,
 				8A4F3D521C05E337000EA005 /* TBScopeFocusManager.h */,
 				8A4F3D531C05E337000EA005 /* TBScopeFocusManager.m */,
-				8A4F3D541C05E337000EA005 /* TBScopeImageAsset.h */,
-				8A4F3D551C05E337000EA005 /* TBScopeImageAsset.m */,
 				8A4E2B0B1BEC06F200F34274 /* GoogleDriveService.h */,
 				8A4E2B0C1BEC06F200F34274 /* GoogleDriveService.m */,
 			);
@@ -982,6 +982,7 @@
 				9B6BF0BE15E19ACD002834C5 /* CoreData.framework */,
 				9B6BF0D515E19ACD002834C5 /* SenTestingKit.framework */,
 				843EF682977FA22DC2DE0F04 /* libPods.a */,
+				50B9E11A8F975E0BF4035F30 /* libPods-TBScopeTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1263,6 +1264,8 @@
 			children = (
 				3FEAAAED5D3615621492E242 /* Pods.debug.xcconfig */,
 				17851EB9401B7F15F10F345C /* Pods.release.xcconfig */,
+				190E715555D66B3F65B4B32F /* Pods-TBScopeTests.debug.xcconfig */,
+				5B98A65379A1D5092587125F /* Pods-TBScopeTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1274,9 +1277,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8A5254431BBDA1C0009B29BF /* Build configuration list for PBXNativeTarget "TBScopeTests" */;
 			buildPhases = (
+				54CF9CE5827A8CE394ECF9F1 /* Check Pods Manifest.lock */,
 				8A5254271BBDA1C0009B29BF /* Sources */,
 				8A5254281BBDA1C0009B29BF /* Frameworks */,
 				8A5254291BBDA1C0009B29BF /* Resources */,
+				046B7E8E35F5478EA4A7E3EB /* Embed Pods Frameworks */,
+				3290DD26FE590FB00ABD2492 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1608,6 +1614,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		046B7E8E35F5478EA4A7E3EB /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-TBScopeTests/Pods-TBScopeTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3290DD26FE590FB00ABD2492 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-TBScopeTests/Pods-TBScopeTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		4F7F3E1584F6C32C338C67E1 /* Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1621,6 +1657,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		54CF9CE5827A8CE394ECF9F1 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		7F962E17E53A8D5245EE584C /* Copy Pods Resources */ = {
@@ -1738,7 +1789,6 @@
 				84072C4E196BB403004F8826 /* CoreDataJSONHelper.m in Sources */,
 				A5A0F3E118F70E4900909615 /* ImageROIResultCell.m in Sources */,
 				A513226919E7866100B11AEE /* Exams.m in Sources */,
-				8A4F3D5C1C05E337000EA005 /* TBScopeImageAsset.m in Sources */,
 				A513228519E9F32A00B11AEE /* LogEntryCell.m in Sources */,
 				A513226C19E8AD4E00B11AEE /* LogViewController.m in Sources */,
 				A5B72A7318988FB90013DA9F /* GoogleDriveSync.m in Sources */,
@@ -1840,7 +1890,7 @@
 /* Begin XCBuildConfiguration section */
 		8A5254331BBDA1C0009B29BF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3FEAAAED5D3615621492E242 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 190E715555D66B3F65B4B32F /* Pods-TBScopeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -1868,7 +1918,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = "../OpenCV-iOS/**";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"../OpenCV-iOS/**",
+				);
 				INFOPLIST_FILE = TBScopeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1881,7 +1934,7 @@
 		};
 		8A5254341BBDA1C0009B29BF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 17851EB9401B7F15F10F345C /* Pods.release.xcconfig */;
+			baseConfigurationReference = 5B98A65379A1D5092587125F /* Pods-TBScopeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -1907,7 +1960,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = "../OpenCV-iOS/**";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"../OpenCV-iOS/**",
+				);
 				INFOPLIST_FILE = TBScopeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1940,7 +1996,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "../OpenCV-iOS/**";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"../OpenCV-iOS/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
@@ -1970,7 +2029,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "../OpenCV-iOS/**";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"../OpenCV-iOS/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;

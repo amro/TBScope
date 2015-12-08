@@ -7,5 +7,9 @@ pod 'PromiseKit/Hang', '~> 1.6'
 pod 'PromiseKit/Join', '~> 1.6'
 pod 'DynamicSpriteSheet', git: 'https://github.com/ardell/DynamicSpriteSheet.git'
 pod 'BackgroundTask', git: 'https://github.com/ardell/BackgroundTask.git'
-pod 'OCMock'
+pod 'ImageManager', git: 'https://github.com/ardell/ImageManager.git'
+
+target :TBScopeTests, exclusive: true do
+  pod 'OCMock'
+end
 

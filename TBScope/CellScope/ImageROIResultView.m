@@ -10,7 +10,7 @@
 #import <DynamicSpriteSheet/DSSSpriteSheet.h>
 #import <PromiseKit/Promise+Hang.h>
 #import "ImageQualityAnalyzer.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
 
 @interface ImageROIResultView ()
 
@@ -56,7 +56,7 @@ float threshold_score = 1;
     if (slide.roiSpritePath) {
         _spriteSheetPromise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             [slide.managedObjectContext performBlock:^{
-                [TBScopeImageAsset getImageAtPath:slide.roiSpritePath].then(^(UIImage *sheet){
+                [slide loadUIImageForRoiSpritePath].then(^(UIImage *sheet) {
                     DSSSpriteSheet *spriteSheet = [[DSSSpriteSheet alloc] initWithItemWidth:PATCH_WIDTH
                                                                                      height:PATCH_HEIGHT
                                                                                 itemsPerRow:SPRITESHEET_PATCHES_PER_ROW
@@ -105,15 +105,14 @@ float threshold_score = 1;
             Images* roiImage = (Images*)cell.currentROI.imageAnalysisResult.image;
             int x = cell.currentROI.x;
             int y = cell.currentROI.y;
-            
-            [TBScopeData getImage:roiImage resultBlock:^(UIImage* image, NSError* err){
-                if (err==nil)
-                {
+
+            [roiImage loadUIImageForPath]
+                .then(^(UIImage *image) {
                     CGRect bounds = CGRectMake(x-NEIGHBORHOOD_SIZE/2,y-NEIGHBORHOOD_SIZE/2,NEIGHBORHOOD_SIZE,NEIGHBORHOOD_SIZE);
-                    
+
                     //get a cropped version of the vicinity around this ROI
                     UIImage* roiNeighborhood = [ImageQualityAnalyzer cropImage:image withBounds:bounds];
-                    
+
                     //display image
                     //place image view on left/right side if gesture is on the right/left side
                     //image view should be 2x scaled
@@ -122,17 +121,17 @@ float threshold_score = 1;
                         [self.roiNeighborhoodView removeFromSuperview];
                         self.roiNeighborhoodView = nil;
                     }
-                    
+
                     self.roiNeighborhoodView = [[UIImageView alloc] initWithImage:roiNeighborhood];
                     [self.roiNeighborhoodView setTransform:CGAffineTransformScale(CGAffineTransformIdentity, 2.0, 2.0)];
                     [self.roiNeighborhoodView setCenter:CGPointMake(neighborhoodX,neighborhoodY)];
-                    
+
                     [self.superview addSubview:self.roiNeighborhoodView];
-                    
-                }
-            }];
-            
-            
+                })
+                .catch(^(NSError *error) {
+                    NSString *message = [NSString stringWithFormat:@"Error loading image: %@", error.description];
+                    [TBScopeData CSLog:message inCategory:@"USER"];
+                });
         }
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateEnded || gestureRecognizer.state == UIGestureRecognizerStateCancelled)//gesture ended

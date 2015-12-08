@@ -7,7 +7,7 @@
 //
 
 #import "ImageResultViewController.h"
-
+#import <ImageManager/IMGImage.h>
 
 
 @implementation ImageResultViewController
@@ -264,8 +264,8 @@
     // Load image
     Images* currentImage = [self imageAtIndex:index];
     [currentImage.managedObjectContext performBlock:^{
-        [TBScopeData getImage:currentImage resultBlock:^(UIImage* image, NSError* err){
-            if (err==nil) {
+        [currentImage loadUIImageForPath]
+            .then(^(UIImage *image) {
                 //do the slideViewer settings need to be set after image set?
                 [slideViewer setImage:image];
                 [slideViewer.subView setRoiList:currentImage.imageAnalysisResults.imageROIs];
@@ -277,12 +277,15 @@
                 [slideViewer setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
                 [slideViewer setNeedsDisplay];
 
-            }
-
-            NSString *message = [NSString stringWithFormat:@"Image viewer screen presented, field #%d", currentImage.fieldNumber];
-            [TBScopeData CSLog:message inCategory:@"USER"];
-            completionBlock();
-        }];
+                completionBlock();
+                NSString *message = [NSString stringWithFormat:@"Image viewer screen presented, field #%d", currentImage.fieldNumber];
+                [TBScopeData CSLog:message inCategory:@"USER"];
+            })
+            .catch(^(NSError *error) {
+                NSString *message = [NSString stringWithFormat:@"Error loading image: %@", error.description];
+                [TBScopeData CSLog:message inCategory:@"USER"];
+                completionBlock();
+            });
     }];
 }
 

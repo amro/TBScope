@@ -10,7 +10,7 @@
 #import "Promise+Hang.h"
 #import <DynamicSpriteSheet/DSSSpriteSheet.h>
 #import "AnalysisViewController.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
 #import "UIImage+Crop.h"
 
 @implementation AnalysisViewController {
@@ -136,34 +136,34 @@
                             self.currentSlide.exam.examID,
                             currentImage.path]
                 inCategory:@"ANALYSIS"];
-        
-                
-        [TBScopeData getImage:currentImage resultBlock:^(UIImage* image, NSError* err){
-            
-            if (err==nil) {
-                // Do analysis on this image
-                // TODO: spin out as new thread
-                currentImage.imageAnalysisResults = [diagnoser runWithUIImage:image
-                                                                coreDataImage:currentImage];
 
-                // Add ROIs to our dictionary of ROI images by objectURI
-                for (ROIs *roi in currentImage.imageAnalysisResults.imageROIs) {
-                    NSString *objectURI = [[[roi objectID] URIRepresentation] absoluteString];
-                    UIImage *roiImage = [TBScopeData getPatchFromImage:image X:roi.x Y:roi.y];
-                    NSData *data = UIImagePNGRepresentation(roiImage);
-                    [_imagesByROIObjectURI setObject:data forKey:objectURI];
-                }
+        [currentImage loadUIImageForPath]
+            .then(^(UIImage *image) {
+                [currentImage.managedObjectContext performBlockAndWait:^{
+                    // Do analysis on this image
+                    // TODO: spin out as new thread
+                    currentImage.imageAnalysisResults = [diagnoser runWithUIImage:image
+                                                                    coreDataImage:currentImage];
 
-                [TBScopeData touchExam:self.currentSlide.exam];
-                [[TBScopeData sharedData] saveCoreData];
-            }
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"AnalysisComplete" object:nil];
-            
-        }];
-        
+                    // Add ROIs to our dictionary of ROI images by objectURI
+                    for (ROIs *roi in currentImage.imageAnalysisResults.imageROIs) {
+                        NSString *objectURI = [[[roi objectID] URIRepresentation] absoluteString];
+                        UIImage *roiImage = [TBScopeData getPatchFromImage:image X:roi.x Y:roi.y];
+                        NSData *data = UIImagePNGRepresentation(roiImage);
+                        [_imagesByROIObjectURI setObject:data forKey:objectURI];
+                    }
+
+                    [TBScopeData touchExam:self.currentSlide.exam];
+                    [[TBScopeData sharedData] saveCoreData];
+                }];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"AnalysisComplete" object:nil];
+            })
+            .catch(^(NSError *error) {
+                NSString *message = [NSString stringWithFormat:@"Error fetching image: %@", error.description];
+                [TBScopeData CSLog:message inCategory:@"CAPTURE"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"AnalysisComplete" object:nil];
+            });
     });
-    
 }
 
 - (void)didReceiveMemoryWarning
@@ -264,12 +264,21 @@
 
                 // Save sprite sheet image
                 UIImage *sprite = [spriteSheet toSpriteSheet];
-                PMKPromise *savePromise = [TBScopeImageAsset saveImage:sprite];
-                savePromise.then(^(NSURL *assetURL){
-                    // Assign path to currentSlide.roiSpritePath
-                    currentSlide.roiSpritePath = [assetURL absoluteString];
-                    finishedSavingSprite(nil);
-                });
+                NSData *data = UIImageJPEGRepresentation(sprite, 1.0);
+                NSString *uri = [Slides generateURI];
+                [IMGImage saveData:data toURI:uri]
+                    .then(^(NSString *uri){
+                        // Assign path to currentSlide.roiSpritePath
+                        [currentSlide.managedObjectContext performBlockAndWait:^{
+                            currentSlide.roiSpritePath = uri;
+                        }];
+                        finishedSavingSprite(nil);
+                    })
+                    .catch(^(NSError *error) {
+                        NSString *message = [NSString stringWithFormat:@"Error saving ROI sprite: %@", error.description];
+                        [TBScopeData CSLog:message inCategory:@"USER"];
+                        finishedSavingSprite(nil);
+                    });
             } else {
                 finishedSavingSprite(nil);
             }

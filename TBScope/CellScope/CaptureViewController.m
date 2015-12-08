@@ -9,6 +9,7 @@
 #import "CaptureViewController.h"
 #import "TBScopeCamera.h"
 #import "TBScopeFocusManager.h"
+#import <ImageManager/IMGImage.h>
 
 BOOL _FLOn=NO;
 BOOL _BFOn=NO;
@@ -213,18 +214,12 @@ AVAudioPlayer* _avPlayer;
     [TBScopeData CSLog:message inCategory:@"CAPTURE"];
 
     [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-        ALAssetOrientation orientation = [image imageOrientation];
-        [library writeImageToSavedPhotosAlbum:image.CGImage
-                                  orientation:orientation
-                              completionBlock:^(NSURL* assetUrl, NSError* error) {
-                                  if (error) {
-                                      resolve(error);
-                                  } else {
-                                      resolve(assetUrl);
-                                  }
-                              }];
-    }].then(^(NSURL *assetURL) {
+        NSData *data = UIImageJPEGRepresentation(image, 1.0);
+        NSString *uri = [Images generateURI];
+        [IMGImage saveData:data toURI:uri]
+            .then(^(NSString *uri) { resolve(uri); })
+            .catch(^(NSError *error) { resolve(error); });
+    }].then(^(NSString *uri) {
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             // Create a temporary managed object context
             NSManagedObjectContext *mainMOC = [[TBScopeData sharedData] managedObjectContext];
@@ -232,12 +227,11 @@ AVAudioPlayer* _avPlayer;
             moc.parentContext = mainMOC;
 
             // Create our new image and set attributes
-            NSString *path = assetURL.absoluteString;
             int fieldNumber = self.currentField+1;
             [moc performBlockAndWait:^{
                 Images* newImage = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images"
                                                                           inManagedObjectContext:moc];
-                newImage.path = path;
+                newImage.path = uri;
                 newImage.fieldNumber = fieldNumber;
                 newImage.metadata = @"";  //this data is no longer useful
                 newImage.xCoordinate = xPosition;
@@ -261,7 +255,7 @@ AVAudioPlayer* _avPlayer;
                                     self.currentSlide.exam.examID,
                                     self.currentSlide.slideNumber,
                                     fieldNumber,
-                                    path]
+                                    uri]
                         inCategory:@"CAPTURE"];
                 resolve(nil);
             }];

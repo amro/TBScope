@@ -45,5 +45,7 @@
 - (BOOL)hasLocalImages;
 - (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive:(GoogleDriveService *)googleDriveService;
 - (PMKPromise *)downloadRoiSpriteSheetFromGoogleDrive:(GoogleDriveService *)googleDriveService;
++ (NSString *)generateURI;
+- (PMKPromise *)loadUIImageForRoiSpritePath;
 
 @end

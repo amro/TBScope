@@ -7,7 +7,7 @@
 //
 
 #import "TBScopeData.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
 
 NSManagedObjectModel* _managedObjectModel;
 NSPersistentStoreCoordinator* _persistentStoreCoordinator;
@@ -402,16 +402,6 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
     UIImage* retImg = [UIImage imageWithCGImage:imageRef];
     CGImageRelease(imageRef);
     return retImg;
-}
-
-+ (PMKPromise *)getImage:(Images*)currentImage
-{
-    return [TBScopeImageAsset getImageAtPath:currentImage.path];
-}
-
-+ (void)getImage:(Images*)currentImage resultBlock:(void (^)(UIImage* image, NSError* err))resultBlock
-{
-    [TBScopeData getImage:currentImage].then(resultBlock);
 }
 
 //these assume RFC3339 strings (google formatted)

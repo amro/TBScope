@@ -11,7 +11,8 @@
 #import "Images.h"
 #import "SlideAnalysisResults.h"
 #import "TBScopeData.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
+#import <ImageManager/IMGDocumentsDirectory.h>
 #import "NSData+MD5.h"
 #import "PMKPromise+NoopPromise.h"
 
@@ -105,15 +106,14 @@
         // Fetch data from the filesystem
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             [self.managedObjectContext performBlock:^{
-                [TBScopeImageAsset getImageAtPath:self.roiSpritePath]
+                [IMGImage loadDataForURI:self.roiSpritePath]
                     .then(^(NSData *data) { resolve(data); })
                     .catch(^(NSError *error) { resolve(error); });
             }];
         }];
-    }).then(^(UIImage *image) {
+    }).then(^(NSData *localData) {
         // Do nothing if local file is same as remote
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            NSData *localData = UIImageJPEGRepresentation((UIImage *)image, 1.0);
             NSString *localMd5 = [localData MD5];
             if ([localMd5 isEqualToString:remoteMd5]) {
                 resolve(nil);
@@ -207,8 +207,9 @@
     }).then(^(NSData *data) {
         // Save to file
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            [TBScopeImageAsset saveImage:[UIImage imageWithData:data]]
-                .then(^(NSURL *url) { resolve([url absoluteString]); })
+            NSString *uri = [[self class] generateURI];
+            [IMGImage saveData:data toURI:uri]
+                .then(^(NSString *url) { resolve(url); })
                 .catch(^(NSError *error) { resolve(error); });
         }];
     }).then(^(NSString *localFilePath) {
@@ -220,6 +221,52 @@
             }];
         }];
     });
+}
+
++ (NSString *)generateURI
+{
+    NSString *localURI;
+    while (!localURI || [IMGDocumentsDirectory fileExistsAtURI:localURI]) {
+        NSString *randomString = [[self class] _randomStringOfLength:32];
+        NSString *localPath = [NSString stringWithFormat:@"roi-sprites/%@.jpg", randomString];
+        localURI = [IMGDocumentsDirectory uriFromPath:localPath];
+    }
+    return localURI;
+}
+
+- (PMKPromise *)loadUIImageForRoiSpritePath
+{
+    return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        [self.managedObjectContext performBlock:^{
+            resolve(self.roiSpritePath);
+        }];
+    }].then(^(NSString *uri) {
+        if (!uri) return [PMKPromise noopPromise];
+        return [IMGImage loadDataForURI:uri];
+    }).then(^(NSData *data) {
+        if (!data) return [PMKPromise noopPromise];
+        return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+            UIImage *imageFromData = [UIImage imageWithData:data];
+            UIImage *orientedImage = [[UIImage alloc] initWithCGImage:imageFromData.CGImage
+                                                                scale:1.0
+                                                          orientation:UIImageOrientationUp];
+            resolve(orientedImage);
+        }];
+    });
+}
+
+#pragma Private methods
+
++ (NSString *)_randomStringOfLength:(int)length
+{
+    NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
+    NSMutableString *s = [NSMutableString stringWithCapacity:20];
+    for (int i = 0; i < length; i++) {
+        u_int32_t r = arc4random() % [alphabet length];
+        unichar c = [alphabet characterAtIndex:r];
+        [s appendFormat:@"%C", c];
+    }
+    return s;
 }
 
 @end

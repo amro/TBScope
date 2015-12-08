@@ -11,6 +11,8 @@ PODS:
   - gtm-http-fetcher (1.0.141)
   - gtm-oauth2 (1.0.126):
     - gtm-http-fetcher (~> 1.0.141)
+  - ImageManager (0.1.1):
+    - PromiseKit/Promise (~> 1.6)
   - OCMock (3.2)
   - PromiseKit/Hang (1.6.0):
     - PromiseKit/Promise
@@ -28,6 +30,7 @@ DEPENDENCIES:
   - BackgroundTask (from `https://github.com/ardell/BackgroundTask.git`)
   - DynamicSpriteSheet (from `https://github.com/ardell/DynamicSpriteSheet.git`)
   - Google-API-Client/Drive (~> 1.0)
+  - ImageManager (from `https://github.com/ardell/ImageManager.git`)
   - OCMock
   - PromiseKit/Hang (~> 1.6)
   - PromiseKit/Join (~> 1.6)
@@ -38,6 +41,8 @@ EXTERNAL SOURCES:
     :git: https://github.com/ardell/BackgroundTask.git
   DynamicSpriteSheet:
     :git: https://github.com/ardell/DynamicSpriteSheet.git
+  ImageManager:
+    :git: https://github.com/ardell/ImageManager.git
 
 CHECKOUT OPTIONS:
   BackgroundTask:
@@ -46,6 +51,9 @@ CHECKOUT OPTIONS:
   DynamicSpriteSheet:
     :commit: f0dea18321cb72cafec7f1f65708369050c2d0d4
     :git: https://github.com/ardell/DynamicSpriteSheet.git
+  ImageManager:
+    :commit: 6808ed110badc00bda70098286c1517d2faa66b2
+    :git: https://github.com/ardell/ImageManager.git
 
 SPEC CHECKSUMS:
   BackgroundTask: ae283adf91380b9fa325216d4beaaccc998b463b
@@ -53,6 +61,7 @@ SPEC CHECKSUMS:
   Google-API-Client: cb712cf122f1d7fda966de4c2bc551324573366c
   gtm-http-fetcher: 6d4617e7d343b6e4c082b777541c334eb6f5d81e
   gtm-oauth2: 2a18b824e4f8a02df6cfe987beb59ae9d9697f9d
+  ImageManager: 510020c078980054dd10c6f170629d59a9072dfc
   OCMock: 28def049ef47f996b515a8eeea958be7ccab2dbb
   PromiseKit: 6be651503d4af22830b5313be993c5a0ef77bf77
 

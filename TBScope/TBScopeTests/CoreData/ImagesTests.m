@@ -12,7 +12,8 @@
 #import "TBScopeData.h"
 #import "PMKPromise+NoopPromise.h"
 #import "PMKPromise+RejectedPromise.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
+#import <ImageManager/IMGDocumentsDirectory.h>
 #import "GoogleDriveService.h"
 
 @interface ImagesTests : XCTestCase
@@ -56,29 +57,31 @@
 - (void)setImagePath
 {
     [self.moc performBlockAndWait:^{
-        self.image.path = @"asset-url://path/to/image.jpg";
+        self.image.path = @"assets-library://path/to/image.jpg";
     }];
 }
 
-// Stub out [TBScopeImageAsset getImageAtPath:path] with a successfully
-// resolved promise resolved to a UIImage instance
-- (void)stubGetImageAtPathToResolve
+// Stub out fetching an image to return a successfully resolved promise
+// resolved to NSData
+- (void)stubOutFetchingImageToResolve
 {
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
     PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
         NSString *imageName = @"fl_01_01";
         NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
         UIImage *image = [UIImage imageWithContentsOfFile:filePath];
-        resolve(image);
+        NSData *data = UIImageJPEGRepresentation(image, 1.0);
+        resolve(data);
     }];
-    [[[mock stub] andReturn:promise] getImageAtPath:[OCMArg any]];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
 }
 
-// Stub out [TBScopeImageAsset getImageAtPath:path] with a rejected promise
-- (void)stubGetImageAtPathToReject
+// Stub out saving an image to return rejected promise
+- (void)stubOutSavingImageToReject
 {
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
-    [[[mock stub] andReturn:[PMKPromise rejectedPromise]] getImageAtPath:[OCMArg any]];
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    [[[mock stub] andReturn:[PMKPromise rejectedPromise]] saveData:[OCMArg any]
+                                                             toURI:[OCMArg any]];
 }
 
 // Stub out [googleDriveService getMetadataForFileId:fileId] to return GTLDriveFile
@@ -103,24 +106,17 @@
         .andReturn(promise);
 }
 
-// Stub out [TBScopeImageAsset saveImage:image] to return rejected promise
-- (void)stubSaveImageToReject
-{
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
-    [[[mock stub] andReturn:[PMKPromise rejectedPromise]] saveImage:[OCMArg any]];
-}
-
 #pragma uploadToGoogleDrive tests
 
 - (void)testThatUploadToGoogleDriveDoesNotAttemptUploadIfGoogleDriveFileIDIsAlreadySet
 {
     [self setImageGoogleDriveFileID];
 
-    // Stub out [TBScopeImageAsset getImageAtPath] to fail the test
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
+    // Stub out fetching an image to fail the test
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        XCTFail(@"Did not expect getImageAtPath to be called");
-    }] getImageAtPath:[OCMArg any]];
+        XCTFail(@"Did not expect loadDataForURI to be called");
+    }] loadDataForURI:[OCMArg any]];
 
     // Set up an expectation, fulfill on then
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
@@ -132,15 +128,23 @@
     }];
 }
 
-- (void)testThatUploadToGoogleDriveRejectsPromiseIfGetImageAtPathFails
+- (void)testThatUploadToGoogleDriveDoesNotAttemptToUploadIfGetImageReturnsNil
 {
-    [self stubGetImageAtPathToReject];
+    // Stub out fetching image to return nil
+    OCMStub([self.image loadUIImageForPath])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Stub out [googleDriveService uploadFile:file withData:data] to fail if called
+    OCMStub([self.googleDriveService uploadFile:[OCMArg any] withData:[OCMArg any]])
+        .andDo(^(NSInvocation *invocation) {
+            XCTFail(@"Expected [googleDriveService getFile:file] not to be called");
+        });
 
     // Set up an expectation, fulfill on catch
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
     [self.image uploadToGoogleDrive:self.googleDriveService]
-        .then(^{ XCTFail(@"Expected uploadToGoogleDrive to return a rejected promise"); })
-        .catch(^{ [expectation fulfill]; });
+        .then(^{ [expectation fulfill]; })
+        .catch(^{ XCTFail(@"Expected promise to resolve."); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
         if (error) XCTFail(@"Async test timed out");
     }];
@@ -153,7 +157,7 @@
     }];
 
     // Stub out getImageAtPath
-    [self stubGetImageAtPathToResolve];
+    [self stubOutFetchingImageToResolve];
 
     // Stub out [googleDriveService uploadFile:withData] to fulfill expectation
     PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
@@ -190,7 +194,7 @@
         .andReturn(userDefaultsMock);
 
     // Stub out getImageAtPath
-    [self stubGetImageAtPathToResolve];
+    [self stubOutFetchingImageToResolve];
 
     // Stub out [googleDriveService uploadFile:withData] to fulfill expectation
     PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
@@ -232,7 +236,7 @@
         .andReturn(userDefaultsMock);
 
     // Stub out getImageAtPath
-    [self stubGetImageAtPathToResolve];
+    [self stubOutFetchingImageToResolve];
 
     // Stub out [googleDriveService uploadFile:withData] to fulfill expectation
     PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
@@ -263,9 +267,10 @@
 {
     [self.moc performBlockAndWait:^{
         self.image.googleDriveFileID = nil;
+        self.image.path = [IMGDocumentsDirectory uriFromPath:@"path/to/image.jpg"];
     }];
 
-    [self stubGetImageAtPathToResolve];
+    [self stubOutFetchingImageToResolve];
 
     // Stub out [googleDriveService uploadFile:withData] to return googleDriveFileId
     NSString *googleDriveFileID = @"test-file-id";
@@ -300,11 +305,11 @@
         self.image.googleDriveFileID = nil;
     }];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:path] to fail if called
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
+    // Stub out fetching image to fail if called
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
     [[[mock stub] andDo:^(NSInvocation *invocation) {
-        XCTFail(@"Expected [TBScopeImageAsset getImageAtPath:path] not to be called");
-    }] getImageAtPath:[OCMArg any]];
+        XCTFail(@"Expected [IMGImage loadDataForURI:uri] not to be called");
+    }] loadDataForURI:[OCMArg any]];
 
     // Set up an expectation and wait for it
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
@@ -359,8 +364,9 @@
     [self setImageGoogleDriveFileID];
     [self setImagePath];
 
-    // Stub out [TBScopeImageAsset getImageAtPath:path]
-    [self stubGetImageAtPathToReject];
+    // Stub out fetching image to return nil
+    OCMStub([self.image loadUIImageForPath])
+        .andReturn([PMKPromise noopPromise]);
 
     // Stub out [googleDriveService getMetadataForFileId]
     [self stubGetMetadataForFileIdToSucceed];
@@ -388,7 +394,7 @@
     [self setImageGoogleDriveFileID];
     [self setImagePath];
 
-    [self stubGetImageAtPathToResolve];
+    [self stubOutFetchingImageToResolve];
     [self stubGetMetadataForFileIdToSucceed];
 
     // Stub out [googleDriveService getFile:file] to fail if called
@@ -466,8 +472,8 @@
     [self stubGetMetadataForFileIdToSucceed];
     [self stubGetFileToSucceed];
     
-    // Stub out [TBScopeImageAsset saveImage:image] to reject
-    [self stubSaveImageToReject];
+    // Stub out saving image to reject
+    [self stubOutSavingImageToReject];
     
     // Call downloadFromGoogleDrive
     [self.image downloadFromGoogleDrive:self.googleDriveService]
@@ -491,23 +497,155 @@
     [self stubGetMetadataForFileIdToSucceed];
     [self stubGetFileToSucceed];
 
-    // Stub out [TBScopeImageAsset saveImage:im] to return a given path
-    NSString *path = @"asset-library://path/to/test/image.jpg";
+    // Stub out saving image to return a given path
+    NSString *uri = @"assets-library://path/to/test/image.jpg";
     PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-        resolve([NSURL URLWithString:path]);
+        resolve(uri);
     }];
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
-    [[[mock stub] andReturn:promise] saveImage:[OCMArg any]];
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    [[[mock stub] andReturn:promise] saveData:[OCMArg any]
+                                        toURI:[OCMArg any]];
 
     // Call downloadFromGoogleDrive
     [self.image downloadFromGoogleDrive:self.googleDriveService]
         .then(^{
             [self.moc performBlock:^{
-                XCTAssert([self.image.path isEqualToString:path]);
+                XCTAssert([self.image.path isEqualToString:uri]);
                 [expectation fulfill];
             }];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
+
+    // Wait for expectation to be fulfilled
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+#pragma loadUIImageForPath tests
+
+- (void)testThatLoadUIImageForPathResolvesIfImageExistsAtPath
+{
+    // Set fake image path
+    NSString *uri = [IMGDocumentsDirectory uriFromPath:@"path/to/image.jpg"];
+    [self.image.managedObjectContext performBlockAndWait:^{
+        self.image.path = uri;
+    }];
+
+    // Stub out [IMGDocumentsDirectory loadDataForURI] to resolve with data
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        NSString *imageName = @"fl_01_01";
+        NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
+        UIImage *image = [UIImage imageWithContentsOfFile:filePath];
+        NSData *data = UIImageJPEGRepresentation(image, 1.0);
+        resolve(data);
+    }];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.image loadUIImageForPath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertNotNil(uiImage);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
+
+    // Wait for expectation to be fulfilled
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatLoadUIImageForPathResolvesToNilIfPathIsNil
+{
+    // Set fake image path
+    [self.image.managedObjectContext performBlockAndWait:^{
+        self.image.path = nil;
+    }];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.image loadUIImageForPath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertNil(uiImage);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
+
+    // Wait for expectation to be fulfilled
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatLoadUIImageForPathResolvesToNilIfImageDoesNotExistAtPath
+{
+    // Set fake image path
+    NSString *uri = [IMGDocumentsDirectory uriFromPath:@"path/to/image.jpg"];
+    [self.image.managedObjectContext performBlockAndWait:^{
+        self.image.path = uri;
+    }];
+
+    // Stub out [IMGDocumentsDirectory loadDataForURI] to resolve with data
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    PMKPromise *promise = [PMKPromise noopPromise];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.image loadUIImageForPath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertNil(uiImage);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
+
+    // Wait for expectation to be fulfilled
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) XCTFail(@"Async test timed out");
+    }];
+}
+
+- (void)testThatLoadUIImageForPathSetsOrientationToUp
+{
+    // Set fake image path
+    NSString *uri = [IMGDocumentsDirectory uriFromPath:@"path/to/image.jpg"];
+    [self.image.managedObjectContext performBlockAndWait:^{
+        self.image.path = uri;
+    }];
+
+    // Stub out [IMGDocumentsDirectory loadDataForURI] to resolve with data
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        NSString *imageName = @"fl_01_01";
+        NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
+        UIImage *image = [UIImage imageWithContentsOfFile:filePath];
+        UIImage *orientedImage = [UIImage imageWithCGImage:image.CGImage
+                                                     scale:1.0
+                                               orientation:UIImageOrientationLeft];
+        NSData *data = UIImageJPEGRepresentation(orientedImage, 1.0);
+        resolve(data);
+    }];
+    [[[mock stub] andReturn:promise] loadDataForURI:[OCMArg any]];
+
+    // Get UIImage
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
+    [self.image loadUIImageForPath]
+        .then(^(UIImage *uiImage) {
+            XCTAssertEqual(uiImage.imageOrientation, UIImageOrientationUp);
+            [expectation fulfill];
+        })
+        .catch(^(NSError *error) {
+            XCTFail(@"Expected promise to resolve.");
+        });
 
     // Wait for expectation to be fulfilled
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {

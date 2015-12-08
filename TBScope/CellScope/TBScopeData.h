@@ -59,9 +59,6 @@
 
 + (void)touchExam:(Exams*)exam;
 
-+ (PMKPromise *)getImage:(Images*)currentImage;
-+ (void)getImage:(Images*)currentImage resultBlock:(void (^)(UIImage* image, NSError* err))resultBlock;
-
 
 + (UIImage*)getPatchFromImage:(UIImage*)image X:(float)x Y:(float)y;
 

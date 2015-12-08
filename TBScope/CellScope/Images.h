@@ -29,8 +29,9 @@
 @property (nonatomic) int32_t focusAttempts;
 @property (nonatomic, retain) NSString * focusResult;
 
-
 - (PMKPromise *)uploadToGoogleDrive:(GoogleDriveService *)googleDriveService;
 - (PMKPromise *)downloadFromGoogleDrive:(GoogleDriveService *)googleDriveService;
++ (NSString *)generateURI;
+- (PMKPromise *)loadUIImageForPath;
 
 @end

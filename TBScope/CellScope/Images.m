@@ -11,7 +11,8 @@
 #import "ImageAnalysisResults.h"
 #import "TBScopeData.h"
 #import "Slides.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
+#import <ImageManager/IMGDocumentsDirectory.h>
 #import "GoogleDriveService.h"
 #import "PMKPromise+NoopPromise.h"
 #import "PMKPromise+RejectedPromise.h"
@@ -44,11 +45,9 @@
         if (googleDriveFileID) return [PMKPromise noopPromise];
 
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            [moc performBlock:^{
-                [TBScopeImageAsset getImageAtPath:[self path]]
-                    .then(^(UIImage *image) { resolve(image); })
-                    .catch(^(NSError *error) { resolve(error); });
-            }];
+            [self loadUIImageForPath]
+                .then(^(UIImage *image) { resolve(image); })
+                .catch(^(NSError *error) { resolve(error); });
         }];
     }).then(^ PMKPromise* (UIImage *image) {
         if (!image) return [PMKPromise noopPromise];
@@ -132,7 +131,7 @@
                 return;
             }
 
-            [TBScopeImageAsset getImageAtPath:path]
+            [self loadUIImageForPath]
                 .then(^(UIImage *image) {
                     if (image) {
                         resolve(nil);  // do nothing
@@ -156,10 +155,10 @@
         if (!data) return [PMKPromise noopPromise];
 
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            // Save this image to asset library as jpg
-            UIImage* im = [UIImage imageWithData:data];
-            [TBScopeImageAsset saveImage:im]
-                .then(^(NSURL *url) { resolve([url absoluteString]); })
+            // Save this image to documents directory as jpg
+            NSString *uri = [[self class] generateURI];
+            [IMGImage saveData:data toURI:uri]
+                .then(^(NSString *url) { resolve(url); })
                 .catch(^(NSError *error) { resolve(error); });
         }];
     }).then(^ PMKPromise* (NSString *path) {
@@ -173,6 +172,52 @@
             }];
         }];
     });
+}
+
++ (NSString *)generateURI
+{
+    NSString *localURI;
+    while (!localURI || [IMGDocumentsDirectory fileExistsAtURI:localURI]) {
+        NSString *randomString = [[self class] _randomStringOfLength:32];
+        NSString *localPath = [NSString stringWithFormat:@"images/%@.jpg", randomString];
+        localURI = [IMGDocumentsDirectory uriFromPath:localPath];
+    }
+    return localURI;
+}
+
+- (PMKPromise *)loadUIImageForPath
+{
+    return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        [self.managedObjectContext performBlock:^{
+            resolve(self.path);
+        }];
+    }].then(^(NSString *uri) {
+        if (!uri) return [PMKPromise noopPromise];
+        return [IMGImage loadDataForURI:uri];
+    }).then(^(NSData *data) {
+        if (!data) return [PMKPromise noopPromise];
+        return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+            UIImage *imageFromData = [UIImage imageWithData:data];
+            UIImage *orientedImage = [[UIImage alloc] initWithCGImage:imageFromData.CGImage
+                                                                scale:1.0
+                                                          orientation:UIImageOrientationUp];
+            resolve(orientedImage);
+        }];
+    });
+}
+
+#pragma Private methods
+
++ (NSString *)_randomStringOfLength:(int)length
+{
+    NSString *alphabet  = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY0123456789";
+    NSMutableString *s = [NSMutableString stringWithCapacity:20];
+    for (int i = 0; i < length; i++) {
+        u_int32_t r = arc4random() % [alphabet length];
+        unichar c = [alphabet characterAtIndex:r];
+        [s appendFormat:@"%C", c];
+    }
+    return s;
 }
 
 @end

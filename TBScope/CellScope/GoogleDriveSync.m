@@ -9,7 +9,6 @@
 #import "GoogleDriveSync.h"
 #import <PromiseKit/Promise+Join.h>
 #import "PMKPromise+NoopPromise.h"
-#import "TBScopeImageAsset.h"
 #import "GoogleDriveService.h"
 
 NSString *const kGoogleDriveSyncErrorDomain = @"GoogleDriveSyncErrorDomain";

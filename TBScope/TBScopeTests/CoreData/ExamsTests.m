@@ -15,7 +15,7 @@
 #import "NSData+MD5.h"
 #import "PMKPromise+NoopPromise.h"
 #import "PMKPromise+RejectedPromise.h"
-#import "TBScopeImageAsset.h"
+#import <ImageManager/IMGImage.h>
 
 @interface ExamsTests : XCTestCase
 @end
@@ -435,7 +435,7 @@
     [moc performBlockAndWait:^{
         Slides *slide = (Slides *)[NSEntityDescription insertNewObjectForEntityForName:@"Slides"
                                                                 inManagedObjectContext:moc];
-        slide.roiSpritePath = @"asset-library://path/to/image.jpg";
+        slide.roiSpritePath = @"assets-library://path/to/image.jpg";
         [exam addExamSlidesObject:slide];
     }];
 
@@ -448,9 +448,9 @@
 
     // Set up slide upload to fail
     // NOTE: OCMock can't stub out core data relationships, so we stub out
-    // TBScopeImageAsset getImageAtPath to fail
-    id mock = [OCMockObject mockForClass:[TBScopeImageAsset class]];
-    [[[mock stub] andReturn:[PMKPromise rejectedPromise]] getImageAtPath:[OCMArg any]];
+    // [IMGImage loadDataForURI] to fail
+    id mock = [OCMockObject mockForClass:[IMGImage class]];
+    [[[mock stub] andReturn:[PMKPromise rejectedPromise]] loadDataForURI:[OCMArg any]];
 
     // Call [exam uploadToGoogleDrive]
     [exam uploadToGoogleDrive:gds]
