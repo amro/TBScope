@@ -140,6 +140,11 @@ BOOL _hasAttemptedLogUpload;
         //push images
         if ([self uploadIsEnabled]) {
             [TBScopeData CSLog:@"Fetching new images from core data." inCategory:@"SYNC"];
+
+            // Determine the max number of images to upload per slide
+            NSInteger maxUploadsPerSlide = [[NSUserDefaults standardUserDefaults] integerForKey:@"MaxUploadsPerSlide"];
+            if (!maxUploadsPerSlide) maxUploadsPerSlide = 10;
+
             // Find all slides, with the most recent first
             results = [CoreDataHelper searchObjectsForEntity:@"Slides"
                                                withPredicate:nil
@@ -149,7 +154,7 @@ BOOL _hasAttemptedLogUpload;
             int imageUploadsEnqueued = 0;
             for (Slides *slide in results) {
                 if (slide.slideAnalysisResults) {  // If slide is analyzed
-                    // Find the top 10 ROIs belonging to the slide
+                    // Find the top N ROIs belonging to the slide
                     NSFetchRequest *request = [[NSFetchRequest alloc] init];
                     NSEntityDescription *entity = [NSEntityDescription entityForName:@"ROIs"
                                                               inManagedObjectContext:tmpMOC];
@@ -158,7 +163,7 @@ BOOL _hasAttemptedLogUpload;
                     [request setPredicate:predicate];
                     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"score" ascending:NO];
                     [request setSortDescriptors:@[sort]];
-                    [request setFetchLimit:10];
+                    [request setFetchLimit:maxUploadsPerSlide];
                     NSError *error = nil;
                     NSMutableArray *rois = [[tmpMOC executeFetchRequest:request error:&error] mutableCopy];
                     for (ROIs *roi in rois) {

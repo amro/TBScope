@@ -86,6 +86,8 @@
 	<date>1984-01-30T13:40:00Z</date>
 	<key>SyncInterval</key>
 	<integer>30</integer>
+	<key>MaxUploadsPerSlide</key>
+	<integer>10</integer>
 	<key>ExamIDFormat</key>
 	<string>.*</string>
 	<key>CellScopeBTUUID</key>

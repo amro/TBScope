@@ -61,6 +61,7 @@
     self.resetCoreData.on = [prefs boolForKey:@"ResetCoreDataOnStartup"];
     
     self.syncInterval.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"SyncInterval"]];
+    self.maxUploadsPerSlide.text = [[NSString alloc] initWithFormat:@"%ld",[prefs integerForKey:@"MaxUploadsPerSlide"]];
     self.wifiOnlyButton.on = [prefs boolForKey:@"WifiSyncOnly"];
 
     NSString *syncDirectoryName = [prefs stringForKey:@"RemoteDirectoryTitle"];
@@ -129,6 +130,7 @@
     
     [prefs setInteger:self.numPatchesToAverage.text.integerValue forKey:@"NumPatchesToAverage"];
     [prefs setInteger:self.syncInterval.text.integerValue forKey:@"SyncInterval"];
+    [prefs setInteger:self.maxUploadsPerSlide.text.integerValue forKey:@"MaxUploadsPerSlide"];
     
     [prefs setFloat:self.diagnosticThreshold.text.floatValue forKey:@"DiagnosticThreshold"];
     [prefs setFloat:self.redThreshold.text.floatValue forKey:@"RedThreshold"];
