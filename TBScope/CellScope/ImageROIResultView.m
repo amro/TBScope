@@ -86,8 +86,6 @@ float threshold_score = 1;
 
 -(void)didReceiveLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    NSLog(@"%ld",(long)gestureRecognizer.state);
-    
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan)
     {
         CGPoint p = [gestureRecognizer locationInView:self];
