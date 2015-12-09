@@ -192,7 +192,7 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
 - (void)insertSeedData
 {
     BOOL insertSeedData = [[[NSProcessInfo processInfo] arguments] containsObject:@"-InsertSeedData"];
-    if (insertSeedData) return;
+    if (!insertSeedData) return;
     
     Exams* exam;
     Slides* slide;
