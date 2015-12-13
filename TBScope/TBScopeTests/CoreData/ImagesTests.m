@@ -215,7 +215,10 @@
     // Call upload
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
     [self.image uploadToGoogleDrive:self.googleDriveService]
-        .then(^{ [expectation fulfill]; })
+        .then(^{
+            [expectation fulfill];
+            [userDefaultsMock stopMocking];
+        })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
         if (error) XCTFail(@"Async test timed out");
@@ -256,7 +259,10 @@
     // Call upload
     XCTestExpectation *expectation = [self expectationWithDescription:@"Wait for async call to finish"];
     [self.image uploadToGoogleDrive:self.googleDriveService]
-        .then(^{ [expectation fulfill]; })
+        .then(^{
+            [expectation fulfill];
+            [userDefaultsMock stopMocking];
+        })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
         if (error) XCTFail(@"Async test timed out");

@@ -262,7 +262,10 @@
 
     // Call uploadToGoogleDrive
     [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
-        .then(^(GTLDriveFile *file) { [expectation fulfill]; })
+        .then(^(GTLDriveFile *file) {
+            [expectation fulfill];
+            [userDefaultsMock stopMocking];
+        })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
     // Wait for expectation
@@ -309,7 +312,10 @@
 
     // Call uploadToGoogleDrive
     [self.slide uploadRoiSpriteSheetToGoogleDrive:self.googleDriveService]
-        .then(^(GTLDriveFile *file) { [expectation fulfill]; })
+        .then(^(GTLDriveFile *file) {
+            [expectation fulfill];
+            [userDefaultsMock stopMocking];
+        })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve"); });
 
     // Wait for expectation

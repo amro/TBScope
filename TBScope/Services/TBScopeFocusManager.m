@@ -60,7 +60,7 @@
 - (int)zPositionBroadSweepMin
 {
     return (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"] -
-    ((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2) ;
+            ((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2) ;
 }
 
 - (float)currentImageQualityMetric

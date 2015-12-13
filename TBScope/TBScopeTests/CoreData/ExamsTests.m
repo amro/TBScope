@@ -154,6 +154,7 @@
         .then(^{
             OCMVerify([gds uploadFile:[OCMArg any] withData:[OCMArg any]]);
             [expectation fulfill];
+            [userDefaultsMock stopMocking];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
 
@@ -201,6 +202,7 @@
         .then(^{
             OCMVerify([gds uploadFile:[OCMArg any] withData:[OCMArg any]]);
             [expectation fulfill];
+            [userDefaultsMock stopMocking];
         })
         .catch(^(NSError *error) { XCTFail(@"Expected promise to resolve."); });
 
