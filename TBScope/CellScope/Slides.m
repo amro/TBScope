@@ -228,7 +228,7 @@
     NSString *localURI;
     while (!localURI || [IMGDocumentsDirectory fileExistsAtURI:localURI]) {
         NSString *randomString = [[self class] _randomStringOfLength:32];
-        NSString *localPath = [NSString stringWithFormat:@"roi-sprites/%@.jpg", randomString];
+        NSString *localPath = [NSString stringWithFormat:@"roi-sprites/%@.png", randomString];
         localURI = [IMGDocumentsDirectory uriFromPath:localPath];
     }
     return localURI;

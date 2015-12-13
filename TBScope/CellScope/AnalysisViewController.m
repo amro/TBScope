@@ -264,7 +264,7 @@
 
                 // Save sprite sheet image
                 UIImage *sprite = [spriteSheet toSpriteSheet];
-                NSData *data = UIImageJPEGRepresentation(sprite, 1.0);
+                NSData *data = UIImagePNGRepresentation(sprite);
                 NSString *uri = [Slides generateURI];
                 [IMGImage saveData:data toURI:uri]
                     .then(^(NSString *uri){
