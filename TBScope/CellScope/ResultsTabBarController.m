@@ -104,8 +104,8 @@ int _slideNumber;
     
     if (self.currentExam.examSlides.count==3) {
         _lastSlide = self.currentExam.examSlides[2];
-        _humanRead = self.currentExam.examFollowUpData.slide1HumanReadResult;
-        _slideNumber = 1;
+        _humanRead = self.currentExam.examFollowUpData.slide3HumanReadResult;
+        _slideNumber = 3;
     }
     else if (self.currentExam.examSlides.count==2) {
         _lastSlide = self.currentExam.examSlides[1];
@@ -114,8 +114,8 @@ int _slideNumber;
     }
     else if (self.currentExam.examSlides.count==1) {
         _lastSlide = self.currentExam.examSlides[0];
-        _humanRead = self.currentExam.examFollowUpData.slide3HumanReadResult;
-        _slideNumber = 3;
+        _humanRead = self.currentExam.examFollowUpData.slide1HumanReadResult;
+        _slideNumber = 1;
     }
     else
         return YES;
