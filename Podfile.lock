@@ -8,6 +8,7 @@ PODS:
     - Google-API-Client/Common
     - gtm-http-fetcher (~> 1.0.141)
     - gtm-oauth2 (~> 1.0.125)
+  - GPUImage (0.1.7)
   - gtm-http-fetcher (1.0.141)
   - gtm-oauth2 (1.0.126):
     - gtm-http-fetcher (~> 1.0.141)
@@ -28,6 +29,7 @@ DEPENDENCIES:
   - BackgroundTask (from `https://github.com/ardell/BackgroundTask.git`)
   - DynamicSpriteSheet (from `https://github.com/ardell/DynamicSpriteSheet.git`)
   - Google-API-Client/Drive (~> 1.0)
+  - GPUImage
   - OCMock
   - PromiseKit/Hang (~> 1.6)
   - PromiseKit/Join (~> 1.6)
@@ -51,6 +53,7 @@ SPEC CHECKSUMS:
   BackgroundTask: ae283adf91380b9fa325216d4beaaccc998b463b
   DynamicSpriteSheet: dfc9989eb7c3c2844ba1f605c59ca31cb6be0e58
   Google-API-Client: cb712cf122f1d7fda966de4c2bc551324573366c
+  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
   gtm-http-fetcher: 6d4617e7d343b6e4c082b777541c334eb6f5d81e
   gtm-oauth2: 2a18b824e4f8a02df6cfe987beb59ae9d9697f9d
   OCMock: 28def049ef47f996b515a8eeea958be7ccab2dbb

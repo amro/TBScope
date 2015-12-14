@@ -8,4 +8,5 @@ pod 'PromiseKit/Join', '~> 1.6'
 pod 'DynamicSpriteSheet', git: 'https://github.com/ardell/DynamicSpriteSheet.git'
 pod 'BackgroundTask', git: 'https://github.com/ardell/BackgroundTask.git'
 pod 'OCMock'
+pod 'GPUImage'
 
