@@ -898,4 +898,24 @@
     }];
 }
 
+- (void)testThatClearSlideImagesDeletesAllImages
+{
+    // Add Images managed objects to slide
+    [self.slide.managedObjectContext performBlockAndWait:^{
+        for (int i=0; i<3; i++) {
+            Images *image = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images"
+                                                                   inManagedObjectContext:self.slide.managedObjectContext];
+            [self.slide addSlideImagesObject:image];
+        }
+    }];
+
+    // Call [slide clearSlideImages]
+    [self.slide clearSlideImages];
+
+    // Expect [slide.slideImages count] to be 0
+    [self.slide.managedObjectContext performBlockAndWait:^{
+        XCTAssertEqual([self.slide.slideImages count], 0);
+    }];
+}
+
 @end

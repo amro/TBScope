@@ -206,6 +206,24 @@
     });
 }
 
+- (void)deleteObject
+{
+    [self.managedObjectContext performBlockAndWait:^{
+        // Save path so we can delete the image after deleting the managed object
+        NSString *path = [self path];
+
+        // Delete the managed object and save the managedObjectContext
+        [self.managedObjectContext deleteObject:self];
+        NSError *error;
+        [self.managedObjectContext save:&error];
+
+        // Only delete images if save succeeded
+        if (!error && path) {
+            [IMGImage deleteFromURI:path];
+        }
+    }];
+}
+
 #pragma Private methods
 
 + (NSString *)_randomStringOfLength:(int)length

@@ -659,4 +659,27 @@
     }];
 }
 
+- (void)testThatDeleteObjectDeletesImageAtPath
+{
+    // Save data to a generated path
+    NSString *uri = [Images generateURI];
+
+    // Set path
+    [self.image.managedObjectContext performBlockAndWait:^{
+        self.image.path = uri;
+    }];
+
+    // Stub out [IMGImage deleteFromURI:uri]
+    id imgImageMock = OCMClassMock([IMGImage class]);
+    OCMStub([imgImageMock deleteFromURI:uri])
+        .andReturn([PMKPromise noopPromise]);
+
+    // Call [image deleteObject]
+    [self.image deleteObject];
+
+    // Wait for expectation to be fulfilled
+    OCMVerify([imgImageMock deleteFromURI:uri]);
+    [imgImageMock stopMocking];
+}
+
 @end

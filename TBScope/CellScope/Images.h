@@ -33,5 +33,6 @@
 - (PMKPromise *)downloadFromGoogleDrive:(GoogleDriveService *)googleDriveService;
 + (NSString *)generateURI;
 - (PMKPromise *)loadUIImageForPath;
+- (void)deleteObject;
 
 @end

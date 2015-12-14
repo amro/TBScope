@@ -36,6 +36,16 @@
     self.slideImages = tempSet;
 }
 
+- (void)clearSlideImages
+{
+    [self.managedObjectContext performBlockAndWait:^{
+        NSOrderedSet *images = [self slideImages];
+        while ([images count] > 0) {
+            [[images objectAtIndex:0] deleteObject];
+        }
+    }];
+}
+
 - (BOOL)allImagesAreLocal
 {
     // If we don't have any images return true

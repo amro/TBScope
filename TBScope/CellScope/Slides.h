@@ -40,6 +40,7 @@
 - (void)removeSlideImagesObject:(Images *)value;
 - (void)addSlideImages:(NSOrderedSet *)values;
 - (void)removeSlideImages:(NSOrderedSet *)values;
+- (void)clearSlideImages;
 
 - (BOOL)allImagesAreLocal;
 - (BOOL)hasLocalImages;

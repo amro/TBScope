@@ -77,9 +77,7 @@ AVAudioPlayer* _avPlayer;
                                                object:nil];
 
     //if this slide is being rescanned, delete old images/results
-    for (Images* im in self.currentSlide.slideImages) {
-        [[[TBScopeData sharedData] managedObjectContext] deleteObject:im];
-    }
+    [self.currentSlide clearSlideImages];
     if (self.currentSlide.slideAnalysisResults!=nil)
         [[[TBScopeData sharedData] managedObjectContext] deleteObject:self.currentSlide.slideAnalysisResults];
     [[TBScopeData sharedData] saveCoreData];
