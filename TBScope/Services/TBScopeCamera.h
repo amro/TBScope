@@ -38,6 +38,7 @@ typedef NS_ENUM(NSInteger, TBScopeCameraServiceAutofocus) {
 -(void)startPreview;
 -(void)stopPreview;
 -(void)takeDownCamera;
+//-(UIView *)previewView;
 @end
 
 @interface TBScopeCamera : NSObject

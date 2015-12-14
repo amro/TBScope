@@ -21,11 +21,11 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         BOOL simulateScope = [[[NSProcessInfo processInfo] arguments] containsObject:@"-AllowScanWithoutCellScope"];
-        if (simulateScope) {
-            sharedCamera = [[TBScopeCameraMock alloc] init];
-        } else {
+//        if (simulateScope) {
+//            sharedCamera = [[TBScopeCameraMock alloc] init];
+//        } else {
             sharedCamera = [[TBScopeCameraReal alloc] init];
-        }
+//        }
     });
     return sharedCamera;
 }

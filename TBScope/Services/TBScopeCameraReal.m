@@ -8,6 +8,7 @@
 
 #import "TBScopeCameraReal.h"
 #import "TBScopeHardware.h"
+#import <GPUImage/GPUImage.h>
 
 @interface TBScopeCameraReal ()
 @property (nonatomic, strong) AVCaptureSession *session;
@@ -20,7 +21,10 @@
 @property (nonatomic) BOOL isExposureLocked;
 @end
 
-@implementation TBScopeCameraReal
+@implementation TBScopeCameraReal {
+//    GPUImageVideoCamera *videoCamera;
+//    GPUImageFilter *filter;
+}
 
 @synthesize currentFocusMetric,
             currentImageQuality,
@@ -36,8 +40,22 @@
     return self;
 }
 
+//- (UIView *)previewView
+//{
+//    GPUImageView *filteredVideoView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 640.0, 480.0)];
+//    [filter addTarget:filteredVideoView];
+//    return filteredVideoView;
+//}
+
 - (void)setUpCamera
 {
+//    videoCamera = [[GPUImageVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset640x480
+//                                                      cameraPosition:AVCaptureDevicePositionBack];
+//    videoCamera.outputImageOrientation = UIInterfaceOrientationLandscapeRight;
+//    filter = [[GPUImageSepiaFilter alloc] init];
+//    [videoCamera addTarget:filter];
+//    [videoCamera startCameraCapture];
+
     // Setup the AV foundation capture session
     self.session = [[AVCaptureSession alloc] init];
     self.session.sessionPreset = AVCaptureSessionPresetPhoto;
@@ -50,18 +68,18 @@
     [self _setWhiteBalanceGainsFromUserDefaults];
     //[self _setExposureAndISOFromUserDefaults];
     
-    // Setup still image output
-    self.stillOutput = [[AVCaptureStillImageOutput alloc] init];
-    //NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys: AVVideoCodecJPEG, AVVideoCodecKey, @1.0, AVVideoQualityKey, nil];
-    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys: AVVideoCodecJPEG, AVVideoCodecKey, nil];
-    [self.stillOutput setOutputSettings:outputSettings];
+//    // Setup still image output
+//    self.stillOutput = [[AVCaptureStillImageOutput alloc] init];
+//    //NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys: AVVideoCodecJPEG, AVVideoCodecKey, @1.0, AVVideoQualityKey, nil];
+//    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys: AVVideoCodecJPEG, AVVideoCodecKey, nil];
+//    [self.stillOutput setOutputSettings:outputSettings];
 
     // Set up the preview layer
-    self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
+//    self.previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
 
     // Add session input and output
     [self.session addInput:self.input];
-    [self.session addOutput:self.stillOutput];
+//    [self.session addOutput:self.stillOutput];
     
     // focus preview stuff
     AVCaptureVideoDataOutput *dataOutput = [[AVCaptureVideoDataOutput alloc] init];

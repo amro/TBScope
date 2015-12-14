@@ -183,6 +183,11 @@
     self.session = nil;
 }
 
+//- (UIView *)previewView
+//{
+//    return [[UIView alloc] init];
+//}
+
 #pragma mark - private methods
 
 - (void)_fireImageQualityReport
