@@ -10,9 +10,30 @@
 #import "TBScopeCamera.h"
 #import <GPUImage/GPUImage.h>
 
+// Alpha mask shader string
+NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
+(
+ varying highp vec2 textureCoordinate;
+ varying highp vec2 textureCoordinate2;
+ 
+ uniform sampler2D inputImageTexture;
+ uniform sampler2D inputImageTexture2;
+ 
+ void main()
+ {
+     lowp vec4 textureColor = texture2D(inputImageTexture, textureCoordinate);
+     lowp vec4 textureColor2 = texture2D(inputImageTexture2, textureCoordinate2);
+     
+     gl_FragColor = vec4(textureColor.xyz, textureColor2.a);
+ }
+);
+
 @implementation CameraScrollView {
     GPUImageVideoCamera *videoCamera;
     GPUImageFilter *cropFilter;
+    GPUImageAlphaBlendFilter *alphaMaskFilter;
+    UIImage *maskImage;
+    GPUImagePicture *maskImageSource;
     GPUImage3x3ConvolutionFilter *convolutionFilter;
     GPUImageDifferenceBlendFilter *differenceFilter;
     GPUImageLuminosity *averageLuminosity;
@@ -46,22 +67,28 @@
     [[TBScopeCamera sharedCamera] setUpCamera];
 
     // Setup image preview layer
+    double captureWidth = 1920.0;
+    double captureHeight = 1080.0;
     videoCamera = [[GPUImageVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080
                                                                            cameraPosition:AVCaptureDevicePositionBack];
     videoCamera.outputImageOrientation = UIInterfaceOrientationLandscapeLeft;
 
-    // Crop the image
-    CGRect cropRect = CGRectMake(0.118, 0.0, 0.764, 1.0);
+    // Crop the image to a square
+    double cropFromSides = (captureWidth - captureHeight) / captureWidth / 2.0;
+    double width = 1.0 - 2.0 * cropFromSides;
+    CGRect cropRect = CGRectMake(cropFromSides, 0.0, width, 1.0);
     cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
     [videoCamera addTarget:cropFilter];
 
-    // Add luminosity detection
-    averageLuminosity = [[GPUImageLuminosity alloc] init];
-    [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
-        NSLog(@"Luminosity: %f", luminosity);
-    }];
-    [videoCamera addTarget:averageLuminosity];
-    
+    // Add alpha mask to reduce to a circle
+    maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
+    maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
+    [maskImageSource processImage];
+    alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilter.mix = 0.5f;
+    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
+
     // Add convolution filter
     convolutionFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
     [convolutionFilter setConvolutionKernel:(GPUMatrix3x3){
@@ -69,15 +96,22 @@
         {-10.0f,   41.0f, -10.0f},
         {  0.0f,  -10.0f,   0.0f}
     }];
-    [cropFilter addTarget:convolutionFilter];
+    [alphaMaskFilter addTarget:convolutionFilter];
 
     // Add difference blend filter
     differenceFilter = [[GPUImageDifferenceBlendFilter alloc] init];
-    [cropFilter addTarget:differenceFilter atTextureLocation:0];
+    [alphaMaskFilter addTarget:differenceFilter atTextureLocation:0];
     [convolutionFilter addTarget:differenceFilter atTextureLocation:1];
 
+    // Add luminosity detection
+    averageLuminosity = [[GPUImageLuminosity alloc] init];
+    [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
+        NSLog(@"Sharpness: %f", luminosity);
+    }];
+    [differenceFilter addTarget:averageLuminosity];
+
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
-    [differenceFilter addTarget:previewLayerView];
+    [alphaMaskFilter addTarget:previewLayerView];
     [videoCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, 2592, 1936); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];

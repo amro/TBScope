@@ -31,6 +31,7 @@
 		8A52546F1BBED52A009B29BF /* TBScopeFocusManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A52546E1BBED52A009B29BF /* TBScopeFocusManagerTests.m */; };
 		8A788A951BF168E1004FA179 /* PMKPromise+NoopPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4E2B241BEC17B400F34274 /* PMKPromise+NoopPromise.m */; };
 		8A7F5AD61BF4FFE40011DA05 /* SlidesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7F5AD51BF4FFE40011DA05 /* SlidesTests.m */; };
+		8A878D471C20668B00CD7210 /* circular_mask_1080x1080.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A878D461C20668B00CD7210 /* circular_mask_1080x1080.png */; };
 		8A8D3E1A1BD954090065BB78 /* fl_boundary_01.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A8D3DFD1BD954090065BB78 /* fl_boundary_01.jpg */; };
 		8A8D3E1B1BD954090065BB78 /* fl_boundary_02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A8D3DFE1BD954090065BB78 /* fl_boundary_02.jpg */; };
 		8A8D3E1C1BD954090065BB78 /* fl_boundary_03.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A8D3DFF1BD954090065BB78 /* fl_boundary_03.jpg */; };
@@ -421,6 +422,7 @@
 		8A52546E1BBED52A009B29BF /* TBScopeFocusManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBScopeFocusManagerTests.m; sourceTree = "<group>"; };
 		8A6998811BB31B2E0034AA93 /* CellScope-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CellScope-Prefix.pch"; sourceTree = "<group>"; };
 		8A7F5AD51BF4FFE40011DA05 /* SlidesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlidesTests.m; path = CoreData/SlidesTests.m; sourceTree = "<group>"; };
+		8A878D461C20668B00CD7210 /* circular_mask_1080x1080.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circular_mask_1080x1080.png; sourceTree = "<group>"; };
 		8A8D3DFD1BD954090065BB78 /* fl_boundary_01.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = fl_boundary_01.jpg; path = Images/ContentMetric/fl_boundary_01.jpg; sourceTree = "<group>"; };
 		8A8D3DFE1BD954090065BB78 /* fl_boundary_02.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = fl_boundary_02.jpg; path = Images/ContentMetric/fl_boundary_02.jpg; sourceTree = "<group>"; };
 		8A8D3DFF1BD954090065BB78 /* fl_boundary_03.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = fl_boundary_03.jpg; path = Images/ContentMetric/fl_boundary_03.jpg; sourceTree = "<group>"; };
@@ -1071,6 +1073,7 @@
 				A5C8E17A196F86860072D99C /* pictureicon.png */,
 				A5C341931835A4CD00DBBD37 /* scalearrow.png */,
 				9BD352C015FAAC3D00E331E9 /* cellscope_logo_1600-bkgd.png */,
+				8A878D461C20668B00CD7210 /* circular_mask_1080x1080.png */,
 				A5CF1A0C187E4B8A00C2C2E1 /* left.png */,
 				A5CF1A0D187E4B8A00C2C2E1 /* right.png */,
 				A5CF1A0F187E4B8A00C2C2E1 /* up.png */,
@@ -1560,6 +1563,7 @@
 				A5CF1A09187DF4E400C2C2E1 /* DHC5_CHP21_1010296_S1_R1_HLH_I2_Fluor_Y_F.tif in Resources */,
 				A554A05F1C085FC4002C99A3 /* scanning_complete.mp3 in Resources */,
 				A513228019E9E6AA00B11AEE /* slide2icon@2x.png in Resources */,
+				8A878D471C20668B00CD7210 /* circular_mask_1080x1080.png in Resources */,
 				A513227919E9E6AA00B11AEE /* followup@2x.png in Resources */,
 				A513228219E9E6AA00B11AEE /* slide3icon@2x.png in Resources */,
 				A5CF1A1B187E4B9F00C2C2E1 /* down.png in Resources */,
