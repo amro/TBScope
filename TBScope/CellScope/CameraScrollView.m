@@ -85,16 +85,16 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
     [maskImageSource processImage];
     alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
-    alphaMaskFilter.mix = 0.5f;
+    alphaMaskFilter.mix = 1.0f;
     [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
     [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
 
     // Add convolution filter
     convolutionFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
     [convolutionFilter setConvolutionKernel:(GPUMatrix3x3){
-        {  0.0f,  -10.0f,   0.0f},
-        {-10.0f,   41.0f, -10.0f},
-        {  0.0f,  -10.0f,   0.0f}
+        { 0.0f, -2.0f,  0.0f},
+        {-2.0f,  9.0f, -2.0f},
+        { 0.0f, -2.0f,  0.0f}
     }];
     [alphaMaskFilter addTarget:convolutionFilter];
 
@@ -106,14 +106,15 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     // Add luminosity detection
     averageLuminosity = [[GPUImageLuminosity alloc] init];
     [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
-        NSLog(@"Sharpness: %f", luminosity);
+        double sharpness = 1.0f / luminosity;
+        NSLog(@"Sharpness: %f", sharpness);
     }];
     [differenceFilter addTarget:averageLuminosity];
 
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
     [alphaMaskFilter addTarget:previewLayerView];
     [videoCamera startCameraCapture];
-    CGRect frame = CGRectMake(0, 0, 2592, 1936); //TODO: grab the resolution from the camera?
+    CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];
     [self setContentSize:frame.size];
     [self setDelegate:self];
