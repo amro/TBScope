@@ -37,6 +37,7 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     GPUImagePicture *maskImageSource;
     GPUImage3x3ConvolutionFilter *convolutionFilter;
     GPUImageDifferenceBlendFilter *differenceFilter;
+    GPUImageLowPassFilter *lowPassFilter;
     GPUImageLuminosity *averageLuminosity;
 }
 
@@ -103,9 +104,9 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     // Add convolution filter
     convolutionFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
     [convolutionFilter setConvolutionKernel:(GPUMatrix3x3){
-        { 0.0f,  1.0f,  0.0f},
-        { 1.0f, -4.0f,  1.0f},
-        { 0.0f,  1.0f,  0.0f}
+        { 0.0f,   5.0f,  0.0f},
+        { 5.0f, -19.0f,  5.0f},
+        { 0.0f,   5.0f,  0.0f}
     }];
     [alphaMaskFilter addTarget:convolutionFilter];
 
@@ -118,8 +119,11 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     averageLuminosity = [[GPUImageLuminosity alloc] init];
     __weak CameraScrollView *weakSelf = self;
     [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
-        double sharpness = luminosity;
-        NSString *bars = [@"" stringByPaddingToLength:(int)MIN(60, (sharpness/0.115*20.0)) withString: @"|" startingAtIndex:0];
+        double minSharpness = 15.0;
+        double maxSharpness = 18.0;
+        double sharpness = luminosity * 1000.0f;
+        double scaledSharpness = MIN(1.0, MAX(0.0, (sharpness-minSharpness)/(maxSharpness-minSharpness)));
+        NSString *bars = [@"" stringByPaddingToLength:(int)(scaledSharpness*40.0) withString: @"|" startingAtIndex:0];
         NSString *text = [NSString stringWithFormat:@"Sharpness: %@ (%3.3f)\n", bars, sharpness];
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.imageQualityLabel setText:text];
