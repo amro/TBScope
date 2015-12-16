@@ -32,12 +32,11 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     GPUImageVideoCamera *videoCamera;
     GPUImageColorMatrixFilter *colorFilter;
     GPUImageFilter *cropFilter;
+    GPUImage3x3ConvolutionFilter *convolutionFilter;
+    GPUImageDifferenceBlendFilter *differenceFilter;
     GPUImageAlphaBlendFilter *alphaMaskFilter;
     UIImage *maskImage;
     GPUImagePicture *maskImageSource;
-    GPUImage3x3ConvolutionFilter *convolutionFilter;
-    GPUImageDifferenceBlendFilter *differenceFilter;
-    GPUImageLowPassFilter *lowPassFilter;
     GPUImageLuminosity *averageLuminosity;
 }
 
@@ -92,15 +91,6 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
     [colorFilter addTarget:cropFilter];
 
-    // Add alpha mask to reduce to a circle
-    maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
-    maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
-    [maskImageSource processImage];
-    alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
-    alphaMaskFilter.mix = 1.0f;
-    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
-    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
-
     // Add convolution filter
     convolutionFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
     [convolutionFilter setConvolutionKernel:(GPUMatrix3x3){
@@ -108,12 +98,21 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
         { 5.0f, -19.0f,  5.0f},
         { 0.0f,   5.0f,  0.0f}
     }];
-    [alphaMaskFilter addTarget:convolutionFilter];
+    [cropFilter addTarget:convolutionFilter];
 
     // Add difference blend filter
     differenceFilter = [[GPUImageDifferenceBlendFilter alloc] init];
-    [alphaMaskFilter addTarget:differenceFilter atTextureLocation:0];
+    [cropFilter addTarget:differenceFilter atTextureLocation:0];
     [convolutionFilter addTarget:differenceFilter atTextureLocation:1];
+
+    // Add alpha mask to reduce to a circle
+    maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
+    maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
+    [maskImageSource processImage];
+    alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilter.mix = 1.0f;
+    [differenceFilter addTarget:alphaMaskFilter atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
 
     // Calculate fluorescence sharpness
     averageLuminosity = [[GPUImageLuminosity alloc] init];
@@ -129,10 +128,11 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
             [weakSelf.imageQualityLabel setText:text];
         });
     }];
-    [differenceFilter addTarget:averageLuminosity];
+    [alphaMaskFilter addTarget:averageLuminosity];
 
+    // Show preview
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
-    [differenceFilter addTarget:previewLayerView];
+    [alphaMaskFilter addTarget:previewLayerView];
     [videoCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];
