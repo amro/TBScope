@@ -30,6 +30,7 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
 
 @implementation CameraScrollView {
     GPUImageVideoCamera *videoCamera;
+    GPUImageColorMatrixFilter *colorFilter;
     GPUImageFilter *cropFilter;
     GPUImageAlphaBlendFilter *alphaMaskFilter;
     UIImage *maskImage;
@@ -73,12 +74,22 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
                                                                            cameraPosition:AVCaptureDevicePositionBack];
     videoCamera.outputImageOrientation = UIInterfaceOrientationLandscapeLeft;
 
+    // Discard all but green channel
+    colorFilter = [[GPUImageColorMatrixFilter alloc] init];
+    [colorFilter setColorMatrix:(GPUMatrix4x4){
+        { 0.f, 0.f, 0.f, 0.f },
+        { 0.f, 1.f, 0.f, 0.f },
+        { 0.f, 0.f, 0.f, 0.f },
+        { 0.f, 0.f, 0.f, 0.f },
+    }];
+    [videoCamera addTarget:colorFilter];
+
     // Crop the image to a square
     double cropFromSides = (captureWidth - captureHeight) / captureWidth / 2.0;
     double width = 1.0 - 2.0 * cropFromSides;
     CGRect cropRect = CGRectMake(cropFromSides, 0.0, width, 1.0);
     cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
-    [videoCamera addTarget:cropFilter];
+    [colorFilter addTarget:cropFilter];
 
     // Add alpha mask to reduce to a circle
     maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
