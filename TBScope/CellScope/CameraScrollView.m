@@ -116,17 +116,8 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
 
     // Calculate fluorescence sharpness
     averageLuminosity = [[GPUImageLuminosity alloc] init];
-    __weak CameraScrollView *weakSelf = self;
     [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
-        double minSharpness = 15.0;
-        double maxSharpness = 18.0;
-        double sharpness = luminosity * 1000.0f;
-        double scaledSharpness = MIN(1.0, MAX(0.0, (sharpness-minSharpness)/(maxSharpness-minSharpness)));
-        NSString *bars = [@"" stringByPaddingToLength:(int)(scaledSharpness*40.0) withString: @"|" startingAtIndex:0];
-        NSString *text = [NSString stringWithFormat:@"Sharpness: %@ (%3.3f)\n", bars, sharpness];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.imageQualityLabel setText:text];
-        });
+        [[TBScopeCamera sharedCamera] setCurrentFocusMetric:luminosity];
     }];
     [alphaMaskFilter addTarget:averageLuminosity];
 

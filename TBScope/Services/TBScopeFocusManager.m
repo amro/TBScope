@@ -52,6 +52,7 @@
 
 - (int)zPositionBroadSweepMax
 {
+    return 10000;
     return (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"] +
             ((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2) ;
     
@@ -59,6 +60,7 @@
 
 - (int)zPositionBroadSweepMin
 {
+    return -40000;
     return (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"DefaultFocusZ"] -
     ((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2) ;
 }
