@@ -34,7 +34,8 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     GPUImageFilter *cropFilter;
     GPUImage3x3ConvolutionFilter *convolutionFilter;
     GPUImageDifferenceBlendFilter *differenceFilter;
-    GPUImageAlphaBlendFilter *alphaMaskFilter;
+    GPUImageAlphaBlendFilter *alphaMaskFilterSharpness;
+    GPUImageAlphaBlendFilter *alphaMaskFilterOutput;
     UIImage *maskImage;
     GPUImagePicture *maskImageSource;
     GPUImageLuminosity *averageLuminosity;
@@ -91,6 +92,15 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
     [colorFilter addTarget:cropFilter];
 
+    // Add alpha mask to reduce to a circle (for output)
+    maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
+    maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
+    [maskImageSource processImage];
+    alphaMaskFilterOutput = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilterOutput.mix = 1.0f;
+    [cropFilter addTarget:alphaMaskFilterOutput atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilterOutput atTextureLocation:1];
+
     // Add convolution filter
     convolutionFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
     [convolutionFilter setConvolutionKernel:(GPUMatrix3x3){
@@ -105,25 +115,22 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     [cropFilter addTarget:differenceFilter atTextureLocation:0];
     [convolutionFilter addTarget:differenceFilter atTextureLocation:1];
 
-    // Add alpha mask to reduce to a circle
-    maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
-    maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
-    [maskImageSource processImage];
-    alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
-    alphaMaskFilter.mix = 1.0f;
-    [differenceFilter addTarget:alphaMaskFilter atTextureLocation:0];
-    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
+    // Add alpha mask to reduce to a circle (for sharpness)
+    alphaMaskFilterSharpness = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilterSharpness.mix = 1.0f;
+    [differenceFilter addTarget:alphaMaskFilterSharpness atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilterSharpness atTextureLocation:1];
 
     // Calculate fluorescence sharpness
     averageLuminosity = [[GPUImageLuminosity alloc] init];
     [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
         [[TBScopeCamera sharedCamera] setCurrentFocusMetric:luminosity];
     }];
-    [alphaMaskFilter addTarget:averageLuminosity];
+    [alphaMaskFilterSharpness addTarget:averageLuminosity];
 
     // Show preview
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
-    [alphaMaskFilter addTarget:previewLayerView];
+    [alphaMaskFilterOutput addTarget:previewLayerView];
     [videoCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];
