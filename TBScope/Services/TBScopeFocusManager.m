@@ -138,7 +138,6 @@
         // Move into position
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:position];
         [[TBScopeHardware sharedHardware] waitForStage];
-        [self pauseForSettling];  // does this help reduce blurring?
 
         // Gather metric
         float metric = [self currentImageQualityMetric];
