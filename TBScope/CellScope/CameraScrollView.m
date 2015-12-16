@@ -103,9 +103,9 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     // Add convolution filter
     convolutionFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
     [convolutionFilter setConvolutionKernel:(GPUMatrix3x3){
-        { 0.0f, -2.0f,  0.0f},
-        {-2.0f,  9.0f, -2.0f},
-        { 0.0f, -2.0f,  0.0f}
+        { 0.0f,  1.0f,  0.0f},
+        { 1.0f, -4.0f,  1.0f},
+        { 0.0f,  1.0f,  0.0f}
     }];
     [alphaMaskFilter addTarget:convolutionFilter];
 
@@ -114,16 +114,21 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     [alphaMaskFilter addTarget:differenceFilter atTextureLocation:0];
     [convolutionFilter addTarget:differenceFilter atTextureLocation:1];
 
-    // Add luminosity detection
+    // Calculate fluorescence sharpness
     averageLuminosity = [[GPUImageLuminosity alloc] init];
+    __weak CameraScrollView *weakSelf = self;
     [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
-        double sharpness = 1.0f / luminosity;
-        NSLog(@"Sharpness: %f", sharpness);
+        double sharpness = luminosity;
+        NSString *bars = [@"" stringByPaddingToLength:(int)MIN(60, (sharpness/0.115*20.0)) withString: @"|" startingAtIndex:0];
+        NSString *text = [NSString stringWithFormat:@"Sharpness: %@ (%3.3f)\n", bars, sharpness];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.imageQualityLabel setText:text];
+        });
     }];
     [differenceFilter addTarget:averageLuminosity];
 
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
-    [alphaMaskFilter addTarget:previewLayerView];
+    [differenceFilter addTarget:previewLayerView];
     [videoCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];
@@ -132,17 +137,17 @@ NSString * const kNBUAlphaMaskShaderString = SHADER_STRING
     [self zoomExtents];
     [previewLayerView setNeedsDisplay];
     
-//    // If we're debugging, add a label to display image quality metrics
-//    self.imageQualityLabel = [[UILabel alloc] init];
-//    [self addSubview:self.imageQualityLabel];
-//    [self.imageQualityLabel setBounds:CGRectMake(0,0,500,500)];
-//    [self.imageQualityLabel setCenter:CGPointMake(400, 80)];
-//    self.imageQualityLabel.textColor = [UIColor whiteColor];
-//    self.imageQualityLabel.font = [UIFont fontWithName:@"Courier" size:14.0];
-//    [self bringSubviewToFront:self.imageQualityLabel];
-//    self.imageQualityLabel.lineBreakMode = NSLineBreakByWordWrapping;
-//    self.imageQualityLabel.numberOfLines = 0;
-//    self.imageQualityLabel.hidden = ![[NSUserDefaults standardUserDefaults] boolForKey:@"DebugMode"];
+    // If we're debugging, add a label to display image quality metrics
+    self.imageQualityLabel = [[UILabel alloc] init];
+    [self addSubview:self.imageQualityLabel];
+    [self.imageQualityLabel setBounds:CGRectMake(0,0,800,800)];
+    [self.imageQualityLabel setCenter:CGPointMake(550, 80)];
+    self.imageQualityLabel.textColor = [UIColor whiteColor];
+    self.imageQualityLabel.font = [UIFont fontWithName:@"Courier" size:14.0];
+    [self bringSubviewToFront:self.imageQualityLabel];
+    self.imageQualityLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.imageQualityLabel.numberOfLines = 0;
+    self.imageQualityLabel.hidden = ![[NSUserDefaults standardUserDefaults] boolForKey:@"DebugMode"];
     
 //    //TODO: are these necessary?
 //    [previewLayerView setNeedsDisplay];
