@@ -463,8 +463,6 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
 
 - (void)moveToX:(int)x Y:(int)y Z:(int)z
 {
-        NSLog(@"moving to (%d, %d, %d)", x,y,z);
-    
         if (x != -1) {
             int xSteps = (int)x - self.xPosition;
             if (xSteps > 0) {

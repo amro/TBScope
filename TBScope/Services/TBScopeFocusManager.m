@@ -138,9 +138,11 @@
         // Move into position
         [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:position];
         [[TBScopeHardware sharedHardware] waitForStage];
+        [self pauseForSettling];
 
         // Gather metric
         float metric = [self currentImageQualityMetric];
+        NSLog(@"Sharpness at %d is %3.6f", position, metric);
         if (metric > bestMetricSoFar) {
             bestMetricSoFar = metric;
             bestPositionSoFar = position;
@@ -207,6 +209,7 @@
 
         // Gather metric
         float metric = [self currentImageQualityMetric];
+        NSLog(@"Sharpness at %d is %3.6f", targetZPosition, metric);
         if (metric > bestMetricSoFar) {
             bestMetricSoFar = metric;
             bestPositionSoFar = targetZPosition;

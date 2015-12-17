@@ -8,6 +8,7 @@
 
 #import "CameraScrollView.h"
 #import "TBScopeCamera.h"
+#import "TBScopeFocusManager.h"
 #import <GPUImage/GPUImage.h>
 
 @implementation CameraScrollView {
@@ -46,8 +47,22 @@
     return self;
 }
 
+-(void)handleDoubleTapGesture:(UITapGestureRecognizer *)doubleTapGesture
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        [[TBScopeFocusManager sharedFocusManager] autoFocus];
+    });
+}
+
 - (void)setUpPreview
 {
+    // Auto-focus on double-tap
+    [self setUserInteractionEnabled:YES];
+    UITapGestureRecognizer *doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                       action:@selector(handleDoubleTapGesture:)];
+    doubleTapGesture.numberOfTapsRequired = 2;
+    [self addGestureRecognizer:doubleTapGesture];
+
     [[TBScopeCamera sharedCamera] setUpCamera];
 
     // Setup image preview layer
@@ -112,7 +127,7 @@
 
     // Show preview
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
-    [alphaMaskFilterOutput addTarget:previewLayerView];
+    [alphaMaskFilterSharpness addTarget:previewLayerView];
     [videoCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];
