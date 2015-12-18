@@ -10,12 +10,17 @@
 #import "TBScopeCamera.h"
 #import "TBScopeFocusManager.h"
 #import <GPUImage/GPUImage.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+#import "TBScopeHardware.h"
 
 @implementation CameraScrollView {
-    GPUImageVideoCamera *videoCamera;
+    GPUImageStillCamera *stillCamera;
+    GPUImage3x3ConvolutionFilter *noopFilter;
     GPUImageColorMatrixFilter *colorFilter;
     GPUImageFilter *cropFilter;
-    GPUImage3x3ConvolutionFilter *convolutionFilter;
+    GPUImage3x3ConvolutionFilter *sobelX;
+    GPUImage3x3ConvolutionFilter *sobelY;
+    GPUImageAddBlendFilter *addFilter;
     GPUImageDifferenceBlendFilter *differenceFilter;
     GPUImageAlphaBlendFilter *alphaMaskFilterSharpness;
     GPUImageAlphaBlendFilter *alphaMaskFilterOutput;
@@ -49,9 +54,45 @@
 
 -(void)handleDoubleTapGesture:(UITapGestureRecognizer *)doubleTapGesture
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-        [[TBScopeFocusManager sharedFocusManager] autoFocus];
-    });
+    // Auto-focus
+    // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+    //     [[TBScopeFocusManager sharedFocusManager] clearLastGoodPositionAndMetric];
+    //     [[TBScopeFocusManager sharedFocusManager] autoFocus];
+    // });
+    
+    // Snap a z-stack
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    void (^__block snapZStack)(int, int, int) = ^(int startZPosition, int endZPosition, int increment) {
+        if (startZPosition > endZPosition) return;
+
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+            // Move to z position
+            [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:startZPosition];
+            
+            // Pause for settling
+            [NSThread sleepForTimeInterval:1.0f];
+            
+            // Snap a picture & save to assets library
+            [stillCamera capturePhotoAsJPEGProcessedUpToFilter:noopFilter
+                                         withCompletionHandler:^(NSData *data, NSError *error) {
+                // UIImage *image = [cropFilter imageFromCurrentFramebuffer];
+                // UIImage *image = [UIImage imageNamed:@"check.png"];
+                // NSData *data = UIImageJPEGRepresentation(image, 1.0);
+                [library writeImageDataToSavedPhotosAlbum:data
+                                                 metadata:nil
+                                          completionBlock:^(NSURL *url, NSError *error) {
+                                              if (error) {
+                                                  NSLog(@"Error saving picture, %@", error.description);
+                                              } else {
+                                                  NSLog(@"Saved picture at %d to %@", startZPosition, [url absoluteString]);
+                                              }
+                                              snapZStack(startZPosition + increment, endZPosition, increment);
+                                          }];
+            }];
+        });
+    };
+    snapZStack(-14000, -12000, 500);
+    // snapZStack(-40000, 10000, 500);
 }
 
 - (void)setUpPreview
@@ -68,9 +109,19 @@
     // Setup image preview layer
     double captureWidth = 1920.0;
     double captureHeight = 1080.0;
-    videoCamera = [[GPUImageVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080
-                                                                           cameraPosition:AVCaptureDevicePositionBack];
-    videoCamera.outputImageOrientation = UIInterfaceOrientationLandscapeLeft;
+    stillCamera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1920x1080
+                                                      cameraPosition:AVCaptureDevicePositionBack];
+    stillCamera.outputImageOrientation = UIInterfaceOrientationLandscapeLeft;
+
+    // Set up filter whose output we'll use to capture stills
+    noopFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [noopFilter setConvolutionKernel:(GPUMatrix3x3){
+        { 0.0f, 0.0f, 0.0f},
+        { 0.0f, 1.0f, 0.0f},
+        { 0.0f, 0.0f, 0.0f}
+    }];
+    [noopFilter forceProcessingAtSize:CGSizeMake(1920.0, 1080.0)];
+    [stillCamera addTarget:noopFilter];
 
     // Discard all but green channel
     colorFilter = [[GPUImageColorMatrixFilter alloc] init];
@@ -80,7 +131,7 @@
         { 0.f, 0.f, 0.f, 0.f },
         { 0.f, 0.f, 0.f, 0.f },
     }];
-    [videoCamera addTarget:colorFilter];
+    [stillCamera addTarget:colorFilter];
 
     // Crop the image to a square
     double cropFromSides = (captureWidth - captureHeight) / captureWidth / 2.0;
@@ -98,19 +149,33 @@
     [cropFilter addTarget:alphaMaskFilterOutput atTextureLocation:0];
     [maskImageSource addTarget:alphaMaskFilterOutput atTextureLocation:1];
 
-    // Add convolution filter
-    convolutionFilter = [[GPUImage3x3ConvolutionFilter alloc] init];
-    [convolutionFilter setConvolutionKernel:(GPUMatrix3x3){
-        { 0.0f,   5.0f,  0.0f},
-        { 5.0f, -19.0f,  5.0f},
-        { 0.0f,   5.0f,  0.0f}
+    // Calculate sobelX
+    sobelX = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [sobelX setConvolutionKernel:(GPUMatrix3x3){
+        { -1.0f, 0.0f, 1.0f},
+        { -2.0f, 0.0f, 2.0f},
+        { -1.0f, 0.0f, 1.0f}
     }];
-    [cropFilter addTarget:convolutionFilter];
+    [cropFilter addTarget:sobelX];
+
+    // Calculate sobelY
+    sobelY = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [sobelY setConvolutionKernel:(GPUMatrix3x3){
+        {  1.0f,  2.0f,  1.0f},
+        {  0.0f,  0.0f,  0.0f},
+        { -1.0f, -2.0f, -1.0f}
+    }];
+    [cropFilter addTarget:sobelY];
+
+    // Calculate tenegrad
+    addFilter = [[GPUImageAddBlendFilter alloc] init];
+    [sobelX addTarget:addFilter];
+    [sobelY addTarget:addFilter];
 
     // Add difference blend filter
     differenceFilter = [[GPUImageDifferenceBlendFilter alloc] init];
     [cropFilter addTarget:differenceFilter atTextureLocation:0];
-    [convolutionFilter addTarget:differenceFilter atTextureLocation:1];
+    [addFilter addTarget:differenceFilter atTextureLocation:1];
 
     // Add alpha mask to reduce to a circle (for sharpness)
     alphaMaskFilterSharpness = [[GPUImageAlphaBlendFilter alloc] init];
@@ -128,7 +193,7 @@
     // Show preview
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
     [alphaMaskFilterSharpness addTarget:previewLayerView];
-    [videoCamera startCameraCapture];
+    [stillCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];
     [self setContentSize:frame.size];
