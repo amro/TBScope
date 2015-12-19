@@ -184,68 +184,44 @@ static int const kLastEmptyImageIndex = 11;
     // Crop the image to a square
     double captureWidth = 1920.0;
     double captureHeight = 1080.0;
-    double cropFromSides = (captureWidth - captureHeight) / captureWidth / 2.0;
-    double width = 1.0 - 2.0 * cropFromSides;
-    CGRect cropRect = CGRectMake(cropFromSides, 0.0, width, 1.0);
+    double targetWidth = 1080;
+    double targetHeight = 1080;
+    double cropFromLeft = (captureWidth - targetWidth) / captureWidth / 2.0;
+    double cropFromTop = (captureHeight - targetHeight) / captureHeight / 2.0;
+    double width = 1.0 - 2.0 * cropFromLeft;
+    double height = 1.0 - 2.0 * cropFromTop;
+    CGRect cropRect = CGRectMake(cropFromLeft, cropFromTop, width, height);
     GPUImageCropFilter *cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
     [colorFilter addTarget:cropFilter];
 
-    // Calculate sobelX
-    GPUImage3x3ConvolutionFilter *sobelX = [[GPUImage3x3ConvolutionFilter alloc] init];
-    [sobelX setConvolutionKernel:(GPUMatrix3x3){
-        { -1.0f, 0.0f, 1.0f},
-        { -2.0f, 0.0f, 2.0f},
-        { -1.0f, 0.0f, 1.0f}
-    }];
-    [cropFilter addTarget:sobelX];
-
-    // Calculate sobelY
-    GPUImage3x3ConvolutionFilter *sobelY = [[GPUImage3x3ConvolutionFilter alloc] init];
-    [sobelY setConvolutionKernel:(GPUMatrix3x3){
-        {  1.0f,  2.0f,  1.0f},
-        {  0.0f,  0.0f,  0.0f},
-        { -1.0f, -2.0f, -1.0f}
-    }];
-    [cropFilter addTarget:sobelY];
+    // Generate sharpened image
+    GPUImageSharpenFilter *sharpenFilter = [[GPUImageSharpenFilter alloc] init];
+    [sharpenFilter setSharpness:1.0];
+    [cropFilter addTarget:sharpenFilter];
 
     // Calculate tenegrad
-    GPUImageAddBlendFilter *addFilter = [[GPUImageAddBlendFilter alloc] init];
-    [sobelX addTarget:addFilter];
-    [sobelY addTarget:addFilter];
+    GPUImageDifferenceBlendFilter *differenceFilter = [[GPUImageDifferenceBlendFilter alloc] init];
+    [sharpenFilter addTarget:differenceFilter];
+    [cropFilter addTarget:differenceFilter];
+
+    // Maybe try to run either a brighten filter or a contrast filter,
+    // then checking the average green value, since the values are so
+    // low that there's not much contrast.
+    GPUImageExposureFilter *exposureFilter = [[GPUImageExposureFilter alloc] init];
+    exposureFilter.exposure = 3.5;
+    [differenceFilter addTarget:exposureFilter];
 
     // Get the metric
-    GPUImageRawDataOutput *rawDataFilter = [[GPUImageRawDataOutput alloc] init];
-    [rawDataFilter setImageSize:CGSizeMake(1920, 1080)];
+    GPUImageAverageColor *averageColorFilter = [[GPUImageAverageColor alloc] init];
     __block double focusMetric;
     PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-        [rawDataFilter setNewFrameAvailableBlock:^{
-            // Initialize histogram
-            NSMutableArray *histogram = [[NSMutableArray alloc] initWithCapacity:256];
-            for (unsigned int i=0; i<256; i++) {
-                histogram[i] = [NSNumber numberWithInt:0];
-            }
-
-            // Fill histogram
-            for (unsigned int x=0; x<1920; x++) {
-                for (unsigned int y=0; y<1080; y++) {
-                    GPUByteColorVector color = [rawDataFilter colorAtLocation:CGPointMake(x, y)];
-                    int green = color.green;
-                    int previousValue = [histogram[green] intValue];
-                    histogram[green] = [NSNumber numberWithInt:(previousValue+1)];
-                }
-            }
-
-            // Log it
-            for (unsigned int i=0; i<256; i++) {
-                NSLog(@"Value at %d is %d", i, histogram[i]);
-            }
-
+        [averageColorFilter setColorAverageProcessingFinishedBlock:^(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha, CMTime frameTime) {
+            focusMetric = green;
             resolve(nil);
         }];
     }];
-    [colorFilter useNextFrameForImageCapture];
-    [colorFilter forceProcessingAtSize:CGSizeMake(1920, 1080)];
-    [colorFilter addTarget:rawDataFilter];
+    [exposureFilter useNextFrameForImageCapture];
+    [exposureFilter addTarget:averageColorFilter];
 
     // Wait for metric
     [stillImageSource processImage];
