@@ -91,8 +91,7 @@
             }];
         });
     };
-    snapZStack(-14000, -12000, 500);
-    // snapZStack(-40000, 10000, 500);
+    snapZStack(-40000, 10000, 500);
 }
 
 - (void)setUpPreview

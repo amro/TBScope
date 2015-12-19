@@ -11,6 +11,9 @@
 #import <objc/runtime.h>
 #import "TBScopeCamera.h"
 #import "ImageQualityAnalyzer.h"
+#import <GPUImage/GPUImage.h>
+#import <PromiseKit/Promise.h>
+#import <PromiseKit/Promise+Hang.h>
 
 @interface ImageQualityAnalyzerTests : XCTestCase
 @end
@@ -40,54 +43,23 @@ static int const kLastEmptyImageIndex = 11;
 }
 
 - (void)testThatFocusedFluorescenceImagesHaveHigherContrastThanBlurryFluorescence {
-    [[TBScopeCamera sharedCamera] setFocusMode:TBScopeCameraFocusModeContrast];
+    // Calculate focus metrics
+    NSDecimalNumber *focus_01 = [self _focusMetricForImageNamed:@"focus_01"];
+    NSDecimalNumber *focus_02 = [self _focusMetricForImageNamed:@"focus_02"];
+    NSDecimalNumber *focus_03 = [self _focusMetricForImageNamed:@"focus_03"];
+    NSDecimalNumber *focus_04 = [self _focusMetricForImageNamed:@"focus_04"];
+    NSDecimalNumber *focus_05 = [self _focusMetricForImageNamed:@"focus_05"];
+    NSDecimalNumber *focus_06 = [self _focusMetricForImageNamed:@"focus_06"];
+    NSDecimalNumber *focus_07 = [self _focusMetricForImageNamed:@"focus_07"];
 
-    // Image set 01
-    NSDecimalNumber *fl_01_01 = [self _contrastForImageNamed:@"fl_01_01"];
-    NSDecimalNumber *fl_01_02 = [self _contrastForImageNamed:@"fl_01_02"];
-    NSDecimalNumber *fl_01_03 = [self _contrastForImageNamed:@"fl_01_03"];
-    NSDecimalNumber *fl_01_04 = [self _contrastForImageNamed:@"fl_01_04"];
-    NSDecimalNumber *fl_01_05 = [self _contrastForImageNamed:@"fl_01_05"];
-    
-    // Image set 02
-    NSDecimalNumber *fl_02_01 = [self _contrastForImageNamed:@"fl_02_01"];
-    NSDecimalNumber *fl_02_02 = [self _contrastForImageNamed:@"fl_02_02"];
-    NSDecimalNumber *fl_02_03 = [self _contrastForImageNamed:@"fl_02_03"];
-    NSDecimalNumber *fl_02_04 = [self _contrastForImageNamed:@"fl_02_04"];
-    NSDecimalNumber *fl_02_05 = [self _contrastForImageNamed:@"fl_02_05"];
-    
-    // Image set 03
-    NSDecimalNumber *fl_03_01 = [self _contrastForImageNamed:@"fl_03_01"];
-    NSDecimalNumber *fl_03_02 = [self _contrastForImageNamed:@"fl_03_02"];
-    NSDecimalNumber *fl_03_03 = [self _contrastForImageNamed:@"fl_03_03"];
-    NSDecimalNumber *fl_03_04 = [self _contrastForImageNamed:@"fl_03_04"];
-    NSDecimalNumber *fl_03_05 = [self _contrastForImageNamed:@"fl_03_05"];
-    
-    // Image set 04
-    NSDecimalNumber *fl_04_01 = [self _contrastForImageNamed:@"fl_04_01"];
-    NSDecimalNumber *fl_04_02 = [self _contrastForImageNamed:@"fl_04_02"];
-    NSDecimalNumber *fl_04_03 = [self _contrastForImageNamed:@"fl_04_03"];
-    NSDecimalNumber *fl_04_04 = [self _contrastForImageNamed:@"fl_04_04"];
-    NSDecimalNumber *fl_04_05 = [self _contrastForImageNamed:@"fl_04_05"];
-    
     NSArray *testCases = @[
         // Sharper image        Blurrier image
-        @[ fl_01_01,            fl_01_02        ],
-        @[ fl_01_02,            fl_01_03        ],
-        @[ fl_01_03,            fl_01_04        ],
-        @[ fl_01_04,            fl_01_05        ],
-        @[ fl_02_01,            fl_02_02        ],
-        @[ fl_02_02,            fl_02_03        ],
-        @[ fl_02_03,            fl_02_04        ],
-        @[ fl_02_04,            fl_02_05        ],
-        @[ fl_03_01,            fl_03_02        ],
-        @[ fl_03_02,            fl_03_03        ],
-        @[ fl_03_03,            fl_03_04        ],
-        @[ fl_03_04,            fl_03_05        ],
-        @[ fl_04_01,            fl_04_02        ],
-        @[ fl_04_02,            fl_04_03        ],
-        @[ fl_04_03,            fl_04_04        ],
-        @[ fl_04_04,            fl_04_05        ],
+        @[ focus_07,            focus_06        ],
+        @[ focus_06,            focus_05        ],
+        @[ focus_05,            focus_04        ],
+        @[ focus_04,            focus_03        ],
+        @[ focus_03,            focus_02        ],
+        @[ focus_02,            focus_01        ],
     ];
     for (NSArray *testCase in testCases) {
         NSDecimalNumber *sharperContrast = testCase[0];
@@ -191,11 +163,96 @@ static int const kLastEmptyImageIndex = 11;
 
 #pragma helper methods
 
-- (NSDecimalNumber *)_contrastForImageNamed:(NSString *)imageName {
-    ImageQuality imageQuality =[self _imageQualityForImageNamed:imageName];
-    double contrast = imageQuality.greenContrast;
-    NSLog(@"Image %@ has greenContrast %3.3f", imageName, contrast);
-    return [[NSDecimalNumber alloc] initWithDouble:contrast];
+- (NSDecimalNumber *)_focusMetricForImageNamed:(NSString *)imageName {
+    // Load the image
+    NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
+    UIImage *image = [UIImage imageWithContentsOfFile:filePath];
+
+    // Convert image to GPU input
+    GPUImagePicture *stillImageSource = [[GPUImagePicture alloc] initWithImage:image];
+
+    // Discard all but green channel
+    GPUImageColorMatrixFilter *colorFilter = [[GPUImageColorMatrixFilter alloc] init];
+    [colorFilter setColorMatrix:(GPUMatrix4x4){
+        { 0.f, 0.f, 0.f, 0.f },
+        { 0.f, 1.f, 0.f, 0.f },
+        { 0.f, 0.f, 0.f, 0.f },
+        { 0.f, 0.f, 0.f, 1.f },
+    }];
+    [stillImageSource addTarget:colorFilter];
+
+    // Crop the image to a square
+    double captureWidth = 1920.0;
+    double captureHeight = 1080.0;
+    double cropFromSides = (captureWidth - captureHeight) / captureWidth / 2.0;
+    double width = 1.0 - 2.0 * cropFromSides;
+    CGRect cropRect = CGRectMake(cropFromSides, 0.0, width, 1.0);
+    GPUImageCropFilter *cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
+    [colorFilter addTarget:cropFilter];
+
+    // Calculate sobelX
+    GPUImage3x3ConvolutionFilter *sobelX = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [sobelX setConvolutionKernel:(GPUMatrix3x3){
+        { -1.0f, 0.0f, 1.0f},
+        { -2.0f, 0.0f, 2.0f},
+        { -1.0f, 0.0f, 1.0f}
+    }];
+    [cropFilter addTarget:sobelX];
+
+    // Calculate sobelY
+    GPUImage3x3ConvolutionFilter *sobelY = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [sobelY setConvolutionKernel:(GPUMatrix3x3){
+        {  1.0f,  2.0f,  1.0f},
+        {  0.0f,  0.0f,  0.0f},
+        { -1.0f, -2.0f, -1.0f}
+    }];
+    [cropFilter addTarget:sobelY];
+
+    // Calculate tenegrad
+    GPUImageAddBlendFilter *addFilter = [[GPUImageAddBlendFilter alloc] init];
+    [sobelX addTarget:addFilter];
+    [sobelY addTarget:addFilter];
+
+    // Get the metric
+    GPUImageRawDataOutput *rawDataFilter = [[GPUImageRawDataOutput alloc] init];
+    [rawDataFilter setImageSize:CGSizeMake(1920, 1080)];
+    __block double focusMetric;
+    PMKPromise *promise = [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        [rawDataFilter setNewFrameAvailableBlock:^{
+            // Initialize histogram
+            NSMutableArray *histogram = [[NSMutableArray alloc] initWithCapacity:256];
+            for (unsigned int i=0; i<256; i++) {
+                histogram[i] = [NSNumber numberWithInt:0];
+            }
+
+            // Fill histogram
+            for (unsigned int x=0; x<1920; x++) {
+                for (unsigned int y=0; y<1080; y++) {
+                    GPUByteColorVector color = [rawDataFilter colorAtLocation:CGPointMake(x, y)];
+                    int green = color.green;
+                    int previousValue = [histogram[green] intValue];
+                    histogram[green] = [NSNumber numberWithInt:(previousValue+1)];
+                }
+            }
+
+            // Log it
+            for (unsigned int i=0; i<256; i++) {
+                NSLog(@"Value at %d is %d", i, histogram[i]);
+            }
+
+            resolve(nil);
+        }];
+    }];
+    [colorFilter useNextFrameForImageCapture];
+    [colorFilter forceProcessingAtSize:CGSizeMake(1920, 1080)];
+    [colorFilter addTarget:rawDataFilter];
+
+    // Wait for metric
+    [stillImageSource processImage];
+    [PMKPromise hang:promise];
+
+    NSLog(@"Image %@ has focus metric %3.6f", imageName, focusMetric);
+    return [[NSDecimalNumber alloc] initWithDouble:focusMetric];
 }
 
 - (NSDecimalNumber *)_boundaryScoreForImageNamed:(NSString *)imageName {
