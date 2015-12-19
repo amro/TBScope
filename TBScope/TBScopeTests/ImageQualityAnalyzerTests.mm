@@ -86,6 +86,111 @@ static int const kLastEmptyImageIndex = 11;
     NSDecimalNumber *beads_500_03_3450 = [self _focusMetricForImageAtPath:@"IMG_3450.JPG"];
     NSDecimalNumber *beads_500_03_3451 = [self _focusMetricForImageAtPath:@"IMG_3451.JPG"];
     NSDecimalNumber *beads_500_03_3452 = [self _focusMetricForImageAtPath:@"IMG_3452.JPG"];
+    NSDecimalNumber *beads_100_01_3500 = [self _focusMetricForImageAtPath:@"IMG_3500.JPG"];
+    NSDecimalNumber *beads_100_01_3501 = [self _focusMetricForImageAtPath:@"IMG_3501.JPG"];
+    NSDecimalNumber *beads_100_01_3502 = [self _focusMetricForImageAtPath:@"IMG_3502.JPG"];
+    NSDecimalNumber *beads_100_01_3503 = [self _focusMetricForImageAtPath:@"IMG_3503.JPG"];
+    NSDecimalNumber *beads_100_01_3504 = [self _focusMetricForImageAtPath:@"IMG_3504.JPG"];
+    NSDecimalNumber *beads_100_01_3505 = [self _focusMetricForImageAtPath:@"IMG_3505.JPG"];
+    NSDecimalNumber *beads_100_01_3506 = [self _focusMetricForImageAtPath:@"IMG_3506.JPG"];
+    NSDecimalNumber *beads_100_01_3507 = [self _focusMetricForImageAtPath:@"IMG_3507.JPG"];
+    NSDecimalNumber *beads_100_01_3508 = [self _focusMetricForImageAtPath:@"IMG_3508.JPG"];
+    NSDecimalNumber *beads_100_01_3509 = [self _focusMetricForImageAtPath:@"IMG_3509.JPG"];
+    NSDecimalNumber *beads_100_01_3510 = [self _focusMetricForImageAtPath:@"IMG_3510.JPG"];
+    NSDecimalNumber *beads_100_01_3511 = [self _focusMetricForImageAtPath:@"IMG_3511.JPG"];
+    NSDecimalNumber *beads_100_01_3512 = [self _focusMetricForImageAtPath:@"IMG_3512.JPG"];
+    NSDecimalNumber *beads_100_01_3513 = [self _focusMetricForImageAtPath:@"IMG_3513.JPG"];
+    NSDecimalNumber *beads_100_01_3514 = [self _focusMetricForImageAtPath:@"IMG_3514.JPG"];
+    NSDecimalNumber *beads_100_01_3515 = [self _focusMetricForImageAtPath:@"IMG_3515.JPG"];
+    NSDecimalNumber *beads_100_01_3516 = [self _focusMetricForImageAtPath:@"IMG_3516.JPG"];
+    NSDecimalNumber *beads_100_01_3517 = [self _focusMetricForImageAtPath:@"IMG_3517.JPG"];
+    NSDecimalNumber *beads_100_01_3518 = [self _focusMetricForImageAtPath:@"IMG_3518.JPG"];
+    NSDecimalNumber *beads_100_01_3519 = [self _focusMetricForImageAtPath:@"IMG_3519.JPG"];
+    NSDecimalNumber *beads_100_01_3520 = [self _focusMetricForImageAtPath:@"IMG_3520.JPG"];
+    NSDecimalNumber *beads_100_01_3521 = [self _focusMetricForImageAtPath:@"IMG_3521.JPG"];
+    NSDecimalNumber *beads_100_01_3522 = [self _focusMetricForImageAtPath:@"IMG_3522.JPG"];
+    NSDecimalNumber *beads_100_01_3523 = [self _focusMetricForImageAtPath:@"IMG_3523.JPG"];
+    NSDecimalNumber *beads_100_01_3524 = [self _focusMetricForImageAtPath:@"IMG_3524.JPG"];
+    NSDecimalNumber *beads_100_01_3525 = [self _focusMetricForImageAtPath:@"IMG_3525.JPG"];
+    NSDecimalNumber *beads_100_01_3526 = [self _focusMetricForImageAtPath:@"IMG_3526.JPG"];
+    NSDecimalNumber *beads_100_01_3527 = [self _focusMetricForImageAtPath:@"IMG_3527.JPG"];
+    NSDecimalNumber *beads_100_01_3528 = [self _focusMetricForImageAtPath:@"IMG_3528.JPG"];
+    NSDecimalNumber *beads_100_01_3529 = [self _focusMetricForImageAtPath:@"IMG_3529.JPG"];
+    NSDecimalNumber *beads_100_01_3530 = [self _focusMetricForImageAtPath:@"IMG_3530.JPG"];
+    NSDecimalNumber *beads_100_01_3531 = [self _focusMetricForImageAtPath:@"IMG_3531.JPG"];
+    NSDecimalNumber *beads_100_01_3532 = [self _focusMetricForImageAtPath:@"IMG_3532.JPG"];
+    NSDecimalNumber *beads_100_01_3533 = [self _focusMetricForImageAtPath:@"IMG_3533.JPG"];
+    NSDecimalNumber *beads_100_01_3534 = [self _focusMetricForImageAtPath:@"IMG_3534.JPG"];
+    NSDecimalNumber *beads_100_01_3535 = [self _focusMetricForImageAtPath:@"IMG_3535.JPG"];
+    NSDecimalNumber *beads_100_01_3536 = [self _focusMetricForImageAtPath:@"IMG_3536.JPG"];
+    NSDecimalNumber *beads_100_01_3537 = [self _focusMetricForImageAtPath:@"IMG_3537.JPG"];
+    NSDecimalNumber *beads_100_01_3538 = [self _focusMetricForImageAtPath:@"IMG_3538.JPG"];
+    NSDecimalNumber *beads_100_01_3539 = [self _focusMetricForImageAtPath:@"IMG_3539.JPG"];
+    NSDecimalNumber *beads_100_01_3540 = [self _focusMetricForImageAtPath:@"IMG_3540.JPG"];
+    NSDecimalNumber *beads_100_01_3541 = [self _focusMetricForImageAtPath:@"IMG_3541.JPG"];
+    NSDecimalNumber *beads_100_01_3542 = [self _focusMetricForImageAtPath:@"IMG_3542.JPG"];
+    NSDecimalNumber *beads_100_01_3543 = [self _focusMetricForImageAtPath:@"IMG_3543.JPG"];
+    NSDecimalNumber *beads_100_01_3544 = [self _focusMetricForImageAtPath:@"IMG_3544.JPG"];
+    NSDecimalNumber *beads_100_01_3545 = [self _focusMetricForImageAtPath:@"IMG_3545.JPG"];
+    NSDecimalNumber *beads_100_01_3546 = [self _focusMetricForImageAtPath:@"IMG_3546.JPG"];
+    NSDecimalNumber *beads_100_01_3547 = [self _focusMetricForImageAtPath:@"IMG_3547.JPG"];
+    NSDecimalNumber *beads_100_01_3548 = [self _focusMetricForImageAtPath:@"IMG_3548.JPG"];
+    NSDecimalNumber *beads_100_01_3549 = [self _focusMetricForImageAtPath:@"IMG_3549.JPG"];
+    NSDecimalNumber *beads_100_01_3550 = [self _focusMetricForImageAtPath:@"IMG_3550.JPG"];
+    NSDecimalNumber *beads_100_01_3551 = [self _focusMetricForImageAtPath:@"IMG_3551.JPG"];
+    NSDecimalNumber *beads_100_01_3552 = [self _focusMetricForImageAtPath:@"IMG_3552.JPG"];
+    NSDecimalNumber *beads_100_01_3553 = [self _focusMetricForImageAtPath:@"IMG_3553.JPG"];
+    NSDecimalNumber *beads_100_01_3554 = [self _focusMetricForImageAtPath:@"IMG_3554.JPG"];
+    NSDecimalNumber *beads_100_01_3555 = [self _focusMetricForImageAtPath:@"IMG_3555.JPG"];
+    NSDecimalNumber *beads_100_01_3556 = [self _focusMetricForImageAtPath:@"IMG_3556.JPG"];
+    NSDecimalNumber *beads_100_01_3557 = [self _focusMetricForImageAtPath:@"IMG_3557.JPG"];
+    NSDecimalNumber *beads_100_01_3558 = [self _focusMetricForImageAtPath:@"IMG_3558.JPG"];
+    NSDecimalNumber *beads_100_01_3559 = [self _focusMetricForImageAtPath:@"IMG_3559.JPG"];
+    NSDecimalNumber *beads_100_01_3560 = [self _focusMetricForImageAtPath:@"IMG_3560.JPG"];
+    NSDecimalNumber *beads_100_01_3561 = [self _focusMetricForImageAtPath:@"IMG_3561.JPG"];
+    NSDecimalNumber *beads_100_01_3562 = [self _focusMetricForImageAtPath:@"IMG_3562.JPG"];
+    NSDecimalNumber *beads_100_01_3563 = [self _focusMetricForImageAtPath:@"IMG_3563.JPG"];
+    NSDecimalNumber *beads_100_01_3564 = [self _focusMetricForImageAtPath:@"IMG_3564.JPG"];
+    NSDecimalNumber *beads_100_01_3565 = [self _focusMetricForImageAtPath:@"IMG_3565.JPG"];
+    NSDecimalNumber *beads_100_01_3566 = [self _focusMetricForImageAtPath:@"IMG_3566.JPG"];
+    NSDecimalNumber *beads_100_01_3567 = [self _focusMetricForImageAtPath:@"IMG_3567.JPG"];
+    NSDecimalNumber *beads_100_01_3568 = [self _focusMetricForImageAtPath:@"IMG_3568.JPG"];
+    NSDecimalNumber *beads_100_01_3569 = [self _focusMetricForImageAtPath:@"IMG_3569.JPG"];
+    NSDecimalNumber *beads_100_01_3570 = [self _focusMetricForImageAtPath:@"IMG_3570.JPG"];
+    NSDecimalNumber *beads_100_01_3571 = [self _focusMetricForImageAtPath:@"IMG_3571.JPG"];
+    NSDecimalNumber *beads_100_01_3572 = [self _focusMetricForImageAtPath:@"IMG_3572.JPG"];
+    NSDecimalNumber *beads_100_01_3573 = [self _focusMetricForImageAtPath:@"IMG_3573.JPG"];
+    NSDecimalNumber *beads_100_01_3574 = [self _focusMetricForImageAtPath:@"IMG_3574.JPG"];
+    NSDecimalNumber *beads_100_01_3575 = [self _focusMetricForImageAtPath:@"IMG_3575.JPG"];
+    NSDecimalNumber *beads_100_01_3576 = [self _focusMetricForImageAtPath:@"IMG_3576.JPG"];
+    NSDecimalNumber *beads_100_01_3577 = [self _focusMetricForImageAtPath:@"IMG_3577.JPG"];
+    NSDecimalNumber *beads_100_01_3578 = [self _focusMetricForImageAtPath:@"IMG_3578.JPG"];
+    NSDecimalNumber *beads_100_01_3579 = [self _focusMetricForImageAtPath:@"IMG_3579.JPG"];
+    NSDecimalNumber *beads_100_01_3580 = [self _focusMetricForImageAtPath:@"IMG_3580.JPG"];
+    NSDecimalNumber *beads_100_01_3581 = [self _focusMetricForImageAtPath:@"IMG_3581.JPG"];
+    NSDecimalNumber *beads_100_01_3582 = [self _focusMetricForImageAtPath:@"IMG_3582.JPG"];
+    NSDecimalNumber *beads_100_01_3583 = [self _focusMetricForImageAtPath:@"IMG_3583.JPG"];
+    NSDecimalNumber *beads_100_01_3584 = [self _focusMetricForImageAtPath:@"IMG_3584.JPG"];
+    NSDecimalNumber *beads_100_01_3585 = [self _focusMetricForImageAtPath:@"IMG_3585.JPG"];
+    NSDecimalNumber *beads_100_01_3586 = [self _focusMetricForImageAtPath:@"IMG_3586.JPG"];
+    NSDecimalNumber *beads_100_01_3587 = [self _focusMetricForImageAtPath:@"IMG_3587.JPG"];
+    NSDecimalNumber *beads_100_01_3588 = [self _focusMetricForImageAtPath:@"IMG_3588.JPG"];
+    NSDecimalNumber *beads_100_01_3589 = [self _focusMetricForImageAtPath:@"IMG_3589.JPG"];
+    NSDecimalNumber *beads_100_01_3590 = [self _focusMetricForImageAtPath:@"IMG_3590.JPG"];
+    NSDecimalNumber *beads_100_01_3591 = [self _focusMetricForImageAtPath:@"IMG_3591.JPG"];
+    NSDecimalNumber *beads_100_01_3592 = [self _focusMetricForImageAtPath:@"IMG_3592.JPG"];
+    NSDecimalNumber *beads_100_01_3593 = [self _focusMetricForImageAtPath:@"IMG_3593.JPG"];
+    NSDecimalNumber *beads_100_01_3594 = [self _focusMetricForImageAtPath:@"IMG_3594.JPG"];
+    NSDecimalNumber *beads_100_01_3595 = [self _focusMetricForImageAtPath:@"IMG_3595.JPG"];
+    NSDecimalNumber *beads_100_01_3596 = [self _focusMetricForImageAtPath:@"IMG_3596.JPG"];
+    NSDecimalNumber *beads_100_01_3597 = [self _focusMetricForImageAtPath:@"IMG_3597.JPG"];
+    NSDecimalNumber *beads_100_01_3598 = [self _focusMetricForImageAtPath:@"IMG_3598.JPG"];
+    NSDecimalNumber *beads_100_01_3599 = [self _focusMetricForImageAtPath:@"IMG_3599.JPG"];
+    NSDecimalNumber *beads_100_01_3600 = [self _focusMetricForImageAtPath:@"IMG_3600.JPG"];
+    NSDecimalNumber *beads_100_01_3601 = [self _focusMetricForImageAtPath:@"IMG_3601.JPG"];
+    NSDecimalNumber *beads_100_01_3602 = [self _focusMetricForImageAtPath:@"IMG_3602.JPG"];
+    NSDecimalNumber *beads_100_01_3603 = [self _focusMetricForImageAtPath:@"IMG_3603.JPG"];
+    NSDecimalNumber *beads_100_01_3604 = [self _focusMetricForImageAtPath:@"IMG_3604.JPG"];
 
     NSArray *testCases = @[
         // Blurrier image       Sharper image
@@ -128,6 +233,110 @@ static int const kLastEmptyImageIndex = 11;
         @[ beads_500_03_3449,   beads_500_03_3450   ],
         @[ beads_500_03_3450,   beads_500_03_3451   ],
         @[ beads_500_03_3451,   beads_500_03_3452   ],
+        @[ beads_100_01_3500,   beads_100_01_3501   ],
+        @[ beads_100_01_3501,   beads_100_01_3502   ],
+        @[ beads_100_01_3502,   beads_100_01_3503   ],
+        @[ beads_100_01_3503,   beads_100_01_3504   ],
+        @[ beads_100_01_3504,   beads_100_01_3505   ],
+        @[ beads_100_01_3505,   beads_100_01_3506   ],
+        @[ beads_100_01_3506,   beads_100_01_3507   ],
+        @[ beads_100_01_3507,   beads_100_01_3508   ],
+        @[ beads_100_01_3508,   beads_100_01_3509   ],
+        @[ beads_100_01_3509,   beads_100_01_3510   ],
+        @[ beads_100_01_3510,   beads_100_01_3511   ],
+        @[ beads_100_01_3511,   beads_100_01_3512   ],
+        @[ beads_100_01_3512,   beads_100_01_3513   ],
+        @[ beads_100_01_3513,   beads_100_01_3514   ],
+        @[ beads_100_01_3514,   beads_100_01_3515   ],
+        @[ beads_100_01_3515,   beads_100_01_3516   ],
+        @[ beads_100_01_3516,   beads_100_01_3517   ],
+        @[ beads_100_01_3517,   beads_100_01_3518   ],
+        @[ beads_100_01_3518,   beads_100_01_3519   ],
+        @[ beads_100_01_3519,   beads_100_01_3520   ],
+        @[ beads_100_01_3520,   beads_100_01_3521   ],
+        @[ beads_100_01_3521,   beads_100_01_3522   ],
+        @[ beads_100_01_3522,   beads_100_01_3523   ],
+        @[ beads_100_01_3523,   beads_100_01_3524   ],
+        @[ beads_100_01_3524,   beads_100_01_3525   ],
+        @[ beads_100_01_3525,   beads_100_01_3526   ],
+        @[ beads_100_01_3526,   beads_100_01_3527   ],
+        @[ beads_100_01_3527,   beads_100_01_3528   ],
+        @[ beads_100_01_3528,   beads_100_01_3529   ],
+        @[ beads_100_01_3529,   beads_100_01_3530   ],
+        @[ beads_100_01_3530,   beads_100_01_3531   ],
+        @[ beads_100_01_3531,   beads_100_01_3532   ],
+        @[ beads_100_01_3532,   beads_100_01_3533   ],
+        @[ beads_100_01_3533,   beads_100_01_3534   ],
+        @[ beads_100_01_3534,   beads_100_01_3535   ],
+        @[ beads_100_01_3535,   beads_100_01_3536   ],
+        @[ beads_100_01_3536,   beads_100_01_3537   ],
+        @[ beads_100_01_3537,   beads_100_01_3538   ],
+        @[ beads_100_01_3538,   beads_100_01_3539   ],
+        @[ beads_100_01_3539,   beads_100_01_3540   ],
+        @[ beads_100_01_3540,   beads_100_01_3541   ],
+        @[ beads_100_01_3541,   beads_100_01_3542   ],
+        @[ beads_100_01_3542,   beads_100_01_3543   ],
+        @[ beads_100_01_3543,   beads_100_01_3544   ],
+        @[ beads_100_01_3544,   beads_100_01_3545   ],
+        @[ beads_100_01_3545,   beads_100_01_3546   ],
+        @[ beads_100_01_3546,   beads_100_01_3547   ],
+        @[ beads_100_01_3547,   beads_100_01_3548   ],
+        @[ beads_100_01_3548,   beads_100_01_3549   ],
+        @[ beads_100_01_3549,   beads_100_01_3550   ],
+        @[ beads_100_01_3550,   beads_100_01_3551   ],
+        @[ beads_100_01_3551,   beads_100_01_3552   ],
+        @[ beads_100_01_3552,   beads_100_01_3553   ],
+        @[ beads_100_01_3553,   beads_100_01_3554   ],
+        @[ beads_100_01_3554,   beads_100_01_3555   ],
+        @[ beads_100_01_3555,   beads_100_01_3556   ],
+        @[ beads_100_01_3556,   beads_100_01_3557   ],
+        @[ beads_100_01_3557,   beads_100_01_3558   ],
+        @[ beads_100_01_3558,   beads_100_01_3559   ],
+        @[ beads_100_01_3559,   beads_100_01_3560   ],
+        @[ beads_100_01_3560,   beads_100_01_3561   ],
+        @[ beads_100_01_3561,   beads_100_01_3562   ],
+        @[ beads_100_01_3562,   beads_100_01_3563   ],
+        @[ beads_100_01_3563,   beads_100_01_3564   ],
+        @[ beads_100_01_3564,   beads_100_01_3565   ],
+        @[ beads_100_01_3565,   beads_100_01_3566   ],
+        @[ beads_100_01_3566,   beads_100_01_3567   ],
+        @[ beads_100_01_3567,   beads_100_01_3568   ],
+        @[ beads_100_01_3568,   beads_100_01_3569   ],
+        @[ beads_100_01_3569,   beads_100_01_3570   ],
+        @[ beads_100_01_3570,   beads_100_01_3571   ],
+        @[ beads_100_01_3571,   beads_100_01_3572   ],
+        @[ beads_100_01_3572,   beads_100_01_3573   ],
+        @[ beads_100_01_3573,   beads_100_01_3574   ],
+        @[ beads_100_01_3574,   beads_100_01_3575   ],
+        @[ beads_100_01_3575,   beads_100_01_3576   ],
+        @[ beads_100_01_3576,   beads_100_01_3577   ],
+        @[ beads_100_01_3577,   beads_100_01_3578   ],
+        @[ beads_100_01_3578,   beads_100_01_3579   ],
+        @[ beads_100_01_3579,   beads_100_01_3580   ],
+        @[ beads_100_01_3580,   beads_100_01_3581   ],
+        @[ beads_100_01_3581,   beads_100_01_3582   ],
+        @[ beads_100_01_3582,   beads_100_01_3583   ],
+        @[ beads_100_01_3583,   beads_100_01_3584   ],
+        @[ beads_100_01_3584,   beads_100_01_3585   ],
+        @[ beads_100_01_3585,   beads_100_01_3586   ],
+        @[ beads_100_01_3586,   beads_100_01_3587   ],
+        @[ beads_100_01_3587,   beads_100_01_3588   ],
+        @[ beads_100_01_3588,   beads_100_01_3589   ],
+        @[ beads_100_01_3589,   beads_100_01_3590   ],
+        @[ beads_100_01_3590,   beads_100_01_3591   ],
+        @[ beads_100_01_3591,   beads_100_01_3592   ],
+        @[ beads_100_01_3592,   beads_100_01_3593   ],
+        @[ beads_100_01_3593,   beads_100_01_3594   ],
+        @[ beads_100_01_3594,   beads_100_01_3595   ],
+        @[ beads_100_01_3595,   beads_100_01_3596   ],
+        @[ beads_100_01_3596,   beads_100_01_3597   ],
+        @[ beads_100_01_3597,   beads_100_01_3598   ],
+        @[ beads_100_01_3598,   beads_100_01_3599   ],
+        @[ beads_100_01_3599,   beads_100_01_3600   ],
+        @[ beads_100_01_3600,   beads_100_01_3601   ],
+        @[ beads_100_01_3601,   beads_100_01_3602   ],
+        @[ beads_100_01_3602,   beads_100_01_3603   ],
+        @[ beads_100_01_3603,   beads_100_01_3604   ],
     ];
     for (NSArray *testCase in testCases) {
         NSDecimalNumber *blurrierContrast = testCase[0];
