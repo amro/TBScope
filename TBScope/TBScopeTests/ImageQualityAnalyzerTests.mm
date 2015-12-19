@@ -44,26 +44,94 @@ static int const kLastEmptyImageIndex = 11;
 
 - (void)testThatFocusedFluorescenceImagesHaveHigherContrastThanBlurryFluorescence {
     // Calculate focus metrics
-    NSDecimalNumber *focus_01 = [self _focusMetricForImageNamed:@"focus_01"];
-    NSDecimalNumber *focus_02 = [self _focusMetricForImageNamed:@"focus_02"];
-    NSDecimalNumber *focus_03 = [self _focusMetricForImageNamed:@"focus_03"];
-    NSDecimalNumber *focus_04 = [self _focusMetricForImageNamed:@"focus_04"];
-    NSDecimalNumber *focus_05 = [self _focusMetricForImageNamed:@"focus_05"];
-    NSDecimalNumber *focus_06 = [self _focusMetricForImageNamed:@"focus_06"];
-    NSDecimalNumber *focus_07 = [self _focusMetricForImageNamed:@"focus_07"];
+    NSDecimalNumber *beads_500_01_001 = [self _focusMetricForImageAtPath:@"IMG_001.JPG"];
+    NSDecimalNumber *beads_500_01_002 = [self _focusMetricForImageAtPath:@"IMG_002.JPG"];
+    NSDecimalNumber *beads_500_01_003 = [self _focusMetricForImageAtPath:@"IMG_003.JPG"];
+    NSDecimalNumber *beads_500_01_004 = [self _focusMetricForImageAtPath:@"IMG_004.JPG"];
+    NSDecimalNumber *beads_500_01_005 = [self _focusMetricForImageAtPath:@"IMG_005.JPG"];
+    NSDecimalNumber *beads_500_01_006 = [self _focusMetricForImageAtPath:@"IMG_006.JPG"];
+    NSDecimalNumber *beads_500_01_007 = [self _focusMetricForImageAtPath:@"IMG_007.JPG"];
+    NSDecimalNumber *beads_500_02_3041 = [self _focusMetricForImageAtPath:@"IMG_3041.JPG"];
+    NSDecimalNumber *beads_500_02_3042 = [self _focusMetricForImageAtPath:@"IMG_3042.JPG"];
+    NSDecimalNumber *beads_500_02_3043 = [self _focusMetricForImageAtPath:@"IMG_3043.JPG"];
+    NSDecimalNumber *beads_500_02_3044 = [self _focusMetricForImageAtPath:@"IMG_3044.JPG"];
+    NSDecimalNumber *beads_500_02_3045 = [self _focusMetricForImageAtPath:@"IMG_3045.JPG"];
+    NSDecimalNumber *beads_500_02_3046 = [self _focusMetricForImageAtPath:@"IMG_3046.JPG"];
+    NSDecimalNumber *beads_500_02_3047 = [self _focusMetricForImageAtPath:@"IMG_3047.JPG"];
+    NSDecimalNumber *beads_500_02_3048 = [self _focusMetricForImageAtPath:@"IMG_3048.JPG"];
+    NSDecimalNumber *beads_500_02_3049 = [self _focusMetricForImageAtPath:@"IMG_3049.JPG"];
+    NSDecimalNumber *beads_500_03_3427 = [self _focusMetricForImageAtPath:@"IMG_3427.JPG"];
+    NSDecimalNumber *beads_500_03_3428 = [self _focusMetricForImageAtPath:@"IMG_3428.JPG"];
+    NSDecimalNumber *beads_500_03_3429 = [self _focusMetricForImageAtPath:@"IMG_3429.JPG"];
+    NSDecimalNumber *beads_500_03_3430 = [self _focusMetricForImageAtPath:@"IMG_3430.JPG"];
+    NSDecimalNumber *beads_500_03_3431 = [self _focusMetricForImageAtPath:@"IMG_3431.JPG"];
+    NSDecimalNumber *beads_500_03_3432 = [self _focusMetricForImageAtPath:@"IMG_3432.JPG"];
+    NSDecimalNumber *beads_500_03_3433 = [self _focusMetricForImageAtPath:@"IMG_3433.JPG"];
+    NSDecimalNumber *beads_500_03_3434 = [self _focusMetricForImageAtPath:@"IMG_3434.JPG"];
+    NSDecimalNumber *beads_500_03_3435 = [self _focusMetricForImageAtPath:@"IMG_3435.JPG"];
+    NSDecimalNumber *beads_500_03_3436 = [self _focusMetricForImageAtPath:@"IMG_3436.JPG"];
+    NSDecimalNumber *beads_500_03_3437 = [self _focusMetricForImageAtPath:@"IMG_3437.JPG"];
+    NSDecimalNumber *beads_500_03_3438 = [self _focusMetricForImageAtPath:@"IMG_3438.JPG"];
+    NSDecimalNumber *beads_500_03_3439 = [self _focusMetricForImageAtPath:@"IMG_3439.JPG"];
+    NSDecimalNumber *beads_500_03_3440 = [self _focusMetricForImageAtPath:@"IMG_3440.JPG"];
+    NSDecimalNumber *beads_500_03_3441 = [self _focusMetricForImageAtPath:@"IMG_3441.JPG"];
+    NSDecimalNumber *beads_500_03_3442 = [self _focusMetricForImageAtPath:@"IMG_3442.JPG"];
+    NSDecimalNumber *beads_500_03_3443 = [self _focusMetricForImageAtPath:@"IMG_3443.JPG"];
+    NSDecimalNumber *beads_500_03_3444 = [self _focusMetricForImageAtPath:@"IMG_3444.JPG"];
+    NSDecimalNumber *beads_500_03_3445 = [self _focusMetricForImageAtPath:@"IMG_3445.JPG"];
+    NSDecimalNumber *beads_500_03_3446 = [self _focusMetricForImageAtPath:@"IMG_3446.JPG"];
+    NSDecimalNumber *beads_500_03_3447 = [self _focusMetricForImageAtPath:@"IMG_3447.JPG"];
+    NSDecimalNumber *beads_500_03_3448 = [self _focusMetricForImageAtPath:@"IMG_3448.JPG"];
+    NSDecimalNumber *beads_500_03_3449 = [self _focusMetricForImageAtPath:@"IMG_3449.JPG"];
+    NSDecimalNumber *beads_500_03_3450 = [self _focusMetricForImageAtPath:@"IMG_3450.JPG"];
+    NSDecimalNumber *beads_500_03_3451 = [self _focusMetricForImageAtPath:@"IMG_3451.JPG"];
+    NSDecimalNumber *beads_500_03_3452 = [self _focusMetricForImageAtPath:@"IMG_3452.JPG"];
 
     NSArray *testCases = @[
-        // Sharper image        Blurrier image
-        @[ focus_07,            focus_06        ],
-        @[ focus_06,            focus_05        ],
-        @[ focus_05,            focus_04        ],
-        @[ focus_04,            focus_03        ],
-        @[ focus_03,            focus_02        ],
-        @[ focus_02,            focus_01        ],
+        // Blurrier image       Sharper image
+        @[ beads_500_01_001,    beads_500_01_002    ],
+        @[ beads_500_01_002,    beads_500_01_003    ],
+        @[ beads_500_01_003,    beads_500_01_004    ],
+        @[ beads_500_01_004,    beads_500_01_005    ],
+        @[ beads_500_01_005,    beads_500_01_006    ],
+        @[ beads_500_01_006,    beads_500_01_007    ],
+        @[ beads_500_02_3041,   beads_500_02_3042   ],
+        @[ beads_500_02_3042,   beads_500_02_3043   ],
+        @[ beads_500_02_3043,   beads_500_02_3044   ],
+        @[ beads_500_02_3044,   beads_500_02_3045   ],
+        @[ beads_500_02_3045,   beads_500_02_3046   ],
+        @[ beads_500_02_3046,   beads_500_02_3047   ],
+        @[ beads_500_02_3047,   beads_500_02_3048   ],
+        @[ beads_500_02_3048,   beads_500_02_3049   ],
+        @[ beads_500_03_3427,   beads_500_03_3428   ],
+        @[ beads_500_03_3428,   beads_500_03_3429   ],
+        @[ beads_500_03_3429,   beads_500_03_3430   ],
+        @[ beads_500_03_3430,   beads_500_03_3431   ],
+        @[ beads_500_03_3431,   beads_500_03_3432   ],
+        @[ beads_500_03_3432,   beads_500_03_3433   ],
+        @[ beads_500_03_3433,   beads_500_03_3434   ],
+        @[ beads_500_03_3434,   beads_500_03_3435   ],
+        @[ beads_500_03_3435,   beads_500_03_3436   ],
+        @[ beads_500_03_3436,   beads_500_03_3437   ],
+        @[ beads_500_03_3437,   beads_500_03_3438   ],
+        @[ beads_500_03_3438,   beads_500_03_3439   ],
+        @[ beads_500_03_3439,   beads_500_03_3440   ],
+        @[ beads_500_03_3440,   beads_500_03_3441   ],
+        @[ beads_500_03_3441,   beads_500_03_3442   ],
+        @[ beads_500_03_3442,   beads_500_03_3443   ],
+        @[ beads_500_03_3443,   beads_500_03_3444   ],
+        @[ beads_500_03_3444,   beads_500_03_3445   ],
+        @[ beads_500_03_3445,   beads_500_03_3446   ],
+        @[ beads_500_03_3446,   beads_500_03_3447   ],
+        @[ beads_500_03_3447,   beads_500_03_3448   ],
+        @[ beads_500_03_3448,   beads_500_03_3449   ],
+        @[ beads_500_03_3449,   beads_500_03_3450   ],
+        @[ beads_500_03_3450,   beads_500_03_3451   ],
+        @[ beads_500_03_3451,   beads_500_03_3452   ],
     ];
     for (NSArray *testCase in testCases) {
-        NSDecimalNumber *sharperContrast = testCase[0];
-        NSDecimalNumber *blurrierContrast = testCase[1];
+        NSDecimalNumber *blurrierContrast = testCase[0];
+        NSDecimalNumber *sharperContrast  = testCase[1];
         XCTAssertGreaterThan([sharperContrast doubleValue], [blurrierContrast doubleValue]);
     }
 }
@@ -163,9 +231,10 @@ static int const kLastEmptyImageIndex = 11;
 
 #pragma helper methods
 
-- (NSDecimalNumber *)_focusMetricForImageNamed:(NSString *)imageName {
+- (NSDecimalNumber *)_focusMetricForImageAtPath:(NSString *)imagePath {
     // Load the image
-    NSString *filePath = [[NSBundle bundleForClass:[self class]] pathForResource:imageName ofType:@"jpg"];
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]] resourcePath];
+    NSString *filePath = [bundlePath stringByAppendingPathComponent:imagePath];
     UIImage *image = [UIImage imageWithContentsOfFile:filePath];
 
     // Convert image to GPU input
@@ -194,21 +263,28 @@ static int const kLastEmptyImageIndex = 11;
     GPUImageCropFilter *cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
     [colorFilter addTarget:cropFilter];
 
+    // Crop out a circle
+    UIImage *maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
+    GPUImagePicture *maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
+    [maskImageSource processImage];
+    GPUImageAlphaBlendFilter *alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilter.mix = 1.0f;
+    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
+
     // Generate sharpened image
     GPUImageSharpenFilter *sharpenFilter = [[GPUImageSharpenFilter alloc] init];
     [sharpenFilter setSharpness:1.0];
-    [cropFilter addTarget:sharpenFilter];
+    [alphaMaskFilter addTarget:sharpenFilter];
 
     // Calculate tenegrad
     GPUImageDifferenceBlendFilter *differenceFilter = [[GPUImageDifferenceBlendFilter alloc] init];
     [sharpenFilter addTarget:differenceFilter];
-    [cropFilter addTarget:differenceFilter];
+    [alphaMaskFilter addTarget:differenceFilter];
 
-    // Maybe try to run either a brighten filter or a contrast filter,
-    // then checking the average green value, since the values are so
-    // low that there's not much contrast.
+    // Increase exposure to brighten the bright pixels more than the dark pixels
     GPUImageExposureFilter *exposureFilter = [[GPUImageExposureFilter alloc] init];
-    exposureFilter.exposure = 3.5;
+    exposureFilter.exposure = 3.75;
     [differenceFilter addTarget:exposureFilter];
 
     // Get the metric
@@ -227,7 +303,7 @@ static int const kLastEmptyImageIndex = 11;
     [stillImageSource processImage];
     [PMKPromise hang:promise];
 
-    NSLog(@"Image %@ has focus metric %3.6f", imageName, focusMetric);
+    NSLog(@"Image %@ has focus metric %3.6f", imagePath, focusMetric);
     return [[NSDecimalNumber alloc] initWithDouble:focusMetric];
 }
 
