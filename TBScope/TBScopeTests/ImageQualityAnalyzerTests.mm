@@ -272,20 +272,43 @@ static int const kLastEmptyImageIndex = 11;
     [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
     [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
 
-    // Generate sharpened image
-    GPUImageSharpenFilter *sharpenFilter = [[GPUImageSharpenFilter alloc] init];
-    [sharpenFilter setSharpness:1.0];
-    [alphaMaskFilter addTarget:sharpenFilter];
+    // Calculate convoluation p = g(i-1,j)
+    GPUImage3x3ConvolutionFilter *p = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [p setConvolutionKernel:(GPUMatrix3x3){
+        { 0.0f, 0.0f, 0.0f},
+        { 1.0f, 0.0f, 0.0f},
+        { 0.0f, 0.0f, 0.0f}
+    }];
+    [alphaMaskFilter addTarget:p];
 
-    // Calculate tenegrad
-    GPUImageDifferenceBlendFilter *differenceFilter = [[GPUImageDifferenceBlendFilter alloc] init];
-    [sharpenFilter addTarget:differenceFilter];
-    [alphaMaskFilter addTarget:differenceFilter];
+    // Calculate convoluation q = g(i+1,j)
+    GPUImage3x3ConvolutionFilter *q = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [q setConvolutionKernel:(GPUMatrix3x3){
+        { 0.0f, 0.0f, 0.0f},
+        { 0.0f, 0.0f, 1.0f},
+        { 0.0f, 0.0f, 0.0f}
+    }];
+    [alphaMaskFilter addTarget:q];
+
+    // Calculate r = p*o (o = original)
+    GPUImageMultiplyBlendFilter *r = [[GPUImageMultiplyBlendFilter alloc] init];
+    [p addTarget:r];
+    [alphaMaskFilter addTarget:r];
+
+    // Calculate s = p*q
+    GPUImageMultiplyBlendFilter *s = [[GPUImageMultiplyBlendFilter alloc] init];
+    [p addTarget:s];
+    [q addTarget:s];
+
+    // Calculate v = r-s
+    GPUImageDifferenceBlendFilter *v = [[GPUImageDifferenceBlendFilter alloc] init];
+    [r addTarget:v];
+    [s addTarget:v];
 
     // Increase exposure to brighten the bright pixels more than the dark pixels
     GPUImageExposureFilter *exposureFilter = [[GPUImageExposureFilter alloc] init];
     exposureFilter.exposure = 3.75;
-    [differenceFilter addTarget:exposureFilter];
+    [v addTarget:exposureFilter];
 
     // Get the metric
     GPUImageAverageColor *averageColorFilter = [[GPUImageAverageColor alloc] init];
