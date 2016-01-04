@@ -18,15 +18,17 @@
     GPUImage3x3ConvolutionFilter *noopFilter;
     GPUImageColorMatrixFilter *colorFilter;
     GPUImageFilter *cropFilter;
-    GPUImage3x3ConvolutionFilter *sobelX;
-    GPUImage3x3ConvolutionFilter *sobelY;
-    GPUImageAddBlendFilter *addFilter;
-    GPUImageDifferenceBlendFilter *differenceFilter;
-    GPUImageAlphaBlendFilter *alphaMaskFilterSharpness;
-    GPUImageAlphaBlendFilter *alphaMaskFilterOutput;
     UIImage *maskImage;
     GPUImagePicture *maskImageSource;
-    GPUImageLuminosity *averageLuminosity;
+    GPUImageAlphaBlendFilter *alphaMaskFilter;
+    GPUImage3x3ConvolutionFilter *p;
+    GPUImage3x3ConvolutionFilter *q;
+    GPUImageMultiplyBlendFilter *r;
+    GPUImageMultiplyBlendFilter *s;
+    GPUImageDifferenceBlendFilter *v;
+    GPUImageExposureFilter *exposureFilter;
+    GPUImageFilter *anotherCropFilter;
+    GPUImageAverageColor *averageColorFilter;
 }
 
 @synthesize previewLayerView;
@@ -54,17 +56,25 @@
 
 -(void)handleDoubleTapGesture:(UITapGestureRecognizer *)doubleTapGesture
 {
+    [self _autoFocus];
+}
+
+- (void)_autoFocus
+{
     // Auto-focus
-    // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-    //     [[TBScopeFocusManager sharedFocusManager] clearLastGoodPositionAndMetric];
-    //     [[TBScopeFocusManager sharedFocusManager] autoFocus];
-    // });
-    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        [[TBScopeFocusManager sharedFocusManager] clearLastGoodPositionAndMetric];
+        [[TBScopeFocusManager sharedFocusManager] autoFocus];
+    });
+}
+
+- (void)_snapZStack
+{
     // Snap a z-stack
     ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
     void (^__block snapZStack)(int, int, int) = ^(int startZPosition, int endZPosition, int increment) {
         if (startZPosition > endZPosition) return;
-
+        
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
             // Move to z position
             [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:startZPosition];
@@ -75,20 +85,20 @@
             // Snap a picture & save to assets library
             [stillCamera capturePhotoAsJPEGProcessedUpToFilter:noopFilter
                                          withCompletionHandler:^(NSData *data, NSError *error) {
-                // UIImage *image = [cropFilter imageFromCurrentFramebuffer];
-                // UIImage *image = [UIImage imageNamed:@"check.png"];
-                // NSData *data = UIImageJPEGRepresentation(image, 1.0);
-                [library writeImageDataToSavedPhotosAlbum:data
-                                                 metadata:nil
-                                          completionBlock:^(NSURL *url, NSError *error) {
-                                              if (error) {
-                                                  NSLog(@"Error saving picture, %@", error.description);
-                                              } else {
-                                                  NSLog(@"Saved picture at %d to %@", startZPosition, [url absoluteString]);
-                                              }
-                                              snapZStack(startZPosition + increment, endZPosition, increment);
-                                          }];
-            }];
+                                             // UIImage *image = [cropFilter imageFromCurrentFramebuffer];
+                                             // UIImage *image = [UIImage imageNamed:@"check.png"];
+                                             // NSData *data = UIImageJPEGRepresentation(image, 1.0);
+                                             [library writeImageDataToSavedPhotosAlbum:data
+                                                                              metadata:nil
+                                                                       completionBlock:^(NSURL *url, NSError *error) {
+                                                                           if (error) {
+                                                                               NSLog(@"Error saving picture, %@", error.description);
+                                                                           } else {
+                                                                               NSLog(@"Saved picture at %d to %@", startZPosition, [url absoluteString]);
+                                                                           }
+                                                                           snapZStack(startZPosition + increment, endZPosition, increment);
+                                                                       }];
+                                         }];
         });
     };
     snapZStack(-18000, 10000, 100);
@@ -133,65 +143,84 @@
     [stillCamera addTarget:colorFilter];
 
     // Crop the image to a square
-    double cropFromSides = (captureWidth - captureHeight) / captureWidth / 2.0;
-    double width = 1.0 - 2.0 * cropFromSides;
-    CGRect cropRect = CGRectMake(cropFromSides, 0.0, width, 1.0);
+    double targetWidth = 1080.0;
+    double targetHeight = 1080.0;
+    double cropFromLeft = (captureWidth - targetWidth) / captureWidth / 2.0;
+    double cropFromTop = (captureHeight - targetHeight) / captureHeight / 2.0;
+    double width = 1.0 - 2.0 * cropFromLeft;
+    double height = 1.0 - 2.0 * cropFromTop;
+    CGRect cropRect = CGRectMake(cropFromLeft, cropFromTop, width, height);
     cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
     [colorFilter addTarget:cropFilter];
-
-    // Add alpha mask to reduce to a circle (for output)
+    
+    // Crop out a circle
     maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
     maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
     [maskImageSource processImage];
-    alphaMaskFilterOutput = [[GPUImageAlphaBlendFilter alloc] init];
-    alphaMaskFilterOutput.mix = 1.0f;
-    [cropFilter addTarget:alphaMaskFilterOutput atTextureLocation:0];
-    [maskImageSource addTarget:alphaMaskFilterOutput atTextureLocation:1];
+    alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilter.mix = 1.0f;
+    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
 
-    // Calculate sobelX
-    sobelX = [[GPUImage3x3ConvolutionFilter alloc] init];
-    [sobelX setConvolutionKernel:(GPUMatrix3x3){
-        { -1.0f, 0.0f, 1.0f},
-        { -2.0f, 0.0f, 2.0f},
-        { -1.0f, 0.0f, 1.0f}
+    // Calculate convoluation p = g(i-1,j)
+    p = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [p setConvolutionKernel:(GPUMatrix3x3){
+        { 0.0f, 0.0f, 0.0f},
+        { 1.0f, 0.0f, 0.0f},
+        { 0.0f, 0.0f, 0.0f}
     }];
-    [cropFilter addTarget:sobelX];
-
-    // Calculate sobelY
-    sobelY = [[GPUImage3x3ConvolutionFilter alloc] init];
-    [sobelY setConvolutionKernel:(GPUMatrix3x3){
-        {  1.0f,  2.0f,  1.0f},
-        {  0.0f,  0.0f,  0.0f},
-        { -1.0f, -2.0f, -1.0f}
+    [alphaMaskFilter addTarget:p];
+    
+    // Calculate convoluation q = g(i+1,j)
+    q = [[GPUImage3x3ConvolutionFilter alloc] init];
+    [q setConvolutionKernel:(GPUMatrix3x3){
+        { 0.0f, 0.0f, 0.0f},
+        { 0.0f, 0.0f, 1.0f},
+        { 0.0f, 0.0f, 0.0f}
     }];
-    [cropFilter addTarget:sobelY];
+    [alphaMaskFilter addTarget:q];
+    
+    // Calculate r = p*o (o = original)
+    r = [[GPUImageMultiplyBlendFilter alloc] init];
+    [p addTarget:r];
+    [alphaMaskFilter addTarget:r];
+    
+    // Calculate s = p*q
+    s = [[GPUImageMultiplyBlendFilter alloc] init];
+    [p addTarget:s];
+    [q addTarget:s];
+    
+    // Calculate v = r-s
+    v = [[GPUImageDifferenceBlendFilter alloc] init];
+    [r addTarget:v];
+    [s addTarget:v];
 
-    // Calculate tenegrad
-    addFilter = [[GPUImageAddBlendFilter alloc] init];
-    [sobelX addTarget:addFilter];
-    [sobelY addTarget:addFilter];
+    // Increase exposure to brighten the bright pixels more than the dark pixels
+    exposureFilter = [[GPUImageExposureFilter alloc] init];
+    exposureFilter.exposure = 3.75;
+    [v addTarget:exposureFilter];
+    
+    // Crop so that we don't take the circle outline into account
+    CGRect anotherCropRect = CGRectMake(0.25, 0.25, 0.5, 0.5);
+    anotherCropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:anotherCropRect];
+    [exposureFilter addTarget:anotherCropFilter];
 
-    // Add difference blend filter
-    differenceFilter = [[GPUImageDifferenceBlendFilter alloc] init];
-    [cropFilter addTarget:differenceFilter atTextureLocation:0];
-    [addFilter addTarget:differenceFilter atTextureLocation:1];
-
-    // Add alpha mask to reduce to a circle (for sharpness)
-    alphaMaskFilterSharpness = [[GPUImageAlphaBlendFilter alloc] init];
-    alphaMaskFilterSharpness.mix = 1.0f;
-    [differenceFilter addTarget:alphaMaskFilterSharpness atTextureLocation:0];
-    [maskImageSource addTarget:alphaMaskFilterSharpness atTextureLocation:1];
-
-    // Calculate fluorescence sharpness
-    averageLuminosity = [[GPUImageLuminosity alloc] init];
-    [averageLuminosity setLuminosityProcessingFinishedBlock:^(CGFloat luminosity, CMTime frameTime) {
-        [[TBScopeCamera sharedCamera] setCurrentFocusMetric:luminosity];
+    // Get the metric
+    averageColorFilter = [[GPUImageAverageColor alloc] init];
+    __weak CameraScrollView *weakSelf = self;
+    [averageColorFilter setColorAverageProcessingFinishedBlock:^(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha, CMTime time) {
+        [[TBScopeCamera sharedCamera] setCurrentFocusMetric:green];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.imageQualityLabel.text = [NSString stringWithFormat:@"Focus: %3.6f", green];
+            [weakSelf.imageQualityLabel setNeedsDisplay];
+        });
     }];
-    [alphaMaskFilterSharpness addTarget:averageLuminosity];
+    [anotherCropFilter useNextFrameForImageCapture];
+    [anotherCropFilter addTarget:averageColorFilter];
 
     // Show preview
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
-    [alphaMaskFilterSharpness addTarget:previewLayerView];
+    [exposureFilter addTarget:previewLayerView];
     [stillCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];
