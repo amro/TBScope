@@ -17,17 +17,16 @@
     GPUImageStillCamera *stillCamera;
     GPUImage3x3ConvolutionFilter *noopFilter;
     GPUImageColorMatrixFilter *colorFilter;
-    GPUImageFilter *cropFilter;
-    UIImage *maskImage;
-    GPUImagePicture *maskImageSource;
-    GPUImageAlphaBlendFilter *alphaMaskFilter;
     GPUImage3x3ConvolutionFilter *p;
     GPUImage3x3ConvolutionFilter *q;
     GPUImageMultiplyBlendFilter *r;
     GPUImageMultiplyBlendFilter *s;
     GPUImageDifferenceBlendFilter *v;
     GPUImageExposureFilter *exposureFilter;
-    GPUImageFilter *anotherCropFilter;
+    GPUImageCropFilter *cropFilter;
+    UIImage *maskImage;
+    GPUImagePicture *maskImageSource;
+    GPUImageAlphaBlendFilter *alphaMaskFilter;
     GPUImageAverageColor *averageColorFilter;
 }
 
@@ -142,26 +141,6 @@
     }];
     [stillCamera addTarget:colorFilter];
 
-    // Crop the image to a square
-    double targetWidth = 1080.0;
-    double targetHeight = 1080.0;
-    double cropFromLeft = (captureWidth - targetWidth) / captureWidth / 2.0;
-    double cropFromTop = (captureHeight - targetHeight) / captureHeight / 2.0;
-    double width = 1.0 - 2.0 * cropFromLeft;
-    double height = 1.0 - 2.0 * cropFromTop;
-    CGRect cropRect = CGRectMake(cropFromLeft, cropFromTop, width, height);
-    cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
-    [colorFilter addTarget:cropFilter];
-    
-    // Crop out a circle
-    maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
-    maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
-    [maskImageSource processImage];
-    alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
-    alphaMaskFilter.mix = 1.0f;
-    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
-    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
-
     // Calculate convoluation p = g(i-1,j)
     p = [[GPUImage3x3ConvolutionFilter alloc] init];
     [p setConvolutionKernel:(GPUMatrix3x3){
@@ -169,7 +148,7 @@
         { 1.0f, 0.0f, 0.0f},
         { 0.0f, 0.0f, 0.0f}
     }];
-    [alphaMaskFilter addTarget:p];
+    [colorFilter addTarget:p];
     
     // Calculate convoluation q = g(i+1,j)
     q = [[GPUImage3x3ConvolutionFilter alloc] init];
@@ -178,12 +157,12 @@
         { 0.0f, 0.0f, 1.0f},
         { 0.0f, 0.0f, 0.0f}
     }];
-    [alphaMaskFilter addTarget:q];
+    [colorFilter addTarget:q];
     
     // Calculate r = p*o (o = original)
     r = [[GPUImageMultiplyBlendFilter alloc] init];
     [p addTarget:r];
-    [alphaMaskFilter addTarget:r];
+    [colorFilter addTarget:r];
     
     // Calculate s = p*q
     s = [[GPUImageMultiplyBlendFilter alloc] init];
@@ -197,13 +176,28 @@
 
     // Increase exposure to brighten the bright pixels more than the dark pixels
     exposureFilter = [[GPUImageExposureFilter alloc] init];
-    exposureFilter.exposure = 3.75;
+    exposureFilter.exposure = 4.75;
     [v addTarget:exposureFilter];
+
+    // Crop the image to a square
+    double targetWidth = 1080.0;
+    double targetHeight = 1080.0;
+    double cropFromLeft = (captureWidth - targetWidth) / captureWidth / 2.0;
+    double cropFromTop = (captureHeight - targetHeight) / captureHeight / 2.0;
+    double width = 1.0 - 2.0 * cropFromLeft;
+    double height = 1.0 - 2.0 * cropFromTop;
+    CGRect cropRect = CGRectMake(cropFromLeft, cropFromTop, width, height);
+    cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
+    [exposureFilter addTarget:cropFilter];
     
-    // Crop so that we don't take the circle outline into account
-    CGRect anotherCropRect = CGRectMake(0.25, 0.25, 0.5, 0.5);
-    anotherCropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:anotherCropRect];
-    [exposureFilter addTarget:anotherCropFilter];
+    // Crop out a circle
+    maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
+    maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
+    [maskImageSource processImage];
+    alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilter.mix = 1.0f;
+    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
 
     // Get the metric
     averageColorFilter = [[GPUImageAverageColor alloc] init];
@@ -215,12 +209,12 @@
             [weakSelf.imageQualityLabel setNeedsDisplay];
         });
     }];
-    [anotherCropFilter useNextFrameForImageCapture];
-    [anotherCropFilter addTarget:averageColorFilter];
+    [alphaMaskFilter useNextFrameForImageCapture];
+    [alphaMaskFilter addTarget:averageColorFilter];
 
     // Show preview
     previewLayerView = [[GPUImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 1920.0, 1080.0)];
-    [exposureFilter addTarget:previewLayerView];
+    [alphaMaskFilter addTarget:previewLayerView];
     [stillCamera startCameraCapture];
     CGRect frame = CGRectMake(0, 0, captureWidth, captureHeight); //TODO: grab the resolution from the camera?
     [self addSubview:previewLayerView];

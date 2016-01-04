@@ -44,6 +44,7 @@ static int const kLastEmptyImageIndex = 11;
 
 - (void)testThatFocusedFluorescenceImagesHaveHigherContrastThanBlurryFluorescence {
     // Calculate focus metrics
+    NSMutableArray *metrics = [[NSMutableArray alloc] init];
     NSDecimalNumber *beads_500_01_001 = [self _focusMetricForImageAtPath:@"IMG_001.JPG"];
     NSDecimalNumber *beads_500_01_002 = [self _focusMetricForImageAtPath:@"IMG_002.JPG"];
     NSDecimalNumber *beads_500_01_003 = [self _focusMetricForImageAtPath:@"IMG_003.JPG"];
@@ -194,148 +195,148 @@ static int const kLastEmptyImageIndex = 11;
 
     NSArray *testCases = @[
         // Blurrier image       Sharper image
-        @[ beads_500_01_001,    beads_500_01_002    ],
-        @[ beads_500_01_002,    beads_500_01_003    ],
-        @[ beads_500_01_003,    beads_500_01_004    ],
-        @[ beads_500_01_004,    beads_500_01_005    ],
-        @[ beads_500_01_005,    beads_500_01_006    ],
+        @[ beads_500_01_001,    beads_500_01_007    ],
+        @[ beads_500_01_002,    beads_500_01_007    ],
+        @[ beads_500_01_003,    beads_500_01_007    ],
+        @[ beads_500_01_004,    beads_500_01_007    ],
+        @[ beads_500_01_005,    beads_500_01_007    ],
         @[ beads_500_01_006,    beads_500_01_007    ],
-        @[ beads_500_02_3041,   beads_500_02_3042   ],
-        @[ beads_500_02_3042,   beads_500_02_3043   ],
-        @[ beads_500_02_3043,   beads_500_02_3044   ],
-        @[ beads_500_02_3044,   beads_500_02_3045   ],
-        @[ beads_500_02_3045,   beads_500_02_3046   ],
-        @[ beads_500_02_3046,   beads_500_02_3047   ],
-        @[ beads_500_02_3047,   beads_500_02_3048   ],
+        @[ beads_500_02_3041,   beads_500_02_3049   ],
+        @[ beads_500_02_3042,   beads_500_02_3049   ],
+        @[ beads_500_02_3043,   beads_500_02_3049   ],
+        @[ beads_500_02_3044,   beads_500_02_3049   ],
+        @[ beads_500_02_3045,   beads_500_02_3049   ],
+        @[ beads_500_02_3046,   beads_500_02_3049   ],
+        @[ beads_500_02_3047,   beads_500_02_3049   ],
         @[ beads_500_02_3048,   beads_500_02_3049   ],
-        @[ beads_500_03_3427,   beads_500_03_3428   ],
-        @[ beads_500_03_3428,   beads_500_03_3429   ],
-        @[ beads_500_03_3429,   beads_500_03_3430   ],
-        @[ beads_500_03_3430,   beads_500_03_3431   ],
-        @[ beads_500_03_3431,   beads_500_03_3432   ],
-        @[ beads_500_03_3432,   beads_500_03_3433   ],
-        @[ beads_500_03_3433,   beads_500_03_3434   ],
-        @[ beads_500_03_3434,   beads_500_03_3435   ],
-        @[ beads_500_03_3435,   beads_500_03_3436   ],
-        @[ beads_500_03_3436,   beads_500_03_3437   ],
-        @[ beads_500_03_3437,   beads_500_03_3438   ],
-        @[ beads_500_03_3438,   beads_500_03_3439   ],
-        @[ beads_500_03_3439,   beads_500_03_3440   ],
-        @[ beads_500_03_3440,   beads_500_03_3441   ],
-        @[ beads_500_03_3441,   beads_500_03_3442   ],
-        @[ beads_500_03_3442,   beads_500_03_3443   ],
-        @[ beads_500_03_3443,   beads_500_03_3444   ],
-        @[ beads_500_03_3444,   beads_500_03_3445   ],
-        @[ beads_500_03_3445,   beads_500_03_3446   ],
-        @[ beads_500_03_3446,   beads_500_03_3447   ],
-        @[ beads_500_03_3447,   beads_500_03_3448   ],
-        @[ beads_500_03_3448,   beads_500_03_3449   ],
-        @[ beads_500_03_3449,   beads_500_03_3450   ],
-        @[ beads_500_03_3450,   beads_500_03_3451   ],
+        @[ beads_500_03_3427,   beads_500_03_3452   ],
+        @[ beads_500_03_3428,   beads_500_03_3452   ],
+        @[ beads_500_03_3429,   beads_500_03_3452   ],
+        @[ beads_500_03_3430,   beads_500_03_3452   ],
+        @[ beads_500_03_3431,   beads_500_03_3452   ],
+        @[ beads_500_03_3432,   beads_500_03_3452   ],
+        @[ beads_500_03_3433,   beads_500_03_3452   ],
+        @[ beads_500_03_3434,   beads_500_03_3452   ],
+        @[ beads_500_03_3435,   beads_500_03_3452   ],
+        @[ beads_500_03_3436,   beads_500_03_3452   ],
+        @[ beads_500_03_3437,   beads_500_03_3452   ],
+        @[ beads_500_03_3438,   beads_500_03_3452   ],
+        @[ beads_500_03_3439,   beads_500_03_3452   ],
+        @[ beads_500_03_3440,   beads_500_03_3452   ],
+        @[ beads_500_03_3441,   beads_500_03_3452   ],
+        @[ beads_500_03_3442,   beads_500_03_3452   ],
+        @[ beads_500_03_3443,   beads_500_03_3452   ],
+        @[ beads_500_03_3444,   beads_500_03_3452   ],
+        @[ beads_500_03_3445,   beads_500_03_3452   ],
+        @[ beads_500_03_3446,   beads_500_03_3452   ],
+        @[ beads_500_03_3447,   beads_500_03_3452   ],
+        @[ beads_500_03_3448,   beads_500_03_3452   ],
+        @[ beads_500_03_3449,   beads_500_03_3452   ],
+        @[ beads_500_03_3450,   beads_500_03_3452   ],
         @[ beads_500_03_3451,   beads_500_03_3452   ],
-        @[ beads_100_01_3500,   beads_100_01_3501   ],
-        @[ beads_100_01_3501,   beads_100_01_3502   ],
-        @[ beads_100_01_3502,   beads_100_01_3503   ],
-        @[ beads_100_01_3503,   beads_100_01_3504   ],
-        @[ beads_100_01_3504,   beads_100_01_3505   ],
-        @[ beads_100_01_3505,   beads_100_01_3506   ],
-        @[ beads_100_01_3506,   beads_100_01_3507   ],
-        @[ beads_100_01_3507,   beads_100_01_3508   ],
-        @[ beads_100_01_3508,   beads_100_01_3509   ],
-        @[ beads_100_01_3509,   beads_100_01_3510   ],
-        @[ beads_100_01_3510,   beads_100_01_3511   ],
-        @[ beads_100_01_3511,   beads_100_01_3512   ],
-        @[ beads_100_01_3512,   beads_100_01_3513   ],
-        @[ beads_100_01_3513,   beads_100_01_3514   ],
-        @[ beads_100_01_3514,   beads_100_01_3515   ],
-        @[ beads_100_01_3515,   beads_100_01_3516   ],
-        @[ beads_100_01_3516,   beads_100_01_3517   ],
-        @[ beads_100_01_3517,   beads_100_01_3518   ],
-        @[ beads_100_01_3518,   beads_100_01_3519   ],
-        @[ beads_100_01_3519,   beads_100_01_3520   ],
-        @[ beads_100_01_3520,   beads_100_01_3521   ],
-        @[ beads_100_01_3521,   beads_100_01_3522   ],
-        @[ beads_100_01_3522,   beads_100_01_3523   ],
-        @[ beads_100_01_3523,   beads_100_01_3524   ],
-        @[ beads_100_01_3524,   beads_100_01_3525   ],
-        @[ beads_100_01_3525,   beads_100_01_3526   ],
-        @[ beads_100_01_3526,   beads_100_01_3527   ],
-        @[ beads_100_01_3527,   beads_100_01_3528   ],
-        @[ beads_100_01_3528,   beads_100_01_3529   ],
-        @[ beads_100_01_3529,   beads_100_01_3530   ],
-        @[ beads_100_01_3530,   beads_100_01_3531   ],
-        @[ beads_100_01_3531,   beads_100_01_3532   ],
-        @[ beads_100_01_3532,   beads_100_01_3533   ],
-        @[ beads_100_01_3533,   beads_100_01_3534   ],
-        @[ beads_100_01_3534,   beads_100_01_3535   ],
-        @[ beads_100_01_3535,   beads_100_01_3536   ],
-        @[ beads_100_01_3536,   beads_100_01_3537   ],
-        @[ beads_100_01_3537,   beads_100_01_3538   ],
-        @[ beads_100_01_3538,   beads_100_01_3539   ],
-        @[ beads_100_01_3539,   beads_100_01_3540   ],
-        @[ beads_100_01_3540,   beads_100_01_3541   ],
-        @[ beads_100_01_3541,   beads_100_01_3542   ],
-        @[ beads_100_01_3542,   beads_100_01_3543   ],
-        @[ beads_100_01_3543,   beads_100_01_3544   ],
-        @[ beads_100_01_3544,   beads_100_01_3545   ],
-        @[ beads_100_01_3545,   beads_100_01_3546   ],
-        @[ beads_100_01_3546,   beads_100_01_3547   ],
-        @[ beads_100_01_3547,   beads_100_01_3548   ],
-        @[ beads_100_01_3548,   beads_100_01_3549   ],
-        @[ beads_100_01_3549,   beads_100_01_3550   ],
-        @[ beads_100_01_3550,   beads_100_01_3551   ],
-        @[ beads_100_01_3551,   beads_100_01_3552   ],
-        @[ beads_100_01_3552,   beads_100_01_3553   ],
-        @[ beads_100_01_3553,   beads_100_01_3554   ],
-        @[ beads_100_01_3554,   beads_100_01_3555   ],
-        @[ beads_100_01_3555,   beads_100_01_3556   ],
-        @[ beads_100_01_3556,   beads_100_01_3557   ],
-        @[ beads_100_01_3557,   beads_100_01_3558   ],
-        @[ beads_100_01_3558,   beads_100_01_3559   ],
-        @[ beads_100_01_3559,   beads_100_01_3560   ],
-        @[ beads_100_01_3560,   beads_100_01_3561   ],
-        @[ beads_100_01_3561,   beads_100_01_3562   ],
-        @[ beads_100_01_3562,   beads_100_01_3563   ],
-        @[ beads_100_01_3563,   beads_100_01_3564   ],
-        @[ beads_100_01_3564,   beads_100_01_3565   ],
-        @[ beads_100_01_3565,   beads_100_01_3566   ],
-        @[ beads_100_01_3566,   beads_100_01_3567   ],
-        @[ beads_100_01_3567,   beads_100_01_3568   ],
-        @[ beads_100_01_3568,   beads_100_01_3569   ],
-        @[ beads_100_01_3569,   beads_100_01_3570   ],
-        @[ beads_100_01_3570,   beads_100_01_3571   ],
-        @[ beads_100_01_3571,   beads_100_01_3572   ],
-        @[ beads_100_01_3572,   beads_100_01_3573   ],
-        @[ beads_100_01_3573,   beads_100_01_3574   ],
-        @[ beads_100_01_3574,   beads_100_01_3575   ],
-        @[ beads_100_01_3575,   beads_100_01_3576   ],
-        @[ beads_100_01_3576,   beads_100_01_3577   ],
-        @[ beads_100_01_3577,   beads_100_01_3578   ],
-        @[ beads_100_01_3578,   beads_100_01_3579   ],
-        @[ beads_100_01_3579,   beads_100_01_3580   ],
-        @[ beads_100_01_3580,   beads_100_01_3581   ],
-        @[ beads_100_01_3581,   beads_100_01_3582   ],
-        @[ beads_100_01_3582,   beads_100_01_3583   ],
-        @[ beads_100_01_3583,   beads_100_01_3584   ],
-        @[ beads_100_01_3584,   beads_100_01_3585   ],
-        @[ beads_100_01_3585,   beads_100_01_3586   ],
-        @[ beads_100_01_3586,   beads_100_01_3587   ],
-        @[ beads_100_01_3587,   beads_100_01_3588   ],
-        @[ beads_100_01_3588,   beads_100_01_3589   ],
-        @[ beads_100_01_3589,   beads_100_01_3590   ],
-        @[ beads_100_01_3590,   beads_100_01_3591   ],
-        @[ beads_100_01_3591,   beads_100_01_3592   ],
-        @[ beads_100_01_3592,   beads_100_01_3593   ],
-        @[ beads_100_01_3593,   beads_100_01_3594   ],
-        @[ beads_100_01_3594,   beads_100_01_3595   ],
-        @[ beads_100_01_3595,   beads_100_01_3596   ],
-        @[ beads_100_01_3596,   beads_100_01_3597   ],
-        @[ beads_100_01_3597,   beads_100_01_3598   ],
-        @[ beads_100_01_3598,   beads_100_01_3599   ],
-        @[ beads_100_01_3599,   beads_100_01_3600   ],
-        @[ beads_100_01_3600,   beads_100_01_3601   ],
-        @[ beads_100_01_3601,   beads_100_01_3602   ],
-        @[ beads_100_01_3602,   beads_100_01_3603   ],
+        @[ beads_100_01_3500,   beads_100_01_3604   ],
+        @[ beads_100_01_3501,   beads_100_01_3604   ],
+        @[ beads_100_01_3502,   beads_100_01_3604   ],
+        @[ beads_100_01_3503,   beads_100_01_3604   ],
+        @[ beads_100_01_3504,   beads_100_01_3604   ],
+        @[ beads_100_01_3505,   beads_100_01_3604   ],
+        @[ beads_100_01_3506,   beads_100_01_3604   ],
+        @[ beads_100_01_3507,   beads_100_01_3604   ],
+        @[ beads_100_01_3508,   beads_100_01_3604   ],
+        @[ beads_100_01_3509,   beads_100_01_3604   ],
+        @[ beads_100_01_3510,   beads_100_01_3604   ],
+        @[ beads_100_01_3511,   beads_100_01_3604   ],
+        @[ beads_100_01_3512,   beads_100_01_3604   ],
+        @[ beads_100_01_3513,   beads_100_01_3604   ],
+        @[ beads_100_01_3514,   beads_100_01_3604   ],
+        @[ beads_100_01_3515,   beads_100_01_3604   ],
+        @[ beads_100_01_3516,   beads_100_01_3604   ],
+        @[ beads_100_01_3517,   beads_100_01_3604   ],
+        @[ beads_100_01_3518,   beads_100_01_3604   ],
+        @[ beads_100_01_3519,   beads_100_01_3604   ],
+        @[ beads_100_01_3520,   beads_100_01_3604   ],
+        @[ beads_100_01_3521,   beads_100_01_3604   ],
+        @[ beads_100_01_3522,   beads_100_01_3604   ],
+        @[ beads_100_01_3523,   beads_100_01_3604   ],
+        @[ beads_100_01_3524,   beads_100_01_3604   ],
+        @[ beads_100_01_3525,   beads_100_01_3604   ],
+        @[ beads_100_01_3526,   beads_100_01_3604   ],
+        @[ beads_100_01_3527,   beads_100_01_3604   ],
+        @[ beads_100_01_3528,   beads_100_01_3604   ],
+        @[ beads_100_01_3529,   beads_100_01_3604   ],
+        @[ beads_100_01_3530,   beads_100_01_3604   ],
+        @[ beads_100_01_3531,   beads_100_01_3604   ],
+        @[ beads_100_01_3532,   beads_100_01_3604   ],
+        @[ beads_100_01_3533,   beads_100_01_3604   ],
+        @[ beads_100_01_3534,   beads_100_01_3604   ],
+        @[ beads_100_01_3535,   beads_100_01_3604   ],
+        @[ beads_100_01_3536,   beads_100_01_3604   ],
+        @[ beads_100_01_3537,   beads_100_01_3604   ],
+        @[ beads_100_01_3538,   beads_100_01_3604   ],
+        @[ beads_100_01_3539,   beads_100_01_3604   ],
+        @[ beads_100_01_3540,   beads_100_01_3604   ],
+        @[ beads_100_01_3541,   beads_100_01_3604   ],
+        @[ beads_100_01_3542,   beads_100_01_3604   ],
+        @[ beads_100_01_3543,   beads_100_01_3604   ],
+        @[ beads_100_01_3544,   beads_100_01_3604   ],
+        @[ beads_100_01_3545,   beads_100_01_3604   ],
+        @[ beads_100_01_3546,   beads_100_01_3604   ],
+        @[ beads_100_01_3547,   beads_100_01_3604   ],
+        @[ beads_100_01_3548,   beads_100_01_3604   ],
+        @[ beads_100_01_3549,   beads_100_01_3604   ],
+        @[ beads_100_01_3550,   beads_100_01_3604   ],
+        @[ beads_100_01_3551,   beads_100_01_3604   ],
+        @[ beads_100_01_3552,   beads_100_01_3604   ],
+        @[ beads_100_01_3553,   beads_100_01_3604   ],
+        @[ beads_100_01_3554,   beads_100_01_3604   ],
+        @[ beads_100_01_3555,   beads_100_01_3604   ],
+        @[ beads_100_01_3556,   beads_100_01_3604   ],
+        @[ beads_100_01_3557,   beads_100_01_3604   ],
+        @[ beads_100_01_3558,   beads_100_01_3604   ],
+        @[ beads_100_01_3559,   beads_100_01_3604   ],
+        @[ beads_100_01_3560,   beads_100_01_3604   ],
+        @[ beads_100_01_3561,   beads_100_01_3604   ],
+        @[ beads_100_01_3562,   beads_100_01_3604   ],
+        @[ beads_100_01_3563,   beads_100_01_3604   ],
+        @[ beads_100_01_3564,   beads_100_01_3604   ],
+        @[ beads_100_01_3565,   beads_100_01_3604   ],
+        @[ beads_100_01_3566,   beads_100_01_3604   ],
+        @[ beads_100_01_3567,   beads_100_01_3604   ],
+        @[ beads_100_01_3568,   beads_100_01_3604   ],
+        @[ beads_100_01_3569,   beads_100_01_3604   ],
+        @[ beads_100_01_3570,   beads_100_01_3604   ],
+        @[ beads_100_01_3571,   beads_100_01_3604   ],
+        @[ beads_100_01_3572,   beads_100_01_3604   ],
+        @[ beads_100_01_3573,   beads_100_01_3604   ],
+        @[ beads_100_01_3574,   beads_100_01_3604   ],
+        @[ beads_100_01_3575,   beads_100_01_3604   ],
+        @[ beads_100_01_3576,   beads_100_01_3604   ],
+        @[ beads_100_01_3577,   beads_100_01_3604   ],
+        @[ beads_100_01_3578,   beads_100_01_3604   ],
+        @[ beads_100_01_3579,   beads_100_01_3604   ],
+        @[ beads_100_01_3580,   beads_100_01_3604   ],
+        @[ beads_100_01_3581,   beads_100_01_3604   ],
+        @[ beads_100_01_3582,   beads_100_01_3604   ],
+        @[ beads_100_01_3583,   beads_100_01_3604   ],
+        @[ beads_100_01_3584,   beads_100_01_3604   ],
+        @[ beads_100_01_3585,   beads_100_01_3604   ],
+        @[ beads_100_01_3586,   beads_100_01_3604   ],
+        @[ beads_100_01_3587,   beads_100_01_3604   ],
+        @[ beads_100_01_3588,   beads_100_01_3604   ],
+        @[ beads_100_01_3589,   beads_100_01_3604   ],
+        @[ beads_100_01_3590,   beads_100_01_3604   ],
+        @[ beads_100_01_3591,   beads_100_01_3604   ],
+        @[ beads_100_01_3592,   beads_100_01_3604   ],
+        @[ beads_100_01_3593,   beads_100_01_3604   ],
+        @[ beads_100_01_3594,   beads_100_01_3604   ],
+        @[ beads_100_01_3595,   beads_100_01_3604   ],
+        @[ beads_100_01_3596,   beads_100_01_3604   ],
+        @[ beads_100_01_3597,   beads_100_01_3604   ],
+        @[ beads_100_01_3598,   beads_100_01_3604   ],
+        @[ beads_100_01_3599,   beads_100_01_3604   ],
+        @[ beads_100_01_3600,   beads_100_01_3604   ],
+        @[ beads_100_01_3601,   beads_100_01_3604   ],
+        @[ beads_100_01_3602,   beads_100_01_3604   ],
         @[ beads_100_01_3603,   beads_100_01_3604   ],
     ];
     for (NSArray *testCase in testCases) {
@@ -459,28 +460,6 @@ static int const kLastEmptyImageIndex = 11;
     }];
     [stillImageSource addTarget:colorFilter];
 
-    // Crop the image to a square
-    double captureWidth = 1920.0;
-    double captureHeight = 1080.0;
-    double targetWidth = 1080;
-    double targetHeight = 1080;
-    double cropFromLeft = (captureWidth - targetWidth) / captureWidth / 2.0;
-    double cropFromTop = (captureHeight - targetHeight) / captureHeight / 2.0;
-    double width = 1.0 - 2.0 * cropFromLeft;
-    double height = 1.0 - 2.0 * cropFromTop;
-    CGRect cropRect = CGRectMake(cropFromLeft, cropFromTop, width, height);
-    GPUImageCropFilter *cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
-    [colorFilter addTarget:cropFilter];
-
-    // Crop out a circle
-    UIImage *maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
-    GPUImagePicture *maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
-    [maskImageSource processImage];
-    GPUImageAlphaBlendFilter *alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
-    alphaMaskFilter.mix = 1.0f;
-    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
-    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
-
     // Calculate convoluation p = g(i-1,j)
     GPUImage3x3ConvolutionFilter *p = [[GPUImage3x3ConvolutionFilter alloc] init];
     [p setConvolutionKernel:(GPUMatrix3x3){
@@ -488,7 +467,7 @@ static int const kLastEmptyImageIndex = 11;
         { 1.0f, 0.0f, 0.0f},
         { 0.0f, 0.0f, 0.0f}
     }];
-    [alphaMaskFilter addTarget:p];
+    [colorFilter addTarget:p];
 
     // Calculate convoluation q = g(i+1,j)
     GPUImage3x3ConvolutionFilter *q = [[GPUImage3x3ConvolutionFilter alloc] init];
@@ -497,12 +476,12 @@ static int const kLastEmptyImageIndex = 11;
         { 0.0f, 0.0f, 1.0f},
         { 0.0f, 0.0f, 0.0f}
     }];
-    [alphaMaskFilter addTarget:q];
+    [colorFilter addTarget:q];
 
     // Calculate r = p*o (o = original)
     GPUImageMultiplyBlendFilter *r = [[GPUImageMultiplyBlendFilter alloc] init];
     [p addTarget:r];
-    [alphaMaskFilter addTarget:r];
+    [colorFilter addTarget:r];
 
     // Calculate s = p*q
     GPUImageMultiplyBlendFilter *s = [[GPUImageMultiplyBlendFilter alloc] init];
@@ -516,8 +495,30 @@ static int const kLastEmptyImageIndex = 11;
 
     // Increase exposure to brighten the bright pixels more than the dark pixels
     GPUImageExposureFilter *exposureFilter = [[GPUImageExposureFilter alloc] init];
-    exposureFilter.exposure = 3.75;
+    exposureFilter.exposure = 4.75;
     [v addTarget:exposureFilter];
+
+    // Crop the image to a square
+    double captureWidth = 1920.0;
+    double captureHeight = 1080.0;
+    double targetWidth = 1080;
+    double targetHeight = 1080;
+    double cropFromLeft = (captureWidth - targetWidth) / captureWidth / 2.0;
+    double cropFromTop = (captureHeight - targetHeight) / captureHeight / 2.0;
+    double width = 1.0 - 2.0 * cropFromLeft;
+    double height = 1.0 - 2.0 * cropFromTop;
+    CGRect cropRect = CGRectMake(cropFromLeft, cropFromTop, width, height);
+    GPUImageCropFilter *cropFilter = [[GPUImageCropFilter alloc] initWithCropRegion:cropRect];
+    [exposureFilter addTarget:cropFilter];
+
+    // Crop out a circle
+    UIImage *maskImage = [UIImage imageNamed:@"circular_mask_1080x1080"];
+    GPUImagePicture *maskImageSource = [[GPUImagePicture alloc] initWithImage:maskImage smoothlyScaleOutput:YES];
+    [maskImageSource processImage];
+    GPUImageAlphaBlendFilter *alphaMaskFilter = [[GPUImageAlphaBlendFilter alloc] init];
+    alphaMaskFilter.mix = 1.0f;
+    [cropFilter addTarget:alphaMaskFilter atTextureLocation:0];
+    [maskImageSource addTarget:alphaMaskFilter atTextureLocation:1];
 
     // Get the metric
     GPUImageAverageColor *averageColorFilter = [[GPUImageAverageColor alloc] init];
@@ -528,8 +529,8 @@ static int const kLastEmptyImageIndex = 11;
             resolve(nil);
         }];
     }];
-    [exposureFilter useNextFrameForImageCapture];
-    [exposureFilter addTarget:averageColorFilter];
+    [alphaMaskFilter useNextFrameForImageCapture];
+    [alphaMaskFilter addTarget:averageColorFilter];
 
     // Wait for metric
     [stillImageSource processImage];

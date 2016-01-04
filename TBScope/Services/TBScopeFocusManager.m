@@ -47,7 +47,7 @@
 
 - (int)zPositionBroadSweepStepsPerSlice
 {
-    return 100;
+    return 250;
     return (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepStepSize"];  // steps
 }
 
