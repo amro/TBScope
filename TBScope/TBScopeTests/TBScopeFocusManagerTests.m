@@ -33,10 +33,12 @@
     self.focusManager = [TBScopeFocusManager sharedFocusManager];
     [self.focusManager clearLastGoodPositionAndMetric];
     [self _toggleFocusManagerPauseForSettlingSwizzling];
+    [self _toggleFocusManagerThresholds];
 }
 
 - (void)tearDown {
     // Un-swizzle
+    [self _toggleFocusManagerThresholds];
     [self _toggleFocusManagerPauseForSettlingSwizzling];
     [self _toggleSharedHardwareSwizzling];
 
@@ -114,23 +116,23 @@
     [self _setLastGoodPositionAndMoveTo:8000];
 
     // Call focus
-    [self _toggleCurrentImageQualityMetricCurvePeakAt8120];
+    [self _toggleCurrentImageQualityMetricCurvePeakAt8200];
     [self.focusManager autoFocus];
-    [self _toggleCurrentImageQualityMetricCurvePeakAt8120];
+    [self _toggleCurrentImageQualityMetricCurvePeakAt8200];
 
-    // Expect hardware zPosition to end at 8120
+    // Expect hardware zPosition to end at 8200
     TBScopeHardwareMock *hardware = (TBScopeHardwareMock *)[TBScopeHardware sharedHardware];
-    XCTAssertEqual(hardware.zPosition, 8120);
+    XCTAssertEqual(hardware.zPosition, 8200);
 }
 
 - (void)testThatItFineFocusesWithoutLastGoodPosition {
-    [self _toggleCurrentImageQualityMetricCurvePeakAt8120];
+    [self _toggleCurrentImageQualityMetricCurvePeakAt8200];
     [self.focusManager autoFocus];
-    [self _toggleCurrentImageQualityMetricCurvePeakAt8120];
+    [self _toggleCurrentImageQualityMetricCurvePeakAt8200];
 
-    // Expect hardware zPosition to end at 8120
+    // Expect hardware zPosition to end at 8200
     TBScopeHardwareMock *hardware = (TBScopeHardwareMock *)[TBScopeHardware sharedHardware];
-    XCTAssertEqual(hardware.zPosition, 8120);
+    XCTAssertEqual(hardware.zPosition, 8200);
 }
 
 #pragma private methods
@@ -153,6 +155,25 @@
     });
     return sharedHardware;
 }
+
+- (void)_toggleFocusManagerThresholds
+{
+    Method originalMethod1 = class_getInstanceMethod([TBScopeFocusManager class], @selector(zPositionBroadSweepStepsPerSlice));
+    Method swizzledMethod1 = class_getInstanceMethod([self class], @selector(_zPositionBroadSweepStepsPerSlice));
+    method_exchangeImplementations(originalMethod1, swizzledMethod1);
+
+    Method originalMethod2 = class_getInstanceMethod([TBScopeFocusManager class], @selector(zPositionBroadSweepMin));
+    Method swizzledMethod2 = class_getInstanceMethod([self class], @selector(_zPositionBroadSweepMin));
+    method_exchangeImplementations(originalMethod2, swizzledMethod2);
+
+    Method originalMethod3 = class_getInstanceMethod([TBScopeFocusManager class], @selector(zPositionBroadSweepMax));
+    Method swizzledMethod3 = class_getInstanceMethod([self class], @selector(_zPositionBroadSweepMax));
+    method_exchangeImplementations(originalMethod3, swizzledMethod3);
+}
+
+- (int)_zPositionBroadSweepStepsPerSlice { return 500; }
+- (int)_zPositionBroadSweepMin { return 0; }
+- (int)_zPositionBroadSweepMax { return 10000; }
 
 // Stub out [focusManager currentImageQualityMetric] to be a linear curve
 // peaking at 8000 (for coarse focus testing).
@@ -190,36 +211,31 @@
 }
 
 // Stub out [focusManager currentImageQualityMetric] to be a linear curve
-// peaking at 8020 (for fine focus testing)
-//   metric = Math.max(0, Math.abs(8120 - zPosition));
+// peaking at 8200 (for fine focus testing)
+//   metric = Math.max(0, Math.abs(8200 - zPosition));
 //   ...
-//   zPosition 7080 -> metric 860
-//   zPosition 8000 -> metric 880
-//   zPosition 8020 -> metric 900
-//   zPosition 8040 -> metric 920
-//   zPosition 8060 -> metric 940
-//   zPosition 8080 -> metric 960
-//   zPosition 8100 -> metric 980
-//   zPosition 8120 -> metric 1000
-//   zPosition 8140 -> metric 980
-//   zPosition 8160 -> metric 960
-//   zPosition 8180 -> metric 940
-//   zPosition 8200 -> metric 920
-//   zPosition 8220 -> metric 900
-//   zPosition 8240 -> metric 880
+//   zPosition 7700 -> metric 500
+//   zPosition 7800 -> metric 600
+//   zPosition 7900 -> metric 700
+//   zPosition 8000 -> metric 800
+//   zPosition 8100 -> metric 900
+//   zPosition 8200 -> metric 1000
+//   zPosition 8300 -> metric 900
+//   zPosition 8400 -> metric 800
+//   zPosition 8500 -> metric 700
 //   ...
-- (void)_toggleCurrentImageQualityMetricCurvePeakAt8120
+- (void)_toggleCurrentImageQualityMetricCurvePeakAt8200
 {
     Method originalMethod = class_getInstanceMethod([TBScopeFocusManager class], @selector(currentImageQualityMetric));
-    Method swizzledMethod = class_getInstanceMethod([self class], @selector(_imageQualityCurvePeakAt8120));
+    Method swizzledMethod = class_getInstanceMethod([self class], @selector(_imageQualityCurvePeakAt8200));
     method_exchangeImplementations(originalMethod, swizzledMethod);
 }
 
-- (float)_imageQualityCurvePeakAt8120
+- (float)_imageQualityCurvePeakAt8200
 {
     TBScopeHardwareMock *hardware = (TBScopeHardwareMock *)[TBScopeHardware sharedHardware];
     float zPosition = [hardware zPosition];
-    float imageQualityMetric = MAX(0.0, ABS(8120 - zPosition)*-1.0+1000.0);
+    float imageQualityMetric = MAX(0.0, ABS(8200 - zPosition)*-1.0+1000.0);
     NSLog(@"zPosition: %2f, metric: %2f", zPosition, imageQualityMetric);
     return imageQualityMetric;
 }

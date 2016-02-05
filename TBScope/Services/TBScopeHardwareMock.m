@@ -105,6 +105,54 @@
     [[TBScopeHardware sharedHardware] disableMotors];
 }
 
+- (void)moveToX:(int)x Y:(int)y Z:(int)z inIncrementsOf:(int)stepsPerMove
+{
+    // Steps is always a positive integer
+    stepsPerMove = ABS(stepsPerMove);
+
+    if (x != -1) {
+        int startPosition = [self xPosition];
+        int endPosition   = x;
+        int direction     = (endPosition >= startPosition) ? 1 : -1;
+        int increments    = floor((endPosition - startPosition) * direction / stepsPerMove);
+        int extraSteps    = (endPosition - startPosition) * direction % stepsPerMove;
+        int target        = startPosition;
+        for (int i=0; i<increments; i++) {
+            target += stepsPerMove * direction;
+            [self moveToX:target Y:-1 Z:-1];
+        }
+        if (extraSteps > 0) [self moveToX:endPosition Y:-1 Z:-1];
+    }
+
+    if (y != -1) {
+        int startPosition = [self yPosition];
+        int endPosition   = y;
+        int direction     = (endPosition >= startPosition) ? 1 : -1;
+        int increments    = floor((endPosition - startPosition) * direction / stepsPerMove);
+        int extraSteps    = (endPosition - startPosition) * direction % stepsPerMove;
+        int target        = startPosition;
+        for (int i=0; i<increments; i++) {
+            target += stepsPerMove * direction;
+            [self moveToX:-1 Y:target Z:-1];
+        }
+        if (extraSteps > 0) [self moveToX:-1 Y:endPosition Z:-1];
+    }
+
+    if (z != -1) {
+        int startPosition = [self zPosition];
+        int endPosition   = z;
+        int direction     = (endPosition >= startPosition) ? 1 : -1;
+        int increments    = floor((endPosition - startPosition) * direction / stepsPerMove);
+        int extraSteps    = (endPosition - startPosition) * direction % stepsPerMove;
+        int target        = startPosition;
+        for (int i=0; i<increments; i++) {
+            target += stepsPerMove * direction;
+            [self moveToX:-1 Y:-1 Z:target];
+        }
+        if (extraSteps > 0) [self moveToX:-1 Y:-1 Z:endPosition];
+    }
+}
+
 - (void)setupBLEConnection
 {
     [self _log:@"setupBLEConnection"];

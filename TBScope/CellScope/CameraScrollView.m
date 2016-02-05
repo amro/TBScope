@@ -82,11 +82,11 @@
                   "boundryScr: %@ (%3.3f)\n"
                   "isBoundary:  %@\n"
                   "isEmpty:     %@\n\n",
-                  [@"" stringByPaddingToLength:(int)MIN(80, (iq.tenengrad3/14.375)) withString: @"|" startingAtIndex:0],
+                  [@"" stringByPaddingToLength:(int)MIN(80, (MAX(0.0f, iq.tenengrad3)/14.375)) withString: @"|" startingAtIndex:0],
                   iq.tenengrad3,
-                  [@"" stringByPaddingToLength:(int)MIN(80, (iq.greenContrast/0.0875)) withString: @"|" startingAtIndex:0],
+                  [@"" stringByPaddingToLength:(int)MIN(80, (MAX(0.0f, iq.greenContrast)/0.0875)) withString: @"|" startingAtIndex:0],
                   iq.greenContrast,
-                  [@"" stringByPaddingToLength:(int)MIN(80, (iq.boundaryScore/10.0)) withString: @"|" startingAtIndex:0],
+                  [@"" stringByPaddingToLength:(int)MIN(80, (MAX(0.0f, iq.boundaryScore)/10.0)) withString: @"|" startingAtIndex:0],
                   iq.boundaryScore,
                   iq.isBoundary?@"YES":@"NO",
                   iq.isEmpty?@"YES":@"NO"

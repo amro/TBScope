@@ -463,61 +463,113 @@ const int MAX_Z_POSITION = 50000; //this is well below any reasonable focal plan
 
 - (void)moveToX:(int)x Y:(int)y Z:(int)z
 {
-        NSLog(@"moving to (%d, %d, %d)", x,y,z);
-    
-        if (x != -1) {
-            int xSteps = (int)x - self.xPosition;
-            if (xSteps > 0) {
-                [self moveStageWithDirection:CSStageDirectionRight
-                                       Steps:xSteps
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            } else if (xSteps < 0) {
-                [self moveStageWithDirection:CSStageDirectionLeft
-                                       Steps:ABS(xSteps)
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            }
-        }
+    NSLog(@"moving to (%d, %d, %d)", x,y,z);
 
-        if (y != -1) {
-            int ySteps = (int)y - self.yPosition;
-            if (ySteps > 0) {
-                [self moveStageWithDirection:CSStageDirectionDown
-                                       Steps:ySteps
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            } else if (ySteps < 0) {
-                [self moveStageWithDirection:CSStageDirectionUp
-                                       Steps:ABS(ySteps)
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            }
+    if (x != -1) {
+        int xSteps = (int)x - self.xPosition;
+        if (xSteps > 0) {
+            [self moveStageWithDirection:CSStageDirectionRight
+                                   Steps:xSteps
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
+        } else if (xSteps < 0) {
+            [self moveStageWithDirection:CSStageDirectionLeft
+                                   Steps:ABS(xSteps)
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
         }
+    }
 
-        if (z != -1) {
-            int zSteps = (int)z - self.zPosition;
-            if (zSteps > 0) {
-                [self moveStageWithDirection:CSStageDirectionFocusDown
-                                       Steps:zSteps
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            } else if (zSteps < 0) {
-                [self moveStageWithDirection:CSStageDirectionFocusUp
-                                       Steps:ABS(zSteps)
-                                 StopOnLimit:YES
-                                DisableAfter:YES];
-                [self waitForStage];
-            }
+    if (y != -1) {
+        int ySteps = (int)y - self.yPosition;
+        if (ySteps > 0) {
+            [self moveStageWithDirection:CSStageDirectionDown
+                                   Steps:ySteps
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
+        } else if (ySteps < 0) {
+            [self moveStageWithDirection:CSStageDirectionUp
+                                   Steps:ABS(ySteps)
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
         }
+    }
 
-        [[TBScopeHardware sharedHardware] disableMotors];
-    
+    if (z != -1) {
+        int zSteps = (int)z - self.zPosition;
+        if (zSteps > 0) {
+            [self moveStageWithDirection:CSStageDirectionFocusDown
+                                   Steps:zSteps
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
+        } else if (zSteps < 0) {
+            [self moveStageWithDirection:CSStageDirectionFocusUp
+                                   Steps:ABS(zSteps)
+                             StopOnLimit:YES
+                            DisableAfter:YES];
+            [self waitForStage];
+        }
+    }
+
+    [[TBScopeHardware sharedHardware] disableMotors];
+}
+
+// The motor inside the microscope is not reliable when moving to
+// arbitrary positions in different increments. E.g. when moving
+// from 0 to 1000 in 100 step increments, then back to 0 in 500
+// step increments, you will end up in a different place. To
+// minimize this we provide a way to move in fixed increments.
+- (void)moveToX:(int)x Y:(int)y Z:(int)z inIncrementsOf:(int)stepsPerMove
+{
+    // Steps is always a positive integer
+    stepsPerMove = ABS(stepsPerMove);
+
+    if (x != -1) {
+        int startPosition = [self xPosition];
+        int endPosition   = x;
+        int direction     = (endPosition >= startPosition) ? 1 : -1;
+        int increments    = floor((endPosition - startPosition) * direction / stepsPerMove);
+        int extraSteps    = (endPosition - startPosition) * direction % stepsPerMove;
+        int target        = startPosition;
+        for (int i=0; i<increments; i++) {
+            target += stepsPerMove * direction;
+            [self moveToX:target Y:-1 Z:-1];
+        }
+        if (extraSteps > 0) [self moveToX:endPosition Y:-1 Z:-1];
+    }
+
+    if (y != -1) {
+        int startPosition = [self yPosition];
+        int endPosition   = y;
+        int direction     = (endPosition >= startPosition) ? 1 : -1;
+        int increments    = floor((endPosition - startPosition) * direction / stepsPerMove);
+        int extraSteps    = (endPosition - startPosition) * direction % stepsPerMove;
+        int target        = startPosition;
+        for (int i=0; i<increments; i++) {
+            target += stepsPerMove * direction;
+            [self moveToX:-1 Y:target Z:-1];
+        }
+        if (extraSteps > 0) [self moveToX:-1 Y:endPosition Z:-1];
+    }
+
+    if (z != -1) {
+        int startPosition = [self zPosition];
+        int endPosition   = z;
+        int direction     = (endPosition >= startPosition) ? 1 : -1;
+        int increments    = floor((endPosition - startPosition) * direction / stepsPerMove);
+        int extraSteps    = (endPosition - startPosition) * direction % stepsPerMove;
+        int target        = startPosition;
+        for (int i=0; i<increments; i++) {
+            target += stepsPerMove * direction;
+            [self moveToX:-1 Y:-1 Z:target];
+        }
+        if (extraSteps > 0) [self moveToX:-1 Y:-1 Z:endPosition];
+    }
 }
 
 - (void) waitForStage

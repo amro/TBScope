@@ -333,8 +333,8 @@ double meanOfVector(std::vector<int> values) {
 
 double contrast(cv::Mat src) {
     std::vector<int> pixelVals = sortValues(pixelValues(src), sortFnAsc);
-    double meanLow = meanOfVector(filterByPercentile(pixelVals, 0.25, 0.75));
-    double meanHigh = meanOfVector(filterByPercentile(pixelVals, 0.995, 1.0));
+    double meanLow = meanOfVector(filterByPercentile(pixelVals, 0.4, 0.6));
+    double meanHigh = meanOfVector(filterByPercentile(pixelVals, 0.9995, 1.0));
     double contrast = meanHigh/MAX(1.0, meanLow);
     
     // std::vector<int> low = filterByPercentile(pixelVals, 0.25, 0.75);

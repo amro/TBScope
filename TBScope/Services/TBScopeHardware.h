@@ -63,6 +63,7 @@ typedef NS_ENUM(int, CSStagePosition)
 
 -(void)moveToPosition:(CSStagePosition)position;
 -(void)moveToX:(int)x Y:(int)y Z:(int)z;
+-(void)moveToX:(int)x Y:(int)y Z:(int)z inIncrementsOf:(int)steps;
 -(void)setupBLEConnection;
 -(void)setupEnvironmentalLogging;
 -(void)requestStatusUpdate;

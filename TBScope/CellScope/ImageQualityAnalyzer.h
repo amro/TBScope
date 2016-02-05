@@ -11,7 +11,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-#define CROP_WINDOW_SIZE 250  //250  // Had to reduce this (from 700) to get 10+ frames/sec
+#define CROP_WINDOW_SIZE 500  // Had to reduce this (from 700) to improve frame rate
 
 typedef struct
     {

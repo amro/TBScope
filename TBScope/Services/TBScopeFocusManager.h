@@ -27,6 +27,7 @@ typedef NS_ENUM(int, TBScopeFocusManagerResult)
 +(instancetype)sharedFocusManager;
 -(TBScopeFocusManagerResult)autoFocus;
 -(void)clearLastGoodPositionAndMetric;
+-(int)zPositionBroadSweepStepsPerSlice;
 -(int)zPositionBroadSweepMin;
 -(int)zPositionBroadSweepMax;
 -(float)currentImageQualityMetric;

@@ -63,6 +63,11 @@
     ((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"FocusBroadSweepRange"] / 2) ;
 }
 
+- (int)zPositionFineSweepStepsPerSlice
+{
+    return 100;
+}
+
 - (float)currentImageQualityMetric
 {
     return [[TBScopeCamera sharedCamera] currentFocusMetric];
@@ -80,62 +85,77 @@
     [self _resetCurrentIterationStats];
     int startingZPosition = [[TBScopeHardware sharedHardware] zPosition];
 
-    // If we have a lastGoodPosition
-    if (self.lastGoodPosition != -1) {
-        // TODO: we should probably make this a wider hill climb because it's
-        // possible we're off by a good margin here
-        if ([self _fineFocus] == TBScopeFocusManagerResultSuccess) {
-            [self _updateLastGoodPositionAndMetric];
-            [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.currentIterationBestPosition];
-            [[TBScopeHardware sharedHardware] waitForStage];
-            return TBScopeFocusManagerResultSuccess;
-        }
-    }
-
-    // Otherwise start from a very coarse focus and work our way finer
-    if ([self _coarseFocus] == TBScopeFocusManagerResultSuccess) {
-        [self _fineFocus];
-        [self _updateLastGoodPositionAndMetric];
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.currentIterationBestPosition];
-        [[TBScopeHardware sharedHardware] waitForStage];
+    // Start from a very coarse sweep, then do a finer sweep
+    if ([self _coarseSweep] == TBScopeFocusManagerResultSuccess) {
+        [self _fineSweep];
         [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful, best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultSuccess;
-    } else if (self.lastGoodPosition!=-1) {
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:self.lastGoodPosition];
-        [[TBScopeHardware sharedHardware] waitForStage];
+    } else if (self.lastGoodPosition != -1) {
+        [[TBScopeHardware sharedHardware] moveToX:-1
+                                                Y:-1
+                                                Z:self.lastGoodPosition
+                                   inIncrementsOf:[self zPositionBroadSweepStepsPerSlice]];
         [TBScopeData CSLog:@"Auto focus failed, returning to last good position." inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultReturn;
     }
 
     // Utter failure to focus, return to starting position
-    [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:startingZPosition];
-    [[TBScopeHardware sharedHardware] waitForStage];
+    [[TBScopeHardware sharedHardware] moveToX:-1
+                                            Y:-1
+                                            Z:startingZPosition
+                               inIncrementsOf:[self zPositionBroadSweepStepsPerSlice]];
     [TBScopeData CSLog:@"Auto focus failure" inCategory:@"CAPTURE"];
     return TBScopeFocusManagerResultFailure;
 }
 
-- (TBScopeFocusManagerResult)_coarseFocus
+- (TBScopeFocusManagerResult)_coarseSweep
 {
-    [TBScopeData CSLog:@"Starting coarse focus" inCategory:@"CAPTURE"];
-    
-    // Start at zPositionBroadSweepMin
-    [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:[self zPositionBroadSweepMin]];
-    [[TBScopeHardware sharedHardware] waitForStage];
+    [TBScopeData CSLog:@"Starting coarse sweep" inCategory:@"CAPTURE"];
 
-    NSLog(@"min %d",[self zPositionBroadSweepMin]);
-    NSLog(@"max %d",[self zPositionBroadSweepMax]);
-    NSLog(@"step %d",[self zPositionBroadSweepStepsPerSlice]);
-    
+    return [self _sweepFrom:[self zPositionBroadSweepMin]
+                         to:[self zPositionBroadSweepMax]
+             inIncrementsOf:[self zPositionBroadSweepStepsPerSlice]
+         withStdevThreshold:FOCUS_SUCCESS_STDDEV_MULTIPLIER];
+}
+
+- (TBScopeFocusManagerResult)_fineSweep
+{
+    [TBScopeData CSLog:@"Starting fine sweep" inCategory:@"CAPTURE"];
+
+    int currentPosition = [[TBScopeHardware sharedHardware] zPosition];
+    int minPosition = currentPosition - 2000;
+    int maxPosition = currentPosition + 500;
+    int stepIncrement = [self zPositionFineSweepStepsPerSlice];
+    return [self _sweepFrom:minPosition
+                         to:maxPosition
+             inIncrementsOf:stepIncrement
+         withStdevThreshold:0.0];
+}
+
+- (TBScopeFocusManagerResult)_sweepFrom:(int)minPosition
+                                     to:(int)maxPosition
+                         inIncrementsOf:(int)stepIncrement
+                     withStdevThreshold:(double)stdevThreshold
+{
+    NSLog(@"Sweeping from %d to %d in increments of %d", minPosition, maxPosition, stepIncrement);
+
+    // Start at minPosition
+    [[TBScopeHardware sharedHardware] moveToX:-1
+                                            Y:-1
+                                            Z:minPosition
+                               inIncrementsOf:stepIncrement];
+
     // For each slice to zPositionBroadSweepMax...
-    int stepsPerSlice = [self zPositionBroadSweepStepsPerSlice];
     NSMutableArray *samples = [[NSMutableArray alloc] init];
     NSInteger bestPositionSoFar = nil;
     float bestMetricSoFar = -1.0;
-    for (int position=[self zPositionBroadSweepMin]; position <= [self zPositionBroadSweepMax]; position+=stepsPerSlice)
+    for (int position=minPosition; position <= maxPosition; position+=stepIncrement)
     {
         // Move into position
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:position];
-        [[TBScopeHardware sharedHardware] waitForStage];
+        [[TBScopeHardware sharedHardware] moveToX:-1
+                                                Y:-1
+                                                Z:position
+                                   inIncrementsOf:stepIncrement];
         [self pauseForSettling];  // does this help reduce blurring?
 
         // Gather metric
@@ -151,127 +171,18 @@
     float mean = [self _mean:samples];
     float stdev = [self _stdev:samples];
     
-    if (bestMetricSoFar > mean+FOCUS_SUCCESS_STDDEV_MULTIPLIER*stdev) {
-        [self _recordNewCurrentIterationPosition:bestPositionSoFar Metric:bestMetricSoFar];
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:bestPositionSoFar];
-        [[TBScopeHardware sharedHardware] waitForStage];
+    if (bestMetricSoFar > mean + stdevThreshold*stdev) {
+        [self _recordNewCurrentIterationPosition:bestPositionSoFar
+                                          Metric:bestMetricSoFar];
+        [[TBScopeHardware sharedHardware] moveToX:-1
+                                                Y:-1
+                                                Z:bestPositionSoFar
+                                   inIncrementsOf:stepIncrement];
+        [self _updateLastGoodPositionAndMetric];
         return TBScopeFocusManagerResultSuccess;
     } else {
         return TBScopeFocusManagerResultFailure;
     }
-}
-
-// Focus within a 2000 step range using hill climbing (resolution 20 steps)
-- (TBScopeFocusManagerResult)_fineFocus
-{
-    [TBScopeData CSLog:@"Starting fine focus" inCategory:@"CAPTURE"];
-    
-    // Calculate min and max positions
-    int currentPosition = [[TBScopeHardware sharedHardware] zPosition];
-    int minPosition = currentPosition - 1000;
-    int maxPosition = currentPosition + 1000;
-
-    // Hill climb
-    return [self _hillClimbInSlicesOf:20
-                   slicesPerIteration:10
-                          inDirection:0
-                      withMinPosition:minPosition
-                          maxPosition:maxPosition];
-}
-
-- (TBScopeFocusManagerResult)_hillClimbInSlicesOf:(int)stepsPerSlice
-                               slicesPerIteration:(int)slicesPerIteration
-                                      inDirection:(int)direction  // -1 is down, 0 is not sure, 1 is up
-                                  withMinPosition:(int)minPosition
-                                      maxPosition:(int)maxPosition
-{
-    [TBScopeData CSLog:[NSString stringWithFormat:@"Hill Climbing from z: %d to %d and direction: %d",minPosition,maxPosition,direction] inCategory:@"CAPTURE"];
-    
-    // If we're outside min/max position, return failure
-    int startZPosition = [[TBScopeHardware sharedHardware] zPosition];
-    if (startZPosition < minPosition || startZPosition+stepsPerSlice*slicesPerIteration > maxPosition) {
-        return TBScopeFocusManagerResultFailure;
-    }
-    
-    // Gather slicesPerIteration successive points starting at start point
-    NSInteger bestPositionSoFar = nil;
-    float bestMetricSoFar = -1.0;
-    NSMutableArray *samples = [NSMutableArray arrayWithArray:@[]];
-    for (int i=0; i<slicesPerIteration; ++i) {
-        // Move to position
-        int targetZPosition = startZPosition + i*stepsPerSlice;
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:targetZPosition];
-        [[TBScopeHardware sharedHardware] waitForStage];
-        [self pauseForSettling];  // does this help reduce blurring?
-
-        // Gather metric
-        float metric = [self currentImageQualityMetric];
-        if (metric > bestMetricSoFar) {
-            bestMetricSoFar = metric;
-            bestPositionSoFar = targetZPosition;
-        }
-        [samples addObject:[NSNumber numberWithFloat:metric]];
-        [self _recordNewCurrentIterationPosition:targetZPosition Metric:metric];
-    }
-
-    // Calculate slope of best-fit
-    float sumY = 0.0;
-    float sumX = 0.0;
-    float sumXY = 0.0;
-    float sumX2 = 0.0;
-    float sumY2 = 0.0;
-    for (int i=0; i<[samples count]; ++i) {
-        float value = [[samples objectAtIndex:i] floatValue];
-        sumX = sumX + i;
-        sumY = sumY + value;
-        sumXY = sumXY + (i * value);
-        sumX2 = sumX2 + (i * i);
-        sumY2 = sumY2 + (value * value);
-    }
-    float slope = (([samples count] * sumXY) - (sumX * sumY)) / (([samples count] * sumX2) - (sumX * sumX));
-
-    // If slope is 0, move to best position and return success
-    // It would be great if we could go over the slope calculatiion
-    if (slope == 0.0) {
-        return TBScopeFocusManagerResultSuccess;
-    }
-
-    // If direction is 0, set direction based on slope
-    if (direction == 0) {
-        if (slope > 0.0) {
-            direction = 1;
-        } else {
-            direction = -1;
-        }
-    }
-
-    // If we're climbing up and slope is decreasing
-    if (direction > 0 && slope < 0) {
-        return TBScopeFocusManagerResultSuccess;
-    }
-
-    // If we're climbing down and slope is increasing
-    if (direction < 0 && slope > 0) {
-        return TBScopeFocusManagerResultSuccess;
-    }
-
-    // Record lastGoodMetric/position and continue climbing
-    if (direction > 0) {  // If we're climbing up
-        // Move stepsPerSlice steps up
-        int targetZPosition = startZPosition + slicesPerIteration*stepsPerSlice;
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:targetZPosition];
-        [[TBScopeHardware sharedHardware] waitForStage];
-    } else {  // If we're climbing down
-        // Move stepsPerSlice steps down
-        int targetZPosition = startZPosition - slicesPerIteration*stepsPerSlice;
-        [[TBScopeHardware sharedHardware] moveToX:-1 Y:-1 Z:targetZPosition];
-        [[TBScopeHardware sharedHardware] waitForStage];
-    }
-    return [self _hillClimbInSlicesOf:stepsPerSlice
-                   slicesPerIteration:slicesPerIteration
-                          inDirection:direction
-                      withMinPosition:minPosition
-                          maxPosition:maxPosition];
 }
 
 - (void)_recordNewCurrentIterationPosition:(int)position Metric:(float)metric
@@ -323,7 +234,9 @@
 // ...testing different values
 - (void)pauseForSettling
 {
-    [NSThread sleepForTimeInterval:[[NSUserDefaults standardUserDefaults] floatForKey:@"FocusSettlingTime"]];
+    float sleepTime =[[NSUserDefaults standardUserDefaults] floatForKey:@"FocusSettlingTime"];
+    sleepTime = 0.15;
+    [NSThread sleepForTimeInterval:sleepTime];
 }
 
 @end
