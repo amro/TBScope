@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UITextField* patientIDFormat;
 @property (weak, nonatomic) IBOutlet UITextField* redThreshold;
 @property (weak, nonatomic) IBOutlet UITextField* yellowThreshold;
+@property (weak, nonatomic) IBOutlet UISwitch* allowManualObjectClassification;
 @property (weak, nonatomic) IBOutlet UITextField* diagnosticThreshold;
 @property (weak, nonatomic) IBOutlet UITextField* numPatchesToAverage;
 @property (weak, nonatomic) IBOutlet UITextField *syncInterval;

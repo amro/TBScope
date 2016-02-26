@@ -56,6 +56,7 @@
     self.redThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"RedThreshold"]];
     self.yellowThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"YellowThreshold"]];
     self.diagnosticThreshold.text = [[NSString alloc] initWithFormat:@"%2.3f",[prefs floatForKey:@"DiagnosticThreshold"]];
+    self.allowManualObjectClassification.on = [prefs boolForKey:@"AllowManualObjectClassification"];
     self.autoAnalyzeSwitch.on = [prefs boolForKey:@"DoAutoAnalyze"];
     self.bypassLogin.on = [prefs boolForKey:@"BypassLogin"];
     self.resetCoreData.on = [prefs boolForKey:@"ResetCoreDataOnStartup"];
@@ -135,6 +136,7 @@
     [prefs setFloat:self.diagnosticThreshold.text.floatValue forKey:@"DiagnosticThreshold"];
     [prefs setFloat:self.redThreshold.text.floatValue forKey:@"RedThreshold"];
     [prefs setFloat:self.yellowThreshold.text.floatValue forKey:@"YellowThreshold"];
+    [prefs setBool:self.allowManualObjectClassification.on forKey:@"AllowManualObjectClassification"];
     
     [prefs setBool:self.bypassLogin.on forKey:@"BypassLogin"];
     [prefs setBool:self.resetCoreData.on forKey:@"ResetCoreDataOnStartup"];
