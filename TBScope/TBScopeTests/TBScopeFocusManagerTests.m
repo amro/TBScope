@@ -135,6 +135,17 @@
     XCTAssertEqual(hardware.zPosition, 8200);
 }
 
+- (void)testThatItFineFocusesWithLastGoodPosition {
+    self.focusManager.lastGoodPosition = 8100;
+    [self _toggleCurrentImageQualityMetricCurvePeakAt8200];
+    [self.focusManager autoFocus];
+    [self _toggleCurrentImageQualityMetricCurvePeakAt8200];
+
+    // Expect hardware zPosition to end at 8200
+    TBScopeHardwareMock *hardware = (TBScopeHardwareMock *)[TBScopeHardware sharedHardware];
+    XCTAssertEqual(hardware.zPosition, 8200);
+}
+
 #pragma private methods
 
 // Make [TBScopeHardware sharedHardware] return TBScopeHardwareMock

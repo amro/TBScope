@@ -85,10 +85,28 @@
     [self _resetCurrentIterationStats];
     int startingZPosition = [[TBScopeHardware sharedHardware] zPosition];
 
+    // If we have a last good position, move there then fine sweep
+    if (self.lastGoodPosition != -1) {
+        [[TBScopeHardware sharedHardware] moveToX:-1
+                                                Y:-1
+                                                Z:self.lastGoodPosition
+                                   inIncrementsOf:[self zPositionBroadSweepStepsPerSlice]];
+        if ([self _fineSweep] == TBScopeFocusManagerResultSuccess) {
+            [TBScopeData CSLog:[NSString stringWithFormat:@"Fine sweep successful, best metric = %f, best position = %d", self.currentIterationBestMetric, self.currentIterationBestPosition] inCategory:@"CAPTURE"];
+            return TBScopeFocusManagerResultSuccess;
+        } else {
+            [[TBScopeHardware sharedHardware] moveToX:-1
+                                                    Y:-1
+                                                    Z:self.lastGoodPosition
+                                       inIncrementsOf:[self zPositionBroadSweepStepsPerSlice]];
+            return TBScopeFocusManagerResultReturn;
+        }
+    }
+
     // Start from a very coarse sweep, then do a finer sweep
     if ([self _coarseSweep] == TBScopeFocusManagerResultSuccess) {
         [self _fineSweep];
-        [TBScopeData CSLog:[NSString stringWithFormat:@"Auto focus successful, best metric = %f, best position = %d",self.currentIterationBestMetric,self.currentIterationBestPosition] inCategory:@"CAPTURE"];
+        [TBScopeData CSLog:[NSString stringWithFormat:@"Full auto-focus successful, best metric = %f, best position = %d", self.currentIterationBestMetric, self.currentIterationBestPosition] inCategory:@"CAPTURE"];
         return TBScopeFocusManagerResultSuccess;
     } else if (self.lastGoodPosition != -1) {
         [[TBScopeHardware sharedHardware] moveToX:-1
