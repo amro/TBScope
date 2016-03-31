@@ -10,7 +10,7 @@
 #define PATCH_HEIGHT 24
 #define SPRITESHEET_PATCHES_PER_ROW 25
 #define SPRITESHEET_BORDER_WIDTH 2
-#define CIRCLEMASKRADIUS 790
+#define CIRCLEMASKRADIUS 750
 
 #if __APPLE__
 #else // Assumed to be windows
