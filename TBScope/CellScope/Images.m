@@ -38,10 +38,21 @@
     __block NSManagedObjectContext *moc = [self managedObjectContext];
     return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
         [moc performBlock:^{
+            NSString *message = [NSString stringWithFormat:@"Uploading image #%d from slide #%d from exam %@ with googleDriveFileID %@",
+              self.fieldNumber,
+              self.slide.slideNumber,
+              self.slide.exam.examID,
+              self.googleDriveFileID
+            ];
+            [TBScopeData CSLog:message inCategory:@"SYNC"];
+
             resolve(self.googleDriveFileID);
         }];
     }].then(^(NSString *googleDriveFileID) {
-        if (googleDriveFileID) return [PMKPromise noopPromise];
+        if (googleDriveFileID) {
+            [TBScopeData CSLog:@"Not uploading because image is already on Google Drive" inCategory:@"SYNC"];
+            return [PMKPromise noopPromise];
+        }
 
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             [moc performBlock:^{
@@ -51,7 +62,13 @@
             }];
         }];
     }).then(^ PMKPromise* (UIImage *image) {
-        if (!image) return [PMKPromise noopPromise];
+        if (!image) {
+            [moc performBlock:^{
+                NSString *message = [NSString stringWithFormat:@"Could not load image from path %@", self.path ];
+                [TBScopeData CSLog:message inCategory:@"SYNC"];
+            }];
+            return [PMKPromise noopPromise];
+        }
 
         // Upload the file
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
@@ -77,13 +94,22 @@
 
                 NSData *data = UIImageJPEGRepresentation((UIImage *)image, 1.0);
 
+                NSString *message = [NSString stringWithFormat:@"Uploading local file from path %@ to Google Drive with title %@",
+                    self.path,
+                    file.title
+                ];
+                [TBScopeData CSLog:message inCategory:@"SYNC"];
+
                 [googleDriveService uploadFile:file withData:data]
                     .then(^(GTLDriveFile *file) { resolve(file); })
                     .catch(^(NSError *error) { resolve(error); });
             }];
         }];
     }).then(^ PMKPromise* (GTLDriveFile *file) {
-        if (!file) return [PMKPromise noopPromise];
+        if (!file) {
+            [TBScopeData CSLog:@"No file was returned from Google Drive" inCategory:@"SYNC"];
+            return [PMKPromise noopPromise];
+        }
 
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             if (file) {

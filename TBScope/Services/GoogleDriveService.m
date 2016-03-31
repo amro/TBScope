@@ -7,6 +7,7 @@
 //
 
 #import "GoogleDriveService.h"
+#import "TBScopeData.h"
 #import "GTMOAuth2ViewControllerTouch.h"
 #import "NSData+MD5.h"
 #import "PMKPromise+NoopPromise.h"
@@ -131,14 +132,17 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
             NSString *remoteMD5 = [existingFile md5Checksum];
             if (localMD5 == remoteMD5) {
                 // Files have same contents, do not upload
+                [TBScopeData CSLog:@"Local file and Google Drive file are the same, not uploading" inCategory:@"SYNC"];
             } else {
                 // Files are different, upload
+                [TBScopeData CSLog:@"Local file and Google Drive file are different, uploading" inCategory:@"SYNC"];
                 query = [GTLQueryDrive queryForFilesUpdateWithObject:file
                                                               fileId:[file identifier]
                                                     uploadParameters:uploadParameters];
             }
         } else {
             // File does not exist on remote server, upload
+            [TBScopeData CSLog:@"File does not exist on Google Drive, uploading" inCategory:@"SYNC"];
             query = [GTLQueryDrive queryForFilesInsertWithObject:file
                                                 uploadParameters:uploadParameters];
         }
