@@ -43,6 +43,7 @@
 
 - (BOOL)allImagesAreLocal;
 - (BOOL)hasLocalImages;
+- (NSArray *)imagesToUpload;
 - (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive:(GoogleDriveService *)googleDriveService;
 - (PMKPromise *)downloadRoiSpriteSheetFromGoogleDrive:(GoogleDriveService *)googleDriveService;
 

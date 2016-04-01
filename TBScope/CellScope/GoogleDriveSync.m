@@ -141,10 +141,6 @@ BOOL _hasAttemptedLogUpload;
         if ([self uploadIsEnabled]) {
             [TBScopeData CSLog:@"Fetching new images from core data." inCategory:@"SYNC"];
 
-            // Determine the max number of images to upload per slide
-            NSInteger maxUploadsPerSlide = [[NSUserDefaults standardUserDefaults] integerForKey:@"MaxUploadsPerSlide"];
-            if (!maxUploadsPerSlide) maxUploadsPerSlide = 10;
-
             // Find all slides, with the most recent first
             results = [CoreDataHelper searchObjectsForEntity:@"Slides"
                                                withPredicate:nil
@@ -153,39 +149,11 @@ BOOL _hasAttemptedLogUpload;
                                                   andContext:tmpMOC];
             int imageUploadsEnqueued = 0;
             for (Slides *slide in results) {
-                if (slide.slideAnalysisResults) {  // If slide is analyzed
-                    // Find the top N ROIs belonging to the slide
-                    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-                    NSEntityDescription *entity = [NSEntityDescription entityForName:@"ROIs"
-                                                              inManagedObjectContext:tmpMOC];
-                    [request setEntity:entity];
-                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"imageAnalysisResult.image.slide = %@", slide];
-                    [request setPredicate:predicate];
-                    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"score" ascending:NO];
-                    [request setSortDescriptors:@[sort]];
-                    [request setFetchLimit:maxUploadsPerSlide];
-                    NSError *error = nil;
-                    NSMutableArray *rois = [[tmpMOC executeFetchRequest:request error:&error] mutableCopy];
-                    for (ROIs *roi in rois) {
-                        // Upload the associated image for each
-                        Images *image = [[roi imageAnalysisResult] image];
-                        if ([self.imageUploadQueue indexOfObject:image] == NSNotFound) {  // if it's not already in the queue
-                            [self.imageUploadQueue addObject:image];
-                            imageUploadsEnqueued++;
-                        }
-                    }
-                } else {  // Otherwise upload all non-remote images
-                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(slide = %@) && (googleDriveFileID = nil) && (path != nil)", slide];
-                    NSArray *images = [CoreDataHelper searchObjectsForEntity:@"Images"
-                                                       withPredicate:predicate
-                                                          andSortKey:@"fieldNumber"
-                                                    andSortAscending:YES
-                                                          andContext:tmpMOC];
-                    for (Images *image in images) {
-                        if ([self.imageUploadQueue indexOfObject:image] == NSNotFound) {  // if it's not already in the queue
-                            [self.imageUploadQueue addObject:image];
-                            imageUploadsEnqueued++;
-                        }
+                NSArray *imagesToUpload = [slide imagesToUpload];
+                for (Images *image in imagesToUpload) {
+                    if ([self.imageUploadQueue indexOfObject:image] == NSNotFound) {  // if it's not already in the queue
+                        [self.imageUploadQueue addObject:image];
+                        imageUploadsEnqueued++;
                     }
                 }
             }

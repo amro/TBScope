@@ -156,6 +156,89 @@
     }];
 }
 
+#pragma imagesToUpload tests
+
+- (void)testThatImagesToUploadIncludesAnImageWithoutROIsIfNumberOfSlidesIsLessThanMaxUploadsPerSlide
+{
+    [self _stubMaxUploadsPerSlide:5];
+    [self.moc performBlockAndWait:^{
+        // Add an image without ROIs to the slide
+        Images *image = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        [self.slide addSlideImagesObject:image];
+
+        // Make sure image is included in results
+        NSArray *actual = [self.slide imagesToUpload];
+        XCTAssertEqual(image, [actual firstObject]);
+    }];
+}
+
+- (void)testThatImagesToUploadDoesNotExceedMaxUploadsPerSlide
+{
+    [self _stubMaxUploadsPerSlide:1];
+    [self.moc performBlockAndWait:^{
+        // Add 2 images to the slide
+        for (int i=0; i<2; i++) {
+            Images *image = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+            [self.slide addSlideImagesObject:image];
+        }
+
+        // Make sure result only contains one object
+        NSArray *actual = [self.slide imagesToUpload];
+        XCTAssertEqual(1, [actual count]);
+    }];
+}
+
+- (void)testThatImagesToUploadIncludesImagesWithHighScoresOverThoseWithLowScores
+{
+    [self _stubMaxUploadsPerSlide:1];
+    [self.moc performBlockAndWait:^{
+        // Add an image with ROI with score 0.75
+        Images *image1 = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        ImageAnalysisResults *results1 = (ImageAnalysisResults*)[NSEntityDescription insertNewObjectForEntityForName:@"ImageAnalysisResults" inManagedObjectContext:self.moc];
+        image1.imageAnalysisResults = results1;
+        ROIs *roi1 = (ROIs*)[NSEntityDescription insertNewObjectForEntityForName:@"ROIs" inManagedObjectContext:self.moc];
+        roi1.score = 0.75;
+        [results1 addImageROIsObject:roi1];
+        [self.slide addSlideImagesObject:image1];
+
+        // Add an image with ROI with score 0.25
+        Images *image2 = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        ImageAnalysisResults *results2 = (ImageAnalysisResults*)[NSEntityDescription insertNewObjectForEntityForName:@"ImageAnalysisResults" inManagedObjectContext:self.moc];
+        image2.imageAnalysisResults = results2;
+        ROIs *roi2 = (ROIs*)[NSEntityDescription insertNewObjectForEntityForName:@"ROIs" inManagedObjectContext:self.moc];
+        roi2.score = 0.25;
+        [results2 addImageROIsObject:roi2];
+        [self.slide addSlideImagesObject:image2];
+
+        // Make sure the image with ROI of 0.75 is in results
+        NSArray *actual = [self.slide imagesToUpload];
+        XCTAssertEqual(image1, [actual firstObject]);
+    }];
+}
+
+- (void)testThatImagesToUploadIncludesImagesROIsOverThoseWithoutROIs
+{
+    [self _stubMaxUploadsPerSlide:1];
+    [self.moc performBlockAndWait:^{
+        // Add image with ROI with score 0.5
+        Images *image1 = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        ImageAnalysisResults *results1 = (ImageAnalysisResults*)[NSEntityDescription insertNewObjectForEntityForName:@"ImageAnalysisResults" inManagedObjectContext:self.moc];
+        image1.imageAnalysisResults = results1;
+        ROIs *roi1 = (ROIs*)[NSEntityDescription insertNewObjectForEntityForName:@"ROIs" inManagedObjectContext:self.moc];
+        roi1.score = 0.5;
+        [results1 addImageROIsObject:roi1];
+        [self.slide addSlideImagesObject:image1];
+
+        // Add image without any ROIs
+        Images *image2 = (Images*)[NSEntityDescription insertNewObjectForEntityForName:@"Images" inManagedObjectContext:self.moc];
+        [self.slide addSlideImagesObject:image2];
+
+        // Make sure the image with ROI of 0.5 is in results
+        NSArray *actual = [self.slide imagesToUpload];
+        XCTAssertEqual(image1, [actual firstObject]);
+    }];
+}
+
 #pragma uploadToGoogleDrive tests
 
 - (void)testThatUploadRoiSpriteSheetToGoogleDriveDoesNotUploadIfPathIsNil
@@ -756,6 +839,19 @@
     [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
         if (error) XCTFail(@"Async test timed out");
     }];
+}
+
+#pragma private helper methods
+
+- (void)_stubMaxUploadsPerSlide:(int)newValue
+{
+    id udMock = OCMPartialMock([NSUserDefaults standardUserDefaults]);
+    id udClassMock = OCMClassMock([NSUserDefaults class]);
+    NSInteger value = (NSInteger)newValue;
+    OCMStub([udMock integerForKey:@"MaxUploadsPerSlide"])
+        .andReturn(value);
+    OCMStub([udClassMock standardUserDefaults])
+        .andReturn(udMock);
 }
 
 @end

@@ -59,6 +59,51 @@
     return NO;
 }
 
+- (NSArray *)imagesToUpload
+{
+    // Get a list of all images
+    NSOrderedSet *allImages = [self slideImages];
+
+    // Make a dictionary of imageId => MAX(roi.score)
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    for (Images *image in allImages) {
+        float maxScore = 0;
+        for (ROIs *roi in image.imageAnalysisResults.imageROIs) {
+            maxScore = MAX(maxScore, roi.score);
+        }
+        [dict setObject:[NSNumber numberWithFloat:maxScore]
+                 forKey:[image objectID]];
+    }
+
+    // Sort list of images by dictionary[imageId]
+    NSArray *sortedImages = [allImages sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        float aMaxScore = [[dict objectForKey:[a objectID]] floatValue];
+        float bMaxScore = [[dict objectForKey:[b objectID]] floatValue];
+
+        // Sort descending
+        if (aMaxScore > bMaxScore) {
+            return (NSComparisonResult)NSOrderedAscending;
+        } else if (aMaxScore < bMaxScore) {
+            return (NSComparisonResult)NSOrderedDescending;
+        } else {
+            return (NSComparisonResult)NSOrderedSame;
+        }
+    }];
+
+    // Get MaxUploadsPerSlide value
+    NSInteger maxUploadsPerSlide = [[NSUserDefaults standardUserDefaults] integerForKey:@"MaxUploadsPerSlide"];
+    if (!maxUploadsPerSlide) maxUploadsPerSlide = 10;
+
+    // Slice list of images based on MaxUploadsPerSlide
+    NSRange range;
+    range.location = 0;
+    range.length = MIN([sortedImages count], maxUploadsPerSlide);
+    NSArray *results = [sortedImages subarrayWithRange:range];
+
+    // Return it
+    return results;
+}
+
 - (PMKPromise *)uploadRoiSpriteSheetToGoogleDrive:(GoogleDriveService *)googleDriveService
 {
     __block NSString *remoteMd5;
