@@ -11,6 +11,7 @@
 		84072C4B196BB3EA004F8826 /* ImageQualityAnalyzer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84072C4A196BB3EA004F8826 /* ImageQualityAnalyzer.mm */; };
 		84072C4E196BB403004F8826 /* CoreDataJSONHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 84072C4D196BB403004F8826 /* CoreDataJSONHelper.m */; };
 		84072C51196BB410004F8826 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 84072C50196BB410004F8826 /* Reachability.m */; };
+		8A21C0E91CB1A537009D36A7 /* ScheduleSyncOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A21C0E81CB1A537009D36A7 /* ScheduleSyncOperation.m */; };
 		8A4E2B0D1BEC06F200F34274 /* GoogleDriveService.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4E2B0C1BEC06F200F34274 /* GoogleDriveService.m */; };
 		8A4E2B1F1BEC14E800F34274 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4E2B1E1BEC14E800F34274 /* NSData+MD5.m */; };
 		8A4E2B221BEC167100F34274 /* UIImage+Crop.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4E2B211BEC167100F34274 /* UIImage+Crop.m */; };
@@ -29,6 +30,11 @@
 		8A52546A1BBEBEA6009B29BF /* bf_blurry.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A5254661BBEBEA6009B29BF /* bf_blurry.jpg */; };
 		8A52546B1BBEBEA6009B29BF /* bf_focused.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A5254671BBEBEA6009B29BF /* bf_focused.jpg */; };
 		8A52546F1BBED52A009B29BF /* TBScopeFocusManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A52546E1BBED52A009B29BF /* TBScopeFocusManagerTests.m */; };
+		8A6612AE1CB0ACD800E5B53A /* UploadImagesOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6612AD1CB0ACD800E5B53A /* UploadImagesOperation.m */; };
+		8A6612B11CB0B6D500E5B53A /* UploadExamsOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6612B01CB0B6D500E5B53A /* UploadExamsOperation.m */; };
+		8A6612B41CB0B6F100E5B53A /* DownloadImagesOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6612B31CB0B6F100E5B53A /* DownloadImagesOperation.m */; };
+		8A6612B71CB0B70700E5B53A /* DownloadExamsOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6612B61CB0B70700E5B53A /* DownloadExamsOperation.m */; };
+		8A6612BA1CB0B72000E5B53A /* UploadLogFileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6612B91CB0B72000E5B53A /* UploadLogFileOperation.m */; };
 		8A788A951BF168E1004FA179 /* PMKPromise+NoopPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4E2B241BEC17B400F34274 /* PMKPromise+NoopPromise.m */; };
 		8A7F5AD61BF4FFE40011DA05 /* SlidesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7F5AD51BF4FFE40011DA05 /* SlidesTests.m */; };
 		8A8D3E1A1BD954090065BB78 /* fl_boundary_01.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A8D3DFD1BD954090065BB78 /* fl_boundary_01.jpg */; };
@@ -387,6 +393,8 @@
 		84072C4F196BB410004F8826 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = CellScope/Reachability.h; sourceTree = "<group>"; };
 		84072C50196BB410004F8826 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = CellScope/Reachability.m; sourceTree = "<group>"; };
 		843EF682977FA22DC2DE0F04 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A21C0E71CB1A537009D36A7 /* ScheduleSyncOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScheduleSyncOperation.h; path = Operations/ScheduleSyncOperation.h; sourceTree = "<group>"; };
+		8A21C0E81CB1A537009D36A7 /* ScheduleSyncOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ScheduleSyncOperation.m; path = Operations/ScheduleSyncOperation.m; sourceTree = "<group>"; };
 		8A4E2B0B1BEC06F200F34274 /* GoogleDriveService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoogleDriveService.h; path = Services/GoogleDriveService.h; sourceTree = "<group>"; };
 		8A4E2B0C1BEC06F200F34274 /* GoogleDriveService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GoogleDriveService.m; path = Services/GoogleDriveService.m; sourceTree = "<group>"; };
 		8A4E2B1D1BEC14E800F34274 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+MD5.h"; path = "Extensions/NSData+MD5.h"; sourceTree = "<group>"; };
@@ -419,6 +427,16 @@
 		8A5254661BBEBEA6009B29BF /* bf_blurry.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bf_blurry.jpg; sourceTree = "<group>"; };
 		8A5254671BBEBEA6009B29BF /* bf_focused.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bf_focused.jpg; sourceTree = "<group>"; };
 		8A52546E1BBED52A009B29BF /* TBScopeFocusManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBScopeFocusManagerTests.m; sourceTree = "<group>"; };
+		8A6612AC1CB0ACD800E5B53A /* UploadImagesOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UploadImagesOperation.h; path = Operations/UploadImagesOperation.h; sourceTree = "<group>"; };
+		8A6612AD1CB0ACD800E5B53A /* UploadImagesOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UploadImagesOperation.m; path = Operations/UploadImagesOperation.m; sourceTree = "<group>"; };
+		8A6612AF1CB0B6D500E5B53A /* UploadExamsOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UploadExamsOperation.h; path = Operations/UploadExamsOperation.h; sourceTree = "<group>"; };
+		8A6612B01CB0B6D500E5B53A /* UploadExamsOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UploadExamsOperation.m; path = Operations/UploadExamsOperation.m; sourceTree = "<group>"; };
+		8A6612B21CB0B6F100E5B53A /* DownloadImagesOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadImagesOperation.h; path = Operations/DownloadImagesOperation.h; sourceTree = "<group>"; };
+		8A6612B31CB0B6F100E5B53A /* DownloadImagesOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DownloadImagesOperation.m; path = Operations/DownloadImagesOperation.m; sourceTree = "<group>"; };
+		8A6612B51CB0B70700E5B53A /* DownloadExamsOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadExamsOperation.h; path = Operations/DownloadExamsOperation.h; sourceTree = "<group>"; };
+		8A6612B61CB0B70700E5B53A /* DownloadExamsOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DownloadExamsOperation.m; path = Operations/DownloadExamsOperation.m; sourceTree = "<group>"; };
+		8A6612B81CB0B72000E5B53A /* UploadLogFileOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UploadLogFileOperation.h; path = Operations/UploadLogFileOperation.h; sourceTree = "<group>"; };
+		8A6612B91CB0B72000E5B53A /* UploadLogFileOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UploadLogFileOperation.m; path = Operations/UploadLogFileOperation.m; sourceTree = "<group>"; };
 		8A6998811BB31B2E0034AA93 /* CellScope-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CellScope-Prefix.pch"; sourceTree = "<group>"; };
 		8A7F5AD51BF4FFE40011DA05 /* SlidesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlidesTests.m; path = CoreData/SlidesTests.m; sourceTree = "<group>"; };
 		8A8D3DFD1BD954090065BB78 /* fl_boundary_01.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = fl_boundary_01.jpg; path = Images/ContentMetric/fl_boundary_01.jpg; sourceTree = "<group>"; };
@@ -826,6 +844,25 @@
 			name = Services;
 			sourceTree = "<group>";
 		};
+		8A66129D1CB0AC9E00E5B53A /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				8A6612AC1CB0ACD800E5B53A /* UploadImagesOperation.h */,
+				8A6612AD1CB0ACD800E5B53A /* UploadImagesOperation.m */,
+				8A6612AF1CB0B6D500E5B53A /* UploadExamsOperation.h */,
+				8A6612B01CB0B6D500E5B53A /* UploadExamsOperation.m */,
+				8A6612B51CB0B70700E5B53A /* DownloadExamsOperation.h */,
+				8A6612B61CB0B70700E5B53A /* DownloadExamsOperation.m */,
+				8A6612B21CB0B6F100E5B53A /* DownloadImagesOperation.h */,
+				8A6612B31CB0B6F100E5B53A /* DownloadImagesOperation.m */,
+				8A6612B81CB0B72000E5B53A /* UploadLogFileOperation.h */,
+				8A6612B91CB0B72000E5B53A /* UploadLogFileOperation.m */,
+				8A21C0E71CB1A537009D36A7 /* ScheduleSyncOperation.h */,
+				8A21C0E81CB1A537009D36A7 /* ScheduleSyncOperation.m */,
+			);
+			name = Operations;
+			sourceTree = "<group>";
+		};
 		8A7AC50D1BD6B74D00795B8B /* BF Focus */ = {
 			isa = PBXGroup;
 			children = (
@@ -919,6 +956,7 @@
 		9B6BF0A915E19ACD002834C5 = {
 			isa = PBXGroup;
 			children = (
+				8A66129D1CB0AC9E00E5B53A /* Operations */,
 				8A5CDE3A1BB421F3004E30A3 /* Services */,
 				A57014B318A7091D00881F95 /* Images.xcassets */,
 				A5C5079C18662AF500187BBC /* BLE */,
@@ -1682,6 +1720,7 @@
 				A5FCCD3118B6F0730004B2F5 /* Logs.m in Sources */,
 				9B6BF10215E19F2A002834C5 /* LoginViewController.m in Sources */,
 				8A4E2B1F1BEC14E800F34274 /* NSData+MD5.m in Sources */,
+				8A6612AE1CB0ACD800E5B53A /* UploadImagesOperation.m in Sources */,
 				A5B45F9818303E51002F4D30 /* ExamListViewController.m in Sources */,
 				A5C27AAF182EFAF400A8CB1D /* TBSlideViewer.m in Sources */,
 				A5C27AA4182C3E8600A8CB1D /* EditExamViewController.m in Sources */,
@@ -1693,6 +1732,7 @@
 				A513226619E7857D00B11AEE /* FollowUpData.m in Sources */,
 				A513226219E5FDF900B11AEE /* FollowUpViewController.m in Sources */,
 				AC1CF6A6179E52DB007FA438 /* BlobClass.cpp in Sources */,
+				8A6612B71CB0B70700E5B53A /* DownloadExamsOperation.m in Sources */,
 				8A4E2B251BEC17B400F34274 /* PMKPromise+NoopPromise.m in Sources */,
 				8ADE758F1C0CA16300163968 /* GoogleDriveFolderListViewController.m in Sources */,
 				AC1CF6AA179E52DB007FA438 /* Features.cpp in Sources */,
@@ -1715,6 +1755,7 @@
 				A599E1111824413300B52EF2 /* ResultsTabBarController.m in Sources */,
 				8A4F3D591C05E337000EA005 /* TBScopeCameraMock.m in Sources */,
 				AC5E74AB179F421900BDC4EB /* svm-scale.c in Sources */,
+				8A6612BA1CB0B72000E5B53A /* UploadLogFileOperation.m in Sources */,
 				A5FCCD3018B6F0730004B2F5 /* Images.m in Sources */,
 				A5C0156D18F8C9B7004BC143 /* PrintViewController.m in Sources */,
 				AC5E74AD179F421900BDC4EB /* svm-train.c in Sources */,
@@ -1732,12 +1773,14 @@
 				AC5E74A9179F421900BDC4EB /* svm-predict.c in Sources */,
 				A5C27AA7182C562C00A8CB1D /* CaptureViewController.m in Sources */,
 				A5FD37A0183DDEB400C67D85 /* GoogleDriveViewController.m in Sources */,
+				8A21C0E91CB1A537009D36A7 /* ScheduleSyncOperation.m in Sources */,
 				A5C8E177196DFF8C0072D99C /* NSData+HexData.m in Sources */,
 				A52BDEB71859236F00B4ECB2 /* TBScope.xcdatamodeld in Sources */,
 				8A4F3D5B1C05E337000EA005 /* TBScopeFocusManager.m in Sources */,
 				84072C4E196BB403004F8826 /* CoreDataJSONHelper.m in Sources */,
 				A5A0F3E118F70E4900909615 /* ImageROIResultCell.m in Sources */,
 				A513226919E7866100B11AEE /* Exams.m in Sources */,
+				8A6612B41CB0B6F100E5B53A /* DownloadImagesOperation.m in Sources */,
 				8A4F3D5C1C05E337000EA005 /* TBScopeImageAsset.m in Sources */,
 				A513228519E9F32A00B11AEE /* LogEntryCell.m in Sources */,
 				A513226C19E8AD4E00B11AEE /* LogViewController.m in Sources */,
@@ -1747,6 +1790,7 @@
 				A500C0B918AC0E4100D8C569 /* NSDictionary_JSONExtensions.m in Sources */,
 				A5FCCD3318B6F0730004B2F5 /* SlideAnalysisResults.m in Sources */,
 				A5FCCD4118BC681B0004B2F5 /* MapViewController.m in Sources */,
+				8A6612B11CB0B6D500E5B53A /* UploadExamsOperation.m in Sources */,
 				A5FCCCF418B596330004B2F5 /* EditSlideViewController.m in Sources */,
 				A5FCCD2F18B6F0730004B2F5 /* ImageAnalysisResults.m in Sources */,
 				A5FCCD3218B6F0730004B2F5 /* ROIs.m in Sources */,

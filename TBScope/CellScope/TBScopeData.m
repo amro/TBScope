@@ -150,6 +150,11 @@ NSPersistentStoreCoordinator* _persistentStoreCoordinator;
                     NSError *error;
                     if ([_managedObjectContext save:&error]) {
                         [TBScopeData CSLog:@"Committed changes to core data" inCategory:@"DATA"];
+
+                        // Reduce memory consumption
+                        for (NSManagedObject *mo in [_managedObjectContext registeredObjects]) {
+                            [_managedObjectContext refreshObject:mo mergeChanges:NO];
+                        }
                     } else {
                         NSString *logMessage = [NSString stringWithFormat:@"Failed to commit to core data: %@", error.description];
                         [TBScopeData CSLog:logMessage inCategory:@"DATA"];

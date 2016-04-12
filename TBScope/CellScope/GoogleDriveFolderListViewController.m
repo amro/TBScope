@@ -53,7 +53,7 @@ UITextField *_newDirectoryTextField;
 
 - (void)fetchDirectoryList
 {
-    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
+    GoogleDriveService *gds = [GoogleDriveService sharedService];
     [gds listDirectories]
         .then(^(GTLDriveFileList *fileList) {
             _directoryList = [fileList items];
@@ -152,7 +152,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 
     // Dispatch directory creation request to Google Drive
     // - then select directory and dismiss
-    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
+    GoogleDriveService *gds = [GoogleDriveService sharedService];
     NSString *newDirectoryTitle = [_newDirectoryTextField text];
     [gds createDirectoryWithTitle:newDirectoryTitle]
         .then(^(GTLDriveFile *newDirectory) {

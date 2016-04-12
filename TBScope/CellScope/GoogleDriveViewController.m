@@ -30,7 +30,7 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
 {
     
     //if logged in, display current username and the logout button, else, load the login screen
-    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
+    GoogleDriveService *gds = [GoogleDriveService sharedService];
     if ([gds isLoggedIn]) {
         self.usernameLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Logged in as: %@", nil), [gds userEmail]];
         [self.loginButton setTitle:NSLocalizedString(@"Log Out",nil) forState:UIControlStateNormal];
@@ -44,8 +44,8 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
 
 - (IBAction)logInOut:(id)sender
 {
-    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
-    if ([[[GoogleDriveService alloc] init] isLoggedIn]) {
+    GoogleDriveService *gds = [GoogleDriveService sharedService];
+    if ([[GoogleDriveService sharedService] isLoggedIn]) {
         [GTMOAuth2ViewControllerTouch removeAuthFromKeychainForName:@"CellScope"];
         [GTMOAuth2ViewControllerTouch revokeTokenForGoogleAuthentication:[[gds driveService] authorizer]];
         [[gds driveService] setAuthorizer:nil];
@@ -80,7 +80,7 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
       finishedWithAuth:(GTMOAuth2Authentication *)authResult
                  error:(NSError *)error
 {
-    GoogleDriveService *gds = [[GoogleDriveService alloc] init];
+    GoogleDriveService *gds = [GoogleDriveService sharedService];
     if (error != nil)
     {
         

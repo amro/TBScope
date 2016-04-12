@@ -49,14 +49,16 @@
 
 - (void)setSyncIndicator
 {
-    if ([[GoogleDriveSync sharedGDS] isSyncing]) {
-        self.syncLabel.hidden = NO;
-        [self.syncSpinner startAnimating];
-    }
-    else {
-        self.syncLabel.hidden = YES;
-        [self.syncSpinner stopAnimating];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[GoogleDriveSync sharedGDS] isSyncing]) {
+            self.syncLabel.hidden = NO;
+            [self.syncSpinner startAnimating];
+        }
+        else {
+            self.syncLabel.hidden = YES;
+            [self.syncSpinner stopAnimating];
+        }
+    });
 }
 
 - (void)viewWillAppear:(BOOL)animated

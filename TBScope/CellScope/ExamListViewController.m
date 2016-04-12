@@ -37,26 +37,30 @@
 
 - (void)setSyncIndicator
 {
-    if ([[GoogleDriveSync sharedGDS] isSyncing]) {
-        self.syncLabel.hidden = NO;
-        [self.syncSpinner startAnimating];
-    }
-    else {
-        self.syncLabel.hidden = YES;
-        [self.syncSpinner stopAnimating];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[GoogleDriveSync sharedGDS] isSyncing]) {
+            self.syncLabel.hidden = NO;
+            [self.syncSpinner startAnimating];
+        }
+        else {
+            self.syncLabel.hidden = YES;
+            [self.syncSpinner stopAnimating];
+        }
+    });
 }
 
 - (void)updateTable
 {
-    
-    //  Grab the data
-    self.examListData = [CoreDataHelper getObjectsForEntity:@"Exams" withSortKey:@"dateModified" andSortAscending:NO andContext:[[TBScopeData sharedData] managedObjectContext]];
-    
+    __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
+        //  Grab the data
+        NSManagedObjectContext *moc =[ [TBScopeData sharedData] managedObjectContext];
+        weakSelf.examListData = [CoreDataHelper getObjectsForEntity:@"Exams"
+                                                        withSortKey:@"dateModified"
+                                                   andSortAscending:NO
+                                                         andContext:moc];
+        [weakSelf.tableView reloadData];
     });
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated

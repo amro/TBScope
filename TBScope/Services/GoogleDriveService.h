@@ -17,6 +17,8 @@
 // Public so we can mock it out in tests
 @property (nonatomic) float googleDriveTimeout;
 
++(instancetype)sharedService;
+
 - (BOOL)isLoggedIn;
 - (NSString*)userEmail;
 
@@ -26,7 +28,6 @@
 - (PMKPromise *)listDirectories;
 - (PMKPromise *)createDirectoryWithTitle:(NSString *)title;
 - (PMKPromise *)uploadFile:(GTLDriveFile *)file withData:(NSData *)data;
-- (PMKPromise *)downloadFileWithId:(NSString *)fileId;
 - (PMKPromise *)deleteFileWithId:(NSString *)fileId;
 
 - (PMKPromise *)executeQueryWithTimeout:(GTLQuery *)query;

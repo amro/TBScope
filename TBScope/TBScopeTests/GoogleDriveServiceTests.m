@@ -23,7 +23,7 @@
 - (void)setUp
 {
     [super setUp];
-    self.service = OCMPartialMock([[GoogleDriveService alloc] init]);
+    self.service = OCMPartialMock([GoogleDriveService sharedService]);
     self.data = OCMPartialMock([@"Hello World" dataUsingEncoding:NSUTF8StringEncoding]);
 }
 

@@ -29,19 +29,13 @@ typedef NS_ENUM(int, GoogleDriveSyncError) {
 + (id)sharedGDS;
 
 @property (strong, nonatomic) Reachability* reachability;
-
-@property (strong, nonatomic) NSMutableArray* slideUploadQueue;
-@property (strong, nonatomic) NSMutableArray* slideDownloadQueue;
-@property (strong, nonatomic) NSMutableArray* imageUploadQueue;
-@property (strong, nonatomic) NSMutableArray* imageDownloadQueue;
-@property (strong, nonatomic) NSMutableArray* examUploadQueue;
-@property (strong, nonatomic) NSMutableArray* examDownloadQueue;
+@property (strong, nonatomic) NSOperationQueue* operationQueue;
 
 @property (nonatomic) BOOL syncEnabled;
 @property (nonatomic) BOOL isSyncing;
-@property (nonatomic) BOOL uploadEnabled;
-@property (nonatomic) BOOL downloadEnabled;
 
 - (void)doSync;
++ (BOOL)uploadIsEnabled;
++ (BOOL)downloadIsEnabled;
 
 @end

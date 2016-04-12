@@ -35,18 +35,19 @@
 
 - (PMKPromise *)uploadToGoogleDrive:(GoogleDriveService *)googleDriveService
 {
-    __block NSManagedObjectContext *moc = [self managedObjectContext];
+    NSManagedObjectContext *moc = [self managedObjectContext];
     return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
         [moc performBlock:^{
             NSString *message = [NSString stringWithFormat:@"Uploading image #%d from slide #%d from exam %@ with googleDriveFileID %@",
-              self.fieldNumber,
-              self.slide.slideNumber,
-              self.slide.exam.examID,
-              self.googleDriveFileID
+                self.fieldNumber,
+                self.slide.slideNumber,
+                self.slide.exam.examID,
+                self.googleDriveFileID
             ];
             [TBScopeData CSLog:message inCategory:@"SYNC"];
 
-            resolve(self.googleDriveFileID);
+            NSString *fileID = self.googleDriveFileID;
+            resolve(fileID);
         }];
     }].then(^(NSString *googleDriveFileID) {
         if (googleDriveFileID) {
@@ -63,8 +64,8 @@
         }];
     }).then(^ PMKPromise* (UIImage *image) {
         if (!image) {
-            [moc performBlock:^{
-                NSString *message = [NSString stringWithFormat:@"Could not load image from path %@", self.path ];
+            [moc performBlockAndWait:^{
+                NSString *message = [NSString stringWithFormat:@"Could not load image from path %@", self.path];
                 [TBScopeData CSLog:message inCategory:@"SYNC"];
             }];
             return [PMKPromise noopPromise];
@@ -72,7 +73,7 @@
 
         // Upload the file
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
-            [moc performBlock:^{
+            [[self managedObjectContext] performBlock:^{
                 // Create a google file object from this image
                 GTLDriveFile *file = [GTLDriveFile object];
                 file.title = [NSString stringWithFormat:@"%@ - %@ - %d-%d.jpg",
@@ -113,7 +114,7 @@
 
         return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
             if (file) {
-                [moc performBlock:^{
+                [[self managedObjectContext] performBlock:^{
                     self.googleDriveFileID = file.identifier;
                     resolve(nil);
                 }];

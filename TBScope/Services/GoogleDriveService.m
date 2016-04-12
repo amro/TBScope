@@ -22,7 +22,24 @@ static NSString *const kClientSecret = @"mbDjzu2hKDW23QpNJXe_0Ukd";
 
 #pragma Initializers
 
++ (id)sharedService
+{
+    return [[GoogleDriveService alloc] initPrivate];
+//    static GoogleDriveService *sharedService;
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        sharedService = [[GoogleDriveService alloc] initPrivate];
+//    });
+//    return sharedService;
+}
+
+// NOTE: Only use this in testing; otherwise use [GoogleDriveService sharedService]
 - (instancetype)init
+{
+    return [[GoogleDriveService alloc] initPrivate];
+}
+
+- (instancetype)initPrivate
 {
     self = [super init];
     if (self) {
