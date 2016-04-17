@@ -36,6 +36,23 @@
 - (PMKPromise *)uploadToGoogleDrive:(GoogleDriveService *)googleDriveService
 {
     NSManagedObjectContext *moc = [self managedObjectContext];
+
+    // This leaks:
+    return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+        [moc performBlock:^{
+            NSLog(@"Hello, world");
+        }];
+        resolve(nil);
+    }];
+
+    // This does not leak:
+    // return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+    //     NSLog(@"Hello, world");
+    //     resolve(nil);
+    // }];
+
+    // NOTE: the code below leaks a significant amount of memory. I've
+    // isolated it to the simplified case above (which also leaks).
     return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
         [moc performBlock:^{
             NSString *message = [NSString stringWithFormat:@"Uploading image #%d from slide #%d from exam %@ with googleDriveFileID %@",
